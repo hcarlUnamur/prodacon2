@@ -19,9 +19,13 @@ public abstract class DBTransformation {
     public abstract void transfrom();    
     public abstract void unDoTransformation();
 
-    public DBTransformation(String dataBaseHostName, String dataBasePortNumber) {
+    public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
         this.dataBaseHostName = dataBaseHostName;
         this.dataBasePortNumber = dataBasePortNumber;
+        this.dataBaseLogin = dataBaseLogin;
+        this.dataBasePassword = dataBasePassword;
     }
+
+    
 
 }
