@@ -5,15 +5,19 @@
  */
 package SQLQuery;
 
+import java.sql.Connection;
+
 /**
  *
  * @author thibaud
  */
 public class SQLSelectQuery extends SQLQuery {
 
-    public SQLSelectQuery(String[] table) {
-        super(table);
+    public SQLSelectQuery(String[] table, Connection con) {
+        super(table, con);
     }
+
+    
     
     @Override
     public void sqlQueryDo() {

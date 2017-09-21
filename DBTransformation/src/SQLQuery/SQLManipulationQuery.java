@@ -5,15 +5,19 @@
  */
 package SQLQuery;
 
+import java.sql.Connection;
+
 /**
  *
  * @author thibaud
  */
 public class SQLManipulationQuery extends SQLQuery{
-    
-     public SQLManipulationQuery (String[] table) {
-        super(table);
+
+    public SQLManipulationQuery(String[] table, Connection con) {
+        super(table, con);
     }
+    
+    
     
     @Override
     public void sqlQueryDo() {

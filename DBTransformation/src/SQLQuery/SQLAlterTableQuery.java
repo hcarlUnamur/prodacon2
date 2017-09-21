@@ -5,15 +5,21 @@
  */
 package SQLQuery;
 
+import java.sql.Connection;
+
 /**
  *
  * @author thibaud
  */
 public class SQLAlterTableQuery extends SQLStructuresQuery{
 
-    public SQLAlterTableQuery(String[] table) {
-        super(table);
+    public SQLAlterTableQuery(String[] table, Connection con) {
+        super(table, con);
     }
+
+    
+
+   
     
     @Override
     public void sqlQueryDo() {

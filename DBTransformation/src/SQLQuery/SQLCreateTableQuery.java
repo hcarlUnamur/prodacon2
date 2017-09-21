@@ -5,15 +5,19 @@
  */
 package SQLQuery;
 
+import java.sql.Connection;
+
 /**
  *
  * @author thibaud
  */
 public class SQLCreateTableQuery extends SQLStructuresQuery{
 
-    public SQLCreateTableQuery(String[] table) {
-        super(table);
+    public SQLCreateTableQuery(String[] table, Connection con) {
+        super(table, con);
     }
+
+    
     
     @Override
     public void sqlQueryDo() {

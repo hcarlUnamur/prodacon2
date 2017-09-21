@@ -4,20 +4,21 @@
  * and open the template in the editor.
  */
 package SQLQuery;
-
+import java.sql.*;
 /**
  *
  * @author thibaud
  */
 public abstract class SQLQuery {
-    public String[] table;
+    private String[] table;
+    private Connection con;
     
     public abstract void sqlQueryDo();    
     public abstract void sqlQueryUndo();
 
-    public SQLQuery(String[] table) {
+    public SQLQuery(String[] table, Connection con) {
         this.table = table;
-    }
-    
+        this.con = con;
+    }  
     
 }

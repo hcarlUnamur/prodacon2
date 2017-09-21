@@ -5,15 +5,19 @@
  */
 package SQLQuery;
 
+import java.sql.Connection;
+
 /**
  *
  * @author thibaud
  */
 public class SQLDropTableQuery extends SQLStructuresQuery {
 
-    public SQLDropTableQuery(String[] table) {
-        super(table);
+    public SQLDropTableQuery(String[] table, Connection con) {
+        super(table, con);
     }
+
+    
     
     @Override
     public void sqlQueryDo() {

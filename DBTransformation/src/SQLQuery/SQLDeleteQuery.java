@@ -5,15 +5,19 @@
  */
 package SQLQuery;
 
+import java.sql.Connection;
+
 /**
  *
  * @author thibaud
  */
 public class SQLDeleteQuery extends SQLManipulationQuery{
 
-    public SQLDeleteQuery(String[] table) {
-        super(table);
+    public SQLDeleteQuery(String[] table, Connection con) {
+        super(table, con);
     }
+
+    
     
     @Override
     public void sqlQueryDo() {
