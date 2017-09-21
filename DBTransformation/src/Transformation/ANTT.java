@@ -11,6 +11,10 @@ package Transformation;
  */
 public class ANTT extends TypeMismatching {
 
+    public ANTT(String dataBaseHostName, String dataBasePortNumber) {
+        super(dataBaseHostName, dataBasePortNumber);
+    }
+
     @Override
     public void transfrom() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
