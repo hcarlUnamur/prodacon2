@@ -11,9 +11,10 @@ package Transformation;
  */
 public class TypeMatching extends DBTransformation {
 
-    public TypeMatching(String dataBaseHostName, String dataBasePortNumber) {
-        super(dataBaseHostName, dataBasePortNumber);
+    public TypeMatching(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
+
 
     @Override
     public void transfrom() {

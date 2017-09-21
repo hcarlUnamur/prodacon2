@@ -11,8 +11,8 @@ package Transformation;
  */
 public class MBT extends TypeMatching {
 
-    public MBT(String dataBaseHostName, String dataBasePortNumber) {
-        super(dataBaseHostName, dataBasePortNumber);
+    public MBT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
 
     public void transfrom() {

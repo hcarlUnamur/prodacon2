@@ -11,9 +11,10 @@ package Transformation;
  */
 public class TypeMismatching extends DBTransformation {
 
-    public TypeMismatching(String dataBaseHostName, String dataBasePortNumber) {
-        super(dataBaseHostName, dataBasePortNumber);
+    public TypeMismatching(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
+
 
     @Override
     public void transfrom() {

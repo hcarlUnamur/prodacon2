@@ -13,6 +13,8 @@ public abstract class DBTransformation {
     
     public String dataBaseHostName;
     public String dataBasePortNumber;
+    public String dataBaseLogin;
+    public String dataBasePassword;
     
     public abstract void transfrom();    
     public abstract void unDoTransformation();

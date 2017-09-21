@@ -11,10 +11,9 @@ package Transformation;
  */
 public class DTT extends TypeMismatching {
 
-    public DTT(String dataBaseHostName, String dataBasePortNumber) {
-        super(dataBaseHostName, dataBasePortNumber);
+    public DTT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
-
 
     @Override
     public void transfrom() {

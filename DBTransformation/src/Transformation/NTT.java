@@ -11,8 +11,8 @@ package Transformation;
  */
 public class NTT extends TypeMismatching {
 
-    public NTT(String dataBaseHostName, String dataBasePortNumber) {
-        super(dataBaseHostName, dataBasePortNumber);
+    public NTT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
 
     @Override
