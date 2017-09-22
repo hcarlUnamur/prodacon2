@@ -19,4 +19,12 @@ public class StringTool {
         return out.substring(1, out.length());
     }
     
+    public static String ArrayToStringInsert(String[] arr) {
+        StringBuilder out= new StringBuilder();
+        for(String s : arr){
+            out=out.append(", "+"\"" + s + "\"");
+        }
+        return out.substring(1, out.length());
+    }
+    
 }
