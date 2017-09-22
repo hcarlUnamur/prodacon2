@@ -17,7 +17,8 @@ import java.util.logging.Logger;
  */
 public class SQLCreateTableQuery extends SQLStructuresQuery{
 
-    private static String QUERYFORMAT = "CREATE DATABASE %s";
+    private static String QUERYFORMAT = "CREATE TABLE %s";
+    private String args;
     
     public SQLCreateTableQuery(String[] table, Connection con) {
         super(table, con);
@@ -28,16 +29,6 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
     @Override
     public void sqlQueryDo() throws SQLException{
 
-        Statement stmt = this.getCon().createStatement();
-        for (String s : this.getTable()){
-            String query = String.format(QUERYFORMAT,s);
-            stmt.executeUpdate(query);
-        }
-        try{
-         if(stmt!=null)
-            stmt.close();
-        }catch(SQLException se2){}
-       
     }
 
     @Override

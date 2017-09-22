@@ -2,3 +2,4 @@
 *.bak_*
 *.lck
 /DBTransformation/nbproject/private/
+/DBTransformation/build/

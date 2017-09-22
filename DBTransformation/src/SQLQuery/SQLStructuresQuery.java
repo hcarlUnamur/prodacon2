@@ -17,7 +17,10 @@ public class SQLStructuresQuery extends SQLQuery {
     public SQLStructuresQuery(String[] table, Connection con) {
         super(table, con);
     }
-
+    public SQLStructuresQuery(String table, Connection con) {
+        super(new String[]{table}, con);
+    }
+    
     
     
     @Override
