@@ -26,6 +26,9 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return new SQLInsertQuery(table, getConn(), values);
     }
     
+    public SQLInsertQuery creatSQLInsertQuery (String table, String[] columns, String[] values){
+        return new SQLInsertQuery(table, getConn(), columns, values);
+    }
     
     public SQLSelectQuery createSQLSelectQuery (String[] table,String[] column,String where){
         return new SQLSelectQuery(table, getConn(), column, where);
