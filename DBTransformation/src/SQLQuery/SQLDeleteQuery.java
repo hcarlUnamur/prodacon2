@@ -7,6 +7,7 @@ package SQLQuery;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
@@ -14,15 +15,37 @@ import java.sql.SQLException;
  */
 public class SQLDeleteQuery extends SQLManipulationQuery{
 
+    private static String QUERYFORMAT = "DELETE FROM %s WHERE (%s)"; 
+    private String[] columns;
+    private String[] values;
+    
     public SQLDeleteQuery(String[] table, Connection con) {
         super(table, con);
+    }
+    
+    public SQLDeleteQuery(String table, Connection con, String[] columns, String[] values){
+        super(new String[]{table}, con);
+        this.columns = columns;
+        this.values = values;
     }
 
     
     
     @Override
     public Object sqlQueryDo() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Statement stmt = this.getCon().createStatement();
+        String s = getTable()[0];
+        
+        String cond = StringTool.DeleteConcatColVal(columns, values);
+        String query = String.format(QUERYFORMAT,s,cond);
+        System.out.println(query);
+        stmt.executeUpdate(query);
+        try{
+         if(stmt!=null)
+            stmt.close();
+        }catch(SQLException se2){}
+        return null;
+    
     }
 
     @Override
