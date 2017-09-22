@@ -18,7 +18,7 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
     
     
     @Override
-    public void sqlQueryDo() throws SQLException {
+    public Object sqlQueryDo() throws SQLException {
      Statement stmt = this.getCon().createStatement();
         for (String s : this.getTable()){
             String query = String.format(QUERYFORMAT,s);
@@ -28,10 +28,11 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
          if(stmt!=null)
             stmt.close();
         }catch(SQLException se2){}
+        return null;
     }
 
     @Override
-    public void sqlQueryUndo() throws SQLException {
+    public Object sqlQueryUndo() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
         /*
         //il faut en plus charger les info sur les column de la bd pour savoir la recrée (a faire lors du new)

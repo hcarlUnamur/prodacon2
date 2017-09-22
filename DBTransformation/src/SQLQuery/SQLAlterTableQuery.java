@@ -23,12 +23,12 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
    
     
     @Override
-    public void sqlQueryDo() throws SQLException {
+    public Object sqlQueryDo() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void sqlQueryUndo() throws SQLException {
+    public Object sqlQueryUndo() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

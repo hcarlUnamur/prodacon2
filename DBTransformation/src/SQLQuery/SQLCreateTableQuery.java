@@ -31,7 +31,7 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
     
     
     @Override
-    public void sqlQueryDo() throws SQLException{
+    public Object sqlQueryDo() throws SQLException{
         Statement stmt = this.getCon().createStatement();
         String s = getTable()[0];
         String query = String.format(QUERYFORMAT,s,StringTool.ArrayToString(this.column));
@@ -40,11 +40,13 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
          if(stmt!=null)
             stmt.close();
         }catch(SQLException se2){}
+        return null;
     }
 
     @Override
-    public void sqlQueryUndo() throws SQLException {
+    public Object sqlQueryUndo() throws SQLException {
         SQLDropTableQuery drop = new SQLDropTableQuery(getTable(), getCon());
         drop.sqlQueryDo();
+        return null;
     }
 }

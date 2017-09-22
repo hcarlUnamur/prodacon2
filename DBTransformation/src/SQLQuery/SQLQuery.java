@@ -30,8 +30,8 @@ public abstract class SQLQuery {
     }
     
     
-    public abstract void sqlQueryDo() throws SQLException ;    
-    public abstract void sqlQueryUndo() throws SQLException ;
+    public abstract Object sqlQueryDo() throws SQLException ;    
+    public abstract Object sqlQueryUndo() throws SQLException ;
 
     public SQLQuery(String[] table, Connection con) {
         this.table = table;
