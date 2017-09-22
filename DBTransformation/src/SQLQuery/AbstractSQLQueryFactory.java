@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public abstract class AbstractSQLQueryFactory {
     
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:mysql://localhost/";
+    static final String DB_URL = "jdbc:mysql://%s";
     
     private String dataBaseHostName;
     private String dataBasePortNumber;
@@ -40,7 +40,7 @@ public abstract class AbstractSQLQueryFactory {
             this.dataBasePassword = dataBasePassword;
             
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(DB_URL, dataBaseLogin, dataBaseHostName);
+            conn = DriverManager.getConnection(String.format(DB_URL,dataBaseHostName), dataBaseLogin, dataBasePassword);
             
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AbstractSQLQueryFactory.class.getName()).log(Level.SEVERE, null, ex);
