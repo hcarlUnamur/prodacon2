@@ -10,8 +10,8 @@ package SQLQuery;
  * @author carl_
  */
 public class SQLQueryFactory extends AbstractSQLQueryFactory {
-
-    public SQLQueryFactory(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+    
+       public SQLQueryFactory(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
 
@@ -26,6 +26,13 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return new SQLInsertQuery(table, getConn(), values);
     }
     */
+    
+    public SQLSelectQuery createSQLSelectQuery (String[] table,String[] column,String where){
+        return new SQLSelectQuery(table, getConn(), column, where);
+    }
+    public SQLSelectQuery createSQLSelectQuery (String table,String[] column,String where){
+        return new SQLSelectQuery(table, getConn(), column, where);
+    }
 
    
 }
