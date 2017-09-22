@@ -6,6 +6,10 @@
 package SQLQuery;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -13,6 +17,8 @@ import java.sql.Connection;
  */
 public class SQLCreateTableQuery extends SQLStructuresQuery{
 
+    private static String QUERYFORMAT = "CREATE DATABASE %s";
+    
     public SQLCreateTableQuery(String[] table, Connection con) {
         super(table, con);
     }
@@ -20,12 +26,22 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
     
     
     @Override
-    public void sqlQueryDo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void sqlQueryDo() throws SQLException{
+
+        Statement stmt = this.getCon().createStatement();
+        for (String s : this.getTable()){
+            String query = String.format(QUERYFORMAT,s);
+            stmt.executeUpdate(query);
+        }
+        try{
+         if(stmt!=null)
+            stmt.close();
+        }catch(SQLException se2){}
+       
     }
 
     @Override
-    public void sqlQueryUndo() {
+    public void sqlQueryUndo() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

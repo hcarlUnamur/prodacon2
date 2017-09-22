@@ -5,10 +5,51 @@
  */
 package SQLQuery;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author thibaud
  */
 public abstract class AbstractSQLQueryFactory {
+    
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+    static final String DB_URL = "jdbc:mysql://localhost/";
+    
+    private String dataBaseHostName;
+    private String dataBasePortNumber;
+    private String dataBaseLogin;
+    private String dataBasePassword;
+    private Connection conn;
+
+    public Connection getConn() {
+        return conn;
+    }
+    
+    
+    
+    public AbstractSQLQueryFactory(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+        try {
+            this.dataBaseHostName = dataBaseHostName;
+            this.dataBasePortNumber = dataBasePortNumber;
+            this.dataBaseLogin = dataBaseLogin;
+            this.dataBasePassword = dataBasePassword;
+            
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(DB_URL, dataBaseLogin, dataBaseHostName);
+            
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AbstractSQLQueryFactory.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AbstractSQLQueryFactory.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    
+    }
+
     
 }

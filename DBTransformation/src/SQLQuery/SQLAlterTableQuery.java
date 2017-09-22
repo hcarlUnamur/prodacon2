@@ -6,6 +6,7 @@
 package SQLQuery;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  *
@@ -22,12 +23,12 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
    
     
     @Override
-    public void sqlQueryDo() {
+    public void sqlQueryDo() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void sqlQueryUndo() {
+    public void sqlQueryUndo() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
