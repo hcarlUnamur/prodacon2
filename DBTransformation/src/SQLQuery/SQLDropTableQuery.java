@@ -22,6 +22,7 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
      Statement stmt = this.getCon().createStatement();
         for (String s : this.getTable()){
             String query = String.format(QUERYFORMAT,s);
+            System.out.println("query execution = " + query);
             stmt.executeUpdate(query);
         }
         try{
