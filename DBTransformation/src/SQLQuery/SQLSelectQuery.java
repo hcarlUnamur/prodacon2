@@ -37,7 +37,7 @@ public class SQLSelectQuery extends SQLQuery {
     
     
     @Override
-    public Object sqlQueryDo() throws SQLException {
+    public ResultSet sqlQueryDo() throws SQLException {
         Statement stmt = this.getCon().createStatement();
         String query = String.format(
                 QUERYFORMAT,
