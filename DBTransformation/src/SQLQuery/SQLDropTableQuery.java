@@ -22,7 +22,6 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
      Statement stmt = this.getCon().createStatement();
         for (String s : this.getTable()){
             String query = String.format(QUERYFORMAT,s);
-            System.out.println("query execution = " + query);
             stmt.executeUpdate(query);
         }
         try{
@@ -33,7 +32,12 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
 
     @Override
     public void sqlQueryUndo() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
+        /*
+        //il faut en plus charger les info sur les column de la bd pour savoir la recrée (a faire lors du new)
+        
         SQLCreateTableQuery create = new SQLCreateTableQuery(getTable(), getCon());
         create.sqlQueryDo();
+        */
     }
 }
