@@ -40,7 +40,7 @@ public class Table {
         for( Column col : Tablecolumn){
             out.add(col.getColumnName()+" "+col.getColumnType());
         }
-        return (String[])out.toArray();
+        return out.toArray(new String[out.size()]);
     }
     
 }

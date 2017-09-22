@@ -38,6 +38,7 @@ public class SQLSelectQuery extends SQLQuery {
     
     @Override
     public ResultSet sqlQueryDo() throws SQLException {
+        if (where=="" || where==null){where="1=1";}
         Statement stmt = this.getCon().createStatement();
         String query = String.format(
                 QUERYFORMAT,
@@ -45,11 +46,8 @@ public class SQLSelectQuery extends SQLQuery {
                 StringTool.ArrayToString(this.getTable()),
                 where
         );
+        System.out.println(query);
         ResultSet out = stmt.executeQuery(query);
-        try{
-         if(stmt!=null)
-            stmt.close();
-        }catch(SQLException se2){}
         return out;
     }
 
