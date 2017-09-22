@@ -1,0 +1,49 @@
+
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`PATIENT`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`PATIENT` (
+  `idPatient` INT NOT NULL,
+  `firstName` VARCHAR(45) NULL,
+  `lastName` VARCHAR(45) NULL,
+  `age` INT NULL,
+  `idHospital` INT NOT NULL,
+  `idAddress` INT NOT NULL,
+  PRIMARY KEY (`idPatient`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`HOSPITAL`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`HOSPITAL` (
+  `idHospital` INT NOT NULL,
+  `name` VARCHAR(45) NULL,
+  `idaddress` INT NOT NULL,
+  PRIMARY KEY (`idHospital`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`ADDRESS`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`ADDRESS` (
+  `idAddress` INT NOT NULL,
+  `street` VARCHAR(45) NULL,
+  `num` INT NULL,
+  `city` VARCHAR(45) NULL,
+  PRIMARY KEY (`idAddress`))
+ENGINE = InnoDB;
+
+
