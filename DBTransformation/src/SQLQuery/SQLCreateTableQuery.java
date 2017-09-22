@@ -17,22 +17,34 @@ import java.util.logging.Logger;
  */
 public class SQLCreateTableQuery extends SQLStructuresQuery{
 
-    private static String QUERYFORMAT = "CREATE TABLE %s";
-    private String args;
+    private static String QUERYFORMAT = "CREATE TABLE %s (%s)";
+    private String[] column;
     
     public SQLCreateTableQuery(String[] table, Connection con) {
         super(table, con);
+    }
+    public SQLCreateTableQuery(String table, Connection con, String[] column) {
+        super(new String[]{table}, con);
+        this.column = column;
     }
 
     
     
     @Override
     public void sqlQueryDo() throws SQLException{
-
+        Statement stmt = this.getCon().createStatement();
+        String s = getTable()[0];
+        String query = String.format(QUERYFORMAT,s,StringTool.ArrayToString(this.column));
+        stmt.executeUpdate(query);
+        try{
+         if(stmt!=null)
+            stmt.close();
+        }catch(SQLException se2){}
     }
 
     @Override
     public void sqlQueryUndo() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SQLDropTableQuery drop = new SQLDropTableQuery(getTable(), getCon());
+        drop.sqlQueryDo();
     }
 }

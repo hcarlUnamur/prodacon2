@@ -15,8 +15,11 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
 
-    public SQLCreateTableQuery creatSQLCreateTableQuery(String[] table){
-        return new SQLCreateTableQuery(table, this.getConn());
+    public SQLCreateTableQuery creatSQLCreateTableQuery(String table,String[] columns){
+        return new SQLCreateTableQuery(table, getConn(), columns);
+    }
+    public SQLDropTableQuery creatDropTableQuery (String table){
+        return new SQLDropTableQuery(table, getConn());
     }
 
 
