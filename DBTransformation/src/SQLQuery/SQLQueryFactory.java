@@ -21,10 +21,11 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
     public SQLDropTableQuery creatDropTableQuery (String table){
         return new SQLDropTableQuery(table, getConn());
     }
-    
+    /*
     public SQLInsertQuery creatSQLInsertQuery (String table, String[] values){
         return new SQLInsertQuery(table, getConn(), values);
     }
+    */
 
    
 }
