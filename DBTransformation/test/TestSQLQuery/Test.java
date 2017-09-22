@@ -18,7 +18,7 @@ public class Test {
     public static void main(String[] args) {
         try {
             SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
-            sqlF.createSQLDeleteQuery("patient", new String[]{"idPatient", "firstName", "lastName", "age", "idHospital", "idAddress"}, new String[]{"2", "zoulou", "zaza", "22", "1", "1"}).sqlQueryDo();
+            sqlF.createSQLUpdateQuery("patient", new String[]{"idPatient", "firstName", "lastName", "age", "idHospital", "idAddress"}, new String[]{"4", "zoulou", "zaza", "22", "1", "1"}, new String[]{"firstName", "lastName"}, new String[]{"coucou", "loulou"}).sqlQueryDo();
             System.out.println("voilà");
         } catch (SQLException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);

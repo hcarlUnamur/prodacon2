@@ -40,6 +40,10 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
     public SQLDeleteQuery createSQLDeleteQuery (String table, String[] columns, String[] values){
         return new SQLDeleteQuery(table, getConn(), columns, values);
     }
+    
+    public SQLUpdateQuery createSQLUpdateQuery (String table, String[] columns, String[] values, String[] newColumns, String[] newValues){
+        return new SQLUpdateQuery(table, getConn(), columns, values, newColumns, newValues);
+    }
 
    
 }

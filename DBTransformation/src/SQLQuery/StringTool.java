@@ -38,4 +38,15 @@ public class StringTool {
         return cond;
     }
     
+    public static String UpdateConcatColVal(String[] columns, String[] values){
+        String cond = "";
+        if(columns.length > 0){
+            cond = cond + columns[0] + "=" + "'" + values[0] + "'";
+            for(int i=1; i<columns.length; i++){
+                cond = cond + " , " + columns[i] + "=" + "'" + values[i] + "'";
+            }
+        }
+        return cond;
+    }
+    
 }
