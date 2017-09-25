@@ -3,3 +3,4 @@
 *.lck
 /DBTransformation/nbproject/private/
 /DBTransformation/build/
+/DBTransformation/dist/
