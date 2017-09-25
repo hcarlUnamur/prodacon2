@@ -65,4 +65,16 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return SQLAlterTableQuery.CreateDroporeignKeyQuery(table, getConn(), constraintName);
     }
   
+    public SQLAlterTableQuery creatSQLAlterAddPrimaryKeyQuery(String table,Column column){
+        return SQLAlterTableQuery.CreateAddPrimaryKeyQuery(table, getConn(), column);
+    }
+    
+    public SQLAlterTableQuery creatSQLAlterAddPrimaryKeyQuery(String table,String columnName){
+        return SQLAlterTableQuery.CreateAddPrimaryKeyQuery(table, getConn(), columnName);
+    }
+    
+    public SQLAlterTableQuery creatSQLAlterDropPrimaryKeyQuery(String table){
+        return SQLAlterTableQuery.CreateDropPrimaryKeyQuery(table, getConn());
+    }
+    
 }

@@ -14,5 +14,7 @@ public enum Alteration {
     DropColumn,
     ModifyColumnType,
     AddForeignKey,
-    DropForeignKey
+    DropForeignKey,
+    AddPrimaryKey,
+    DropPrimaryKey
 }
