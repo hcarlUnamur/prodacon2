@@ -16,17 +16,15 @@ import java.sql.Statement;
 public class SQLDeleteQuery extends SQLManipulationQuery{
 
     private static String QUERYFORMAT = "DELETE FROM %s WHERE (%s)"; 
-    private String[] columns;
-    private String[] values;
+    private String[][] whereValues;
     
     public SQLDeleteQuery(String[] table, Connection con) {
         super(table, con);
     }
     
-    public SQLDeleteQuery(String table, Connection con, String[] columns, String[] values){
+    public SQLDeleteQuery(String table, Connection con, String[][] whereValues){
         super(new String[]{table}, con);
-        this.columns = columns;
-        this.values = values;
+        this.whereValues = whereValues;
     }
 
     
@@ -36,7 +34,7 @@ public class SQLDeleteQuery extends SQLManipulationQuery{
         Statement stmt = this.getCon().createStatement();
         String s = getTable()[0];
         
-        String cond = StringTool.DeleteConcatColVal(columns, values);
+        String cond = StringTool.WhereToStringVal(whereValues);
         String query = String.format(QUERYFORMAT,s,cond);
         System.out.println(query);
         stmt.executeUpdate(query);

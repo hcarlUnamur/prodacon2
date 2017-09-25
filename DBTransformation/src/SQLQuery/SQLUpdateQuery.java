@@ -16,28 +16,24 @@ import java.sql.Statement;
 public class SQLUpdateQuery extends SQLManipulationQuery{
     
     private static String QUERYFORMAT = "UPDATE %s SET %s WHERE %s;"; 
-    private String[] columns;
-    private String[] values;
-    private String[] newColumns;
-    private String[] newValues;
+    private String[][] setValues;
+    private String[][] condValues;
 
     public SQLUpdateQuery(String[] table, Connection con) {
         super(table, con);
     }
-    public SQLUpdateQuery(String table, Connection con, String[] columns, String[] values, String[] newColumns, String[] newValues){
+    public SQLUpdateQuery(String table, Connection con, String[][] setValues, String[][] condValues){
         super(new String[]{table}, con);
-        this.columns = columns;
-        this.values = values;
-        this.newColumns = newColumns;
-        this.newValues = newValues;
+        this.setValues = setValues;
+        this.condValues = condValues;
     }
     
     @Override
     public Object sqlQueryDo() throws SQLException {
         Statement stmt = this.getCon().createStatement();
         String s = getTable()[0];
-        String setChange = StringTool.UpdateConcatColVal(newColumns, newValues);
-        String cond = StringTool.DeleteConcatColVal(columns, values);
+        String setChange = StringTool.UpdateSetVal(setValues);
+        String cond = StringTool.WhereToStringVal(condValues);
         String query = String.format(QUERYFORMAT,s,setChange, cond);
         System.out.println(query);
         stmt.executeUpdate(query);

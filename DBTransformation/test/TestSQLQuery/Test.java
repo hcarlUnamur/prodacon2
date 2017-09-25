@@ -18,8 +18,13 @@ public class Test {
     public static void main(String[] args) {
         try {
             SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
-            sqlF.createSQLUpdateQuery("patient", new String[]{"idPatient", "firstName", "lastName", "age", "idHospital", "idAddress"}, new String[]{"4", "zoulou", "zaza", "22", "1", "1"}, new String[]{"firstName", "lastName"}, new String[]{"coucou", "loulou"}).sqlQueryDo();
             
+            sqlF.createSQLDeleteQuery("patient", new String[][]{{"idPatient", "69"},{"firstName", "lola"},{"lastName", "zaza"}, {"age", "22"}, {"idHospital", "1"}, {"idAddress", "1"}}).sqlQueryDo();
+            
+            
+            /*            
+            sqlF.createSQLUpdateQuery("patient", new String[][]{{"idPatient", "69"}, {"firstName", "lola"}}, new String[][]{{"idPatient", "5"},{"firstName", "zoulou"},{"lastName", "zaza"}, {"age", "22"}, {"idHospital", "1"}, {"idAddress", "1"}}).sqlQueryDo();
+            */
             /*
             //test creatable + droptable + undoDroptable
             sqlF.creatSQLCreateTableQuery("carl", new String[]{"id int"," taille int "," bof varchar(33)"}).sqlQueryDo();

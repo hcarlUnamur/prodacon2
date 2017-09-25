@@ -27,25 +27,25 @@ public class StringTool {
         return out.substring(1, out.length());
     }
     
-    public static String DeleteConcatColVal(String[] columns, String[] values){
+    public static String UpdateSetVal(String[][] values){
         String cond = "";
-        if(columns.length > 0){
-            cond = cond + columns[0] + "=" + "'" + values[0] + "'";
-            for(int i=1; i<columns.length; i++){
-                cond = cond + " && " + columns[i] + "=" + "'" + values[i] + "'";
-            }
-        }
+            for(int i=0; i<values.length; i++){
+                cond = cond + values[i][0] + "=" + "'" + values[i][1] + "'";
+                if(i < values.length - 1){
+                    cond = cond + " , ";
+                }
+            }        
         return cond;
     }
     
-    public static String UpdateConcatColVal(String[] columns, String[] values){
+    public static String WhereToStringVal(String[][] values){
         String cond = "";
-        if(columns.length > 0){
-            cond = cond + columns[0] + "=" + "'" + values[0] + "'";
-            for(int i=1; i<columns.length; i++){
-                cond = cond + " , " + columns[i] + "=" + "'" + values[i] + "'";
-            }
-        }
+            for(int i=0; i<values.length; i++){
+                cond = cond + values[i][0] + "=" + "'" + values[i][1] + "'";
+                if(i < values.length - 1){
+                    cond = cond + " && ";
+                }
+            }        
         return cond;
     }
     
