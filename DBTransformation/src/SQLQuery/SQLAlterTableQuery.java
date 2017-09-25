@@ -98,7 +98,7 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
         return CreateAddPrimaryKeyQuery(table, con, new Column(columnName, null));
     }
     
-    public static SQLAlterTableQuery CreateDropPrimaryKeyQuery(String table, Connection con,String columnName){
+    public static SQLAlterTableQuery CreateDropPrimaryKeyQuery(String table, Connection con){
         SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.DropPrimaryKey);
         return out;
     }
@@ -129,7 +129,7 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
             case AddPrimaryKey:
                 out=String.format(sqlQuery, getTable()[0], "ADD PRIMARY KEY", "("+column.getColumnName()+")");
                 break;
-            case DeletePrimaryKey:
+            case DropPrimaryKey:
                 out=String.format(sqlQuery, getTable()[0], "DROP PRIMARY KEY", "");
                 break;                
         }
