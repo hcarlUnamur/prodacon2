@@ -15,11 +15,26 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
 
-    public SQLCreateTableQuery creatSQLCreateTableQuery(String table,String[] columns){
-        return new SQLCreateTableQuery(table, getConn(), columns);
+    public SQLCreateTableQuery creatSQLCreateTableQuery(String tableName,String[] columns){
+        return new SQLCreateTableQuery(tableName, getConn(), columns);
     }
-    public SQLDropTableQuery creatDropTableQuery (String table){
+    
+    public SQLCreateTableQuery creatSQLCreateTableQuery(Table table){
+        String[] columns = new String[table.getTablecolumn().size()]
+        int i = 0;
+        for (Column c : table.getTablecolumn()){
+            columns[i]=c.getColumnName() + " " + c.getColumnType();
+            i++;
+        }
+        return new SQLCreateTableQuery(table.getName(), getConn(), columns);
+    }
+    
+    public SQLDropTableQuery creatDropTableQuery (String tableName){
         return new SQLDropTableQuery(table, getConn());
+    }
+    
+    public SQLDropTableQuery creatDropTableQuery (Table table){
+        return new SQLDropTableQuery(table.getName(), getConn());
     }
     
     public SQLInsertQuery creatSQLInsertQuery (String table, String[] values){
