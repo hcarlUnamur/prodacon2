@@ -15,6 +15,10 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
     private Table referentialTable;
     private String constraintName;
 
+    public SQLAlterTableQuery(String[] table, Connection con) {
+        super(table, con);
+    }
+    
     public void setConstraintName(String constraintName) {
         this.constraintName = constraintName;
     }
@@ -29,11 +33,6 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
 
     public void setColumn(Column column) {
         this.column = column;
-    }
-
-    
-    public SQLAlterTableQuery(String[] table, Connection con) {
-        super(table, con);
     }
 
     public SQLAlterTableQuery(String table, Connection con, Alteration alteration) {
@@ -76,7 +75,9 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
     public SQLAlterTableQuery CreateAddForeignKeyQuery(String table, Connection con,String constraintName, Column column , String referentialTable, String referentialColumn) {
         SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.ModifyColumnType);
         out.setColumn(column);
-        out.setReferentialTable(new Table(referentialTable, (new ArrayList<Column>().add(new Column(referentialColumn, null)))));        
+        ArrayList<Column arr => new ArrayList<Column>();
+        arr.add(new Column(referentialColumn, null));
+        out.setReferentialTable(new Table(referentialTable, arr));        
         out.setConstraintName(constraintName);
         return out;
     }
