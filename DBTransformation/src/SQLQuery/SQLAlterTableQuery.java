@@ -75,7 +75,7 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
     public SQLAlterTableQuery CreateAddForeignKeyQuery(String table, Connection con,String constraintName, Column column , String referentialTable, String referentialColumn) {
         SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.ModifyColumnType);
         out.setColumn(column);
-        ArrayList<Column arr => new ArrayList<Column>();
+        ArrayList<Column> arr = new ArrayList<Column>();
         arr.add(new Column(referentialColumn, null));
         out.setReferentialTable(new Table(referentialTable, arr));        
         out.setConstraintName(constraintName);
