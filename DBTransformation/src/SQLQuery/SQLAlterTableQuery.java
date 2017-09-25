@@ -128,7 +128,6 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
                 break;
             case AddPrimaryKey:
                 out=String.format(sqlQuery, getTable()[0], "ADD PRIMARY KEY", "("+column.getColumnName()+")");
-                System.out.println(out);
                 break;
             case DropPrimaryKey:
                 out=String.format(sqlQuery, getTable()[0], "DROP PRIMARY KEY", "");
