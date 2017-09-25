@@ -20,7 +20,7 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
     }
     
     public SQLCreateTableQuery creatSQLCreateTableQuery(Table table){
-        String[] columns = new String[table.getTablecolumn().size()]
+        String[] columns = new String[table.getTablecolumn().size()];
         int i = 0;
         for (Column c : table.getTablecolumn()){
             columns[i]=c.getColumnName() + " " + c.getColumnType();
@@ -30,7 +30,7 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
     }
     
     public SQLDropTableQuery creatDropTableQuery (String tableName){
-        return new SQLDropTableQuery(table, getConn());
+        return new SQLDropTableQuery(tableName, getConn());
     }
     
     public SQLDropTableQuery creatDropTableQuery (Table table){
