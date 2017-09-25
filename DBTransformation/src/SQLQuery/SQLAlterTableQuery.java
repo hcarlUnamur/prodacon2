@@ -40,44 +40,50 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
         this.alteration=alteration;
     }
     
-    public SQLAlterTableQuery CreateAddColumnQuery(String table, Connection con, Column column) {
+    public static SQLAlterTableQuery CreateAddColumnQuery(String table, Connection con, Column column) {
         SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.AddColumn);
         out.setColumn(column);
         return out;
     }
     
-    public SQLAlterTableQuery CreateDropColumnQuery(String table, Connection con, Column column) {
+    public static SQLAlterTableQuery CreateDropColumnQuery(String table, Connection con, Column column) {
         SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.DropColumn);
         out.setColumn(column);
         return out;
     }
     
-    public SQLAlterTableQuery CreateDropColumnQuery(String table, Connection con, String columnName) {
+    public static SQLAlterTableQuery CreateDropColumnQuery(String table, Connection con, String columnName) {
         SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.DropColumn);
-        out.setColumn(column);
+        out.setColumn(new Column(columnName, null));
         return out;
     }
     
-    public SQLAlterTableQuery CreateModifyColumnTypeQuery(String table, Connection con, Column column) {
+    public static SQLAlterTableQuery CreateModifyColumnTypeQuery(String table, Connection con, Column column) {
         SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.ModifyColumnType);
         out.setColumn(column);
         return out;
     }
     
-    public SQLAlterTableQuery CreateAddForeignKeyQuery(String table, Connection con,String constraintName, Column column , Table referentialTable) {
-        SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.ModifyColumnType);
+    public static SQLAlterTableQuery CreateAddForeignKeyQuery(String table, Connection con,String constraintName, Column column , Table referentialTable) {
+        SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.AddForeignKey);
         out.setColumn(column);
         out.setReferentialTable(referentialTable);
         out.setConstraintName(constraintName);
         return out;
     }
     
-    public SQLAlterTableQuery CreateAddForeignKeyQuery(String table, Connection con,String constraintName, Column column , String referentialTable, String referentialColumn) {
-        SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.ModifyColumnType);
+    public static SQLAlterTableQuery CreateAddForeignKeyQuery(String table, Connection con,String constraintName, Column column , String referentialTable, String referentialColumn) {
+        SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.AddForeignKey);
         out.setColumn(column);
         ArrayList<Column> arr = new ArrayList<Column>();
         arr.add(new Column(referentialColumn, null));
         out.setReferentialTable(new Table(referentialTable, arr));        
+        out.setConstraintName(constraintName);
+        return out;
+    }
+    
+    public static SQLAlterTableQuery CreateDroporeignKeyQuery(String table, Connection con,String constraintName) {
+        SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.DropForeignKey);
         out.setConstraintName(constraintName);
         return out;
     }

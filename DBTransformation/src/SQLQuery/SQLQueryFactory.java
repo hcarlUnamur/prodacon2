@@ -44,6 +44,27 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
     public SQLUpdateQuery createSQLUpdateQuery (String table, String[][] setValues, String[][] whereValues){
         return new SQLUpdateQuery(table, getConn(), setValues, whereValues);
     }
-
-   
+    
+    public SQLAlterTableQuery creatSQLAltertableAddColumnQuery(String table, Column column){
+        return SQLAlterTableQuery.CreateAddColumnQuery(table, getConn(), column);  
+    }
+    
+    public SQLAlterTableQuery creatSQLAlterDropColumnQuery(String table, Column column){
+        return SQLAlterTableQuery.CreateDropColumnQuery(table, getConn(), column);
+    }
+;
+    public SQLAlterTableQuery creatSQLAlterModifyColumnTypeQuery(String table, Column column){
+        return SQLAlterTableQuery.CreateModifyColumnTypeQuery(table, getConn(), column);
+    }
+    
+    public SQLAlterTableQuery creatSQLAlterAddForeignKeyQuery(String table,String constraintName, Column column , Table referentialTable){
+        return SQLAlterTableQuery.CreateAddForeignKeyQuery(table, getConn(), constraintName, column, referentialTable);
+    }
+    
+    public SQLAlterTableQuery creatSQLAlterDropForeignKeyQuery(String table,String constraintName, Column column , Table referentialTable){
+        return SQLAlterTableQuery.CreateDroporeignKeyQuery(table, getConn(), constraintName);
+    }
+    
+    
+    
 }
