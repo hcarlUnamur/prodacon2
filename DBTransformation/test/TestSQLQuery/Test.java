@@ -5,8 +5,11 @@
  */
 package TestSQLQuery;
 
+import SQLQuery.Column;
 import SQLQuery.SQLQueryFactory;
+import SQLQuery.Table;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +21,9 @@ public class Test {
     public static void main(String[] args) {
         try {
             SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
+            
+            
+            
             
             sqlF.createSQLDeleteQuery("patient", new String[][]{{"idPatient", "69"},{"firstName", "lola"},{"lastName", "zaza"}, {"age", "22"}, {"idHospital", "1"}, {"idAddress", "1"}}).sqlQueryDo();
             
