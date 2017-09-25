@@ -36,4 +36,7 @@ public class Column {
         this.columnType = columnType;
     }
     
+    public String toString(){
+        return columnName + " " + columnType;
+    }
 }

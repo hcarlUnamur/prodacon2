@@ -14,6 +14,21 @@ import java.util.ArrayList;
 public class Table {
 
     private ArrayList<Column> Tablecolumn;
+    private String name;
+
+    public Table( String name, ArrayList<Column> Tablecolumn) {
+        this.Tablecolumn = Tablecolumn;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     
     public Table() {
         this.Tablecolumn = new ArrayList<Column>();
