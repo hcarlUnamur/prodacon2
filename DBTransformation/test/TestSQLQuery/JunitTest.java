@@ -127,7 +127,7 @@ public class JunitTest {
             SQLUpdateQuery upd = sqlF.createSQLUpdateQuery("testUpdateTable", new String[][]{{"id", "6"}, {"name", "Smith"}, {"trueFalse", "0"}}, where);
             upd.sqlQueryDo();
             upd.sqlQueryUndo();
-            //sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
+            sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
@@ -167,7 +167,7 @@ public class JunitTest {
     }
     
     @Test
-    public void AlterAddPrimaryKeyQuery(){
+    public void AlterAddDropPrimaryKeyQuery(){
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
         int result = 0;
         try{
@@ -176,10 +176,11 @@ public class JunitTest {
             SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
             add.sqlQueryDo();
             sqlF.creatSQLAlterAddPrimaryKeyQuery("testAddPrimaryKeyTable", "id").sqlQueryDo();
+            sqlF.creatSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable").sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddPrimaryKeyQuery()");
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropPrimaryKeyQuery()");
             try {sqlF.creatDropTableQuery("testAddPrimaryKeyTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
@@ -187,7 +188,7 @@ public class JunitTest {
     }
     
     @Test
-    public void AlterAddForeignKeyQuery(){
+    public void AlterAddDropForeignKeyQuery(){
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
         int result = 0;
         try{
@@ -200,18 +201,59 @@ public class JunitTest {
             Table t2 = new Table("testAddForeignKeyTable2", listCol2);
             SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
-            
             sqlF.creatSQLAlterAddPrimaryKeyQuery("testAddForeignKeyTable1", "id").sqlQueryDo();
             sqlF.creatSQLAlterAddForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), "testAddForeignKeyTable1", "id").sqlQueryDo();
-            
+            sqlF.creatSQLAlterDropForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), t1).sqlQueryDo();
             sqlF.creatDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();
             sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddForeignKeyQuery()");
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropForeignKeyQuery()");
             try {sqlF.creatDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();} catch (SQLException ex1) {}
             try {sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();} catch (SQLException ex1) {}
+            result = 1;
+        }
+        assertEquals(0, result);
+    }
+    
+    @Test
+    public void AlterAddDropColumnQuery(){
+        SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
+        int result = 0;
+        try{
+            ArrayList<Column> listCol = new ArrayList(); listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
+            Table t1 = new Table("testAddDropColumnTable", listCol);
+            SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
+            add.sqlQueryDo();
+            sqlF.creatSQLAltertableAddColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
+            sqlF.creatSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
+            add.sqlQueryUndo();     
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropColumnQuery()");
+            try {sqlF.creatDropTableQuery("testAddDropColumnTable").sqlQueryDo();} catch (SQLException ex1) {}
+            result = 1;
+        }
+        assertEquals(0, result);
+    }
+    
+    @Test
+    public void AlterModifyColumnTypeQuery(){
+        SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
+        int result = 0;
+        try{
+            ArrayList<Column> listCol = new ArrayList(); listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
+            Table t1 = new Table("testModifyColumnTypeTable", listCol);
+            SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
+            add.sqlQueryDo();
+            sqlF.creatSQLAlterModifyColumnTypeQuery("testModifyColumnTypeTable", new Column("name", "int")).sqlQueryDo();
+            
+            add.sqlQueryUndo();     
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterModifyColumnTypeQuery()");
+            try {sqlF.creatDropTableQuery("testModifyColumnTypeTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
