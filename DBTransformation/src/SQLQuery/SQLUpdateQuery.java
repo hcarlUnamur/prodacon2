@@ -7,6 +7,7 @@ package SQLQuery;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -59,9 +60,18 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
 
     @Override
     public Object sqlQueryUndo() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
-        
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ResultSetMetaData meta = datasave.getMetaData();
+        String[][] modif = new String[meta.getColumnCount()][2];
+        int length = meta.getColumnCount();
+        datasave.next();
+        for(int i=0;i<meta.getColumnCount();i++){
+            modif[i][0] = meta.getColumnName(i+1);
+            modif[i][1] = datasave.getString(i+1);
+        }
+        SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, condValues);
+        update.sqlQueryDo();
+        return null;
     }
     
 }
