@@ -6,6 +6,7 @@
 package TestSQLQuery;
 
 import SQLQuery.Column;
+import SQLQuery.SQLAlterTableQuery;
 import SQLQuery.SQLCreateTableQuery;
 import SQLQuery.SQLDeleteQuery;
 import SQLQuery.SQLDropTableQuery;
@@ -175,7 +176,12 @@ public class JunitTest {
             Table t1 = new Table("testAddPrimaryKeyTable", listCol);
             SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
             add.sqlQueryDo();
-            sqlF.creatSQLAlterAddPrimaryKeyQuery("testAddPrimaryKeyTable", "id").sqlQueryDo();
+            SQLAlterTableQuery pk = sqlF.creatSQLAlterAddPrimaryKeyQuery("testAddPrimaryKeyTable", "id");
+            
+            pk.sqlQueryDo();
+            pk.sqlQueryUndo();
+            pk.sqlQueryDo();
+            
             sqlF.creatSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable").sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (SQLException ex) {
@@ -202,7 +208,11 @@ public class JunitTest {
             SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             sqlF.creatSQLAlterAddPrimaryKeyQuery("testAddForeignKeyTable1", "id").sqlQueryDo();
-            sqlF.creatSQLAlterAddForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), "testAddForeignKeyTable1", "id").sqlQueryDo();
+            SQLAlterTableQuery fk = sqlF.creatSQLAlterAddForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), "testAddForeignKeyTable1", "id");
+            
+            fk.sqlQueryDo();
+            fk.sqlQueryUndo();
+            fk.sqlQueryDo();
             sqlF.creatSQLAlterDropForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), t1).sqlQueryDo();
             sqlF.creatDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();
             sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();
@@ -226,7 +236,12 @@ public class JunitTest {
             Table t1 = new Table("testAddDropColumnTable", listCol);
             SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
             add.sqlQueryDo();
-            sqlF.creatSQLAltertableAddColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
+            SQLAlterTableQuery col = sqlF.creatSQLAltertableAddColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)"));
+            
+            col.sqlQueryDo();
+            col.sqlQueryUndo();
+            col.sqlQueryDo();
+            
             sqlF.creatSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (SQLException ex) {
@@ -247,8 +262,10 @@ public class JunitTest {
             Table t1 = new Table("testModifyColumnTypeTable", listCol);
             SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
             add.sqlQueryDo();
-            sqlF.creatSQLAlterModifyColumnTypeQuery("testModifyColumnTypeTable", new Column("name", "int")).sqlQueryDo();
-            
+            SQLAlterTableQuery mCol = sqlF.creatSQLAlterModifyColumnTypeQuery("testModifyColumnTypeTable", new Column("name", "int"));
+            mCol.sqlQueryDo();
+            mCol.sqlQueryUndo();
+            mCol.sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (SQLException ex) {
             System.out.println(ex);
