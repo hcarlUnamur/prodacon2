@@ -8,6 +8,7 @@ package SQLQuery;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +41,14 @@ public abstract class AbstractSQLQueryFactory {
             this.dataBasePassword = dataBasePassword;
             
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(String.format(DB_URL,dataBaseHostName), dataBaseLogin, dataBasePassword);
+            
+            Properties props = new Properties();
+            props.setProperty("user",dataBaseLogin);
+            props.setProperty("password",dataBasePassword);
+            props.setProperty("ssl","true");
+            
+            conn = DriverManager.getConnection(String.format(DB_URL,dataBaseHostName),props);
+            
             
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AbstractSQLQueryFactory.class.getName()).log(Level.SEVERE, null, ex);

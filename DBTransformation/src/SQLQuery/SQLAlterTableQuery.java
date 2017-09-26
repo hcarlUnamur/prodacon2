@@ -152,6 +152,30 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
 
     @Override
     public Object sqlQueryUndo() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch(alteration){
+            case AddColumn: 
+                
+                break;
+            case DropColumn: 
+                
+                break;
+            case ModifyColumnType: 
+                
+                break;
+            case AddForeignKey: 
+                
+                break;
+            case DropForeignKey: 
+    
+                break;
+            case AddPrimaryKey:
+                
+                break;
+            case DropPrimaryKey:
+                
+                break;                
+        }
+        return null;
     }
 }
