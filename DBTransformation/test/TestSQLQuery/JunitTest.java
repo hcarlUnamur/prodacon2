@@ -7,6 +7,7 @@ package TestSQLQuery;
 
 import SQLQuery.Column;
 import SQLQuery.SQLCreateTableQuery;
+import SQLQuery.SQLDeleteQuery;
 import SQLQuery.SQLDropTableQuery;
 import SQLQuery.SQLQueryFactory;
 import SQLQuery.StringTool;
@@ -100,7 +101,9 @@ public class JunitTest {
         try {
             sqlF.creatSQLCreateTableQuery("testInsertTable", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
             sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
-            sqlF.createSQLDeleteQuery("testInsertTable", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"").sqlQueryDo();
+            SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
+            del.sqlQueryDo();
+            del.sqlQueryUndo();
             sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();
             System.out.println("ok");
         } catch (SQLException ex) {

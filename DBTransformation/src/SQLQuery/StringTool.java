@@ -5,6 +5,8 @@
  */
 package SQLQuery;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author carl_
@@ -47,6 +49,19 @@ public class StringTool {
                 }
             }        
         return cond;
+    }
+    
+    public static ArrayList<String[]> InsertVal(String[][] values){
+        String[] col = null;
+        String[] val = null;
+            for(int i=0; i<values.length; i++){
+                col[i] = values[i][0];
+                val[i] = values[i][1];
+            }    
+            
+        ArrayList<String[]> ls = new ArrayList<>();
+        ls.add(col); ls.add(val);
+        return ls;
     }
     
 }

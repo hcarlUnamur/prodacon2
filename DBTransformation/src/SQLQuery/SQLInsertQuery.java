@@ -8,6 +8,7 @@ package SQLQuery;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -29,12 +30,17 @@ public class SQLInsertQuery extends SQLManipulationQuery {
         this.columns = new String[]{""};
     }    
     
-    
-    
     public SQLInsertQuery(String table, Connection con, String[] columns, String[] values){
         super(new String[]{table}, con);
-        this.values = values;
         this.columns = columns;
+        this.values = values;
+    }
+    
+    public SQLInsertQuery(String table, Connection con, String[][] setValues){
+        super(new String[]{table}, con);
+        ArrayList<String[]> ls = new ArrayList<>();
+        this.values = ls.get(0);
+        this.columns = ls.get(1);
     }
     
     @Override
