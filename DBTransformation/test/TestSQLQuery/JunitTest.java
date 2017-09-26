@@ -54,7 +54,7 @@ public class JunitTest {
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.out.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableQuery()");
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableQuery()");
             try {sqlF.creatDropTableQuery("testCreateTable1").sqlQueryDo();} catch (SQLException ex1) {}
             try {sqlF.creatDropTableQuery("testCreateTable2").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
@@ -86,7 +86,7 @@ public class JunitTest {
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.out.println("ko! : " + "TestSQLQuery.JunitTest.testDropTableQuery()");
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testDropTableQuery()");
             try {sqlF.creatDropTableQuery("testDropTable1").sqlQueryDo();} catch (SQLException ex1) {}
             try {sqlF.creatDropTableQuery("testDropTable2").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
@@ -103,12 +103,12 @@ public class JunitTest {
             sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
             SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
             del.sqlQueryDo();
-            del.sqlQueryUndo();
+            //del.sqlQueryUndo();
             sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.out.println("ko! : " + "TestSQLQuery.JunitTest.testInsertDeleteQuery()");
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testInsertDeleteQuery()");
             try {sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
@@ -128,7 +128,7 @@ public class JunitTest {
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.out.println("ko! : " + "TestSQLQuery.JunitTest.testUpdateQuery()");
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testUpdateQuery()");
             try {sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
@@ -156,7 +156,7 @@ public class JunitTest {
             
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.out.println("ko! : " + "TestSQLQuery.JunitTest.testSelectQuery()");
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testSelectQuery()");
             try {sqlF.creatDropTableQuery("testSelectTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
@@ -176,7 +176,7 @@ public class JunitTest {
             add.sqlQueryUndo();     
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.out.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddPrimaryKeyQuery()");
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddPrimaryKeyQuery()");
             try {sqlF.creatDropTableQuery("testAddPrimaryKeyTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
@@ -206,9 +206,9 @@ public class JunitTest {
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
-            System.out.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddForeignKeyQuery()");
-            try {sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();} catch (SQLException ex1) {}
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddForeignKeyQuery()");
             try {sqlF.creatDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();} catch (SQLException ex1) {}
+            try {sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
