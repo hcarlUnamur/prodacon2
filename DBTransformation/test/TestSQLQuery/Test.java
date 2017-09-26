@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+/*
 package TestSQLQuery;
 
 import SQLQuery.Column;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
  *
  * @author thibaud
  */
+/*
 public class Test {
     public static void main(String[] args) {
         try {
@@ -25,7 +27,7 @@ public class Test {
             
             
             
-            sqlF.createSQLDeleteQuery("patient", new String[][]{{"idPatient", "69"},{"firstName", "lola"},{"lastName", "zaza"}, {"age", "22"}, {"idHospital", "1"}, {"idAddress", "1"}}).sqlQueryDo();
+            //sqlF.createSQLDeleteQuery("patient", new String[][]{{"idPatient", "69"},{"firstName", "lola"},{"lastName", "zaza"}, {"age", "22"}, {"idHospital", "1"}, {"idAddress", "1"}}).sqlQueryDo();
             
             
             /*            
@@ -48,10 +50,11 @@ public class Test {
                     System.out.println(rs.getInt(1) + " " + rs.getInt(2) + " " + rs.getString(3) );
                 }
             */
-            
+   /*         
             System.out.println("voilà");
         } catch (SQLException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
+*/
