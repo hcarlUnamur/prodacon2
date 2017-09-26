@@ -11,6 +11,7 @@ import SQLQuery.SQLDropTableQuery;
 import SQLQuery.SQLQueryFactory;
 import SQLQuery.StringTool;
 import SQLQuery.Table;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -29,12 +30,10 @@ import static org.junit.Assert.*;
 public class JunitTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
+ 
     
     @Test
-    public void testCreateTableQuery() {
+    public void testCreateTableQuery(){
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
         int result = 0;
         try {
@@ -47,12 +46,16 @@ public class JunitTest {
             Table test2 = new Table("testCreateTable2", listCol);
             SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(test2);
             add2.sqlQueryDo();
-            add2.sqlQueryUndo();      
+            add2.sqlQueryUndo();   
+            add2.sqlQueryDo();
+            add2.sqlQueryUndo();
             
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
             System.out.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableQuery()");
+            try {sqlF.creatDropTableQuery("testCreateTable1").sqlQueryDo();} catch (SQLException ex1) {}
+            try {sqlF.creatDropTableQuery("testCreateTable2").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
@@ -83,6 +86,8 @@ public class JunitTest {
         } catch (SQLException ex) {
             System.out.println(ex);
             System.out.println("ko! : " + "TestSQLQuery.JunitTest.testDropTableQuery()");
+            try {sqlF.creatDropTableQuery("testDropTable1").sqlQueryDo();} catch (SQLException ex1) {}
+            try {sqlF.creatDropTableQuery("testDropTable2").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
@@ -95,12 +100,13 @@ public class JunitTest {
         try {
             sqlF.creatSQLCreateTableQuery("testInsertTable", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
             sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
-            sqlF.createSQLDeleteQuery("testInsertTable", new String[][]{{"id", "1"}, {"name", "Strong"}, {"trueFalse", "1"}}).sqlQueryDo();
+            sqlF.createSQLDeleteQuery("testInsertTable", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"").sqlQueryDo();
             sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
             System.out.println("ko! : " + "TestSQLQuery.JunitTest.testInsertDeleteQuery()");
+            try {sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
@@ -119,6 +125,7 @@ public class JunitTest {
         } catch (SQLException ex) {
             System.out.println(ex);
             System.out.println("ko! : " + "TestSQLQuery.JunitTest.testUpdateQuery()");
+            try {sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
@@ -130,13 +137,23 @@ public class JunitTest {
         int result = 0;
         try {
             sqlF.creatSQLCreateTableQuery("testSelectTable", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testSelectTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
-            sqlF.createSQLSelectQuery("testSelectTable", new String[]{"id", "name", "trueFalse"}, "id = '1'").sqlQueryDo();
+            sqlF.creatSQLInsertQuery("testSelectTable", new String[]{"3", "Strong", "1"}).sqlQueryDo();
+            
+            ResultSet essai = sqlF.createSQLSelectQuery("testSelectTable", new String[]{"id", "name", "trueFalse"}, "id = '3'").sqlQueryDo();
             sqlF.creatDropTableQuery("testSelectTable").sqlQueryDo();
-            System.out.println("ok");
+            essai.first();
+            if(!(essai.getString(1).equals("3") && essai.getString(2).equals("Strong") && essai.getString(3).equals("1"))){
+                System.out.println("Wrong Select Query");
+                System.out.println("ko! : " + "TestSQLQuery.JunitTest.testSelectQuery()");
+                result = 1;
+            }else{
+                System.out.println("ok");
+            }
+            
         } catch (SQLException ex) {
             System.out.println(ex);
             System.out.println("ko! : " + "TestSQLQuery.JunitTest.testSelectQuery()");
+            try {sqlF.creatDropTableQuery("testSelectTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
@@ -156,6 +173,7 @@ public class JunitTest {
         } catch (SQLException ex) {
             System.out.println(ex);
             System.out.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddPrimaryKeyQuery()");
+            try {sqlF.creatDropTableQuery("testAddPrimaryKeyTable").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
@@ -185,9 +203,14 @@ public class JunitTest {
         } catch (SQLException ex) {
             System.out.println(ex);
             System.out.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddForeignKeyQuery()");
+            try {sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();} catch (SQLException ex1) {}
+            try {sqlF.creatDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
     }
+    
+    
+    
    
 }
