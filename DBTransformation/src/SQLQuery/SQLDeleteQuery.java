@@ -64,7 +64,7 @@ public class SQLDeleteQuery extends SQLManipulationQuery{
         String[] cols = new String[length];
         String[] values = new String[length];
         for (int i=0;i<length;i++){
-            cols[i]= meta.getColumnClassName(i+1);
+            cols[i]= meta.getColumnClassName(i);
             values[i] = datasave.getNString(i);
         }
         SQLInsertQuery insert = new SQLInsertQuery(getTable()[0], getCon(), cols, values);

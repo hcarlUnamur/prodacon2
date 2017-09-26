@@ -60,7 +60,7 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return new SQLDeleteQuery(table, getConn(), whereValues);
     }
     
-    public SQLUpdateQuery createSQLUpdateQuery (String table, String[][] setValues, String[][] whereValues){
+    public SQLUpdateQuery createSQLUpdateQuery (String table, String[][] setValues, String whereValues){
         return new SQLUpdateQuery(table, getConn(), setValues, whereValues);
     }
     

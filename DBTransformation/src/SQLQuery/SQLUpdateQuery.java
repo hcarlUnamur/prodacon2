@@ -6,8 +6,11 @@
 package SQLQuery;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,15 +20,25 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
     
     private static String QUERYFORMAT = "UPDATE %s SET %s WHERE %s;"; 
     private String[][] setValues;
-    private String[][] condValues;
+    private String condValues;
+    private ResultSet datasave ;
 
     public SQLUpdateQuery(String[] table, Connection con) {
         super(table, con);
     }
-    public SQLUpdateQuery(String table, Connection con, String[][] setValues, String[][] condValues){
+    public SQLUpdateQuery(String table, Connection con, String[][] setValues, String condValues){
         super(new String[]{table}, con);
-        this.setValues = setValues;
-        this.condValues = condValues;
+            this.setValues = setValues;
+            this.condValues = condValues;
+            //save data
+            SQLSelectQuery select = new SQLSelectQuery(getTable()[0], getCon(), new String[]{"*"}, condValues);
+            try {
+                datasave = select.sqlQueryDo();
+            } catch (SQLException ex) {
+                Logger.getLogger(SQLUpdateQuery.class.getName()).log(Level.SEVERE, null, ex);
+            }
+              
+        
     }
     
     @Override
@@ -33,7 +46,7 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
         Statement stmt = this.getCon().createStatement();
         String s = getTable()[0];
         String setChange = StringTool.UpdateSetVal(setValues);
-        String cond = StringTool.WhereToStringVal(condValues);
+        String cond = condValues;
         String query = String.format(QUERYFORMAT,s,setChange, cond);
         System.out.println(query);
         stmt.executeUpdate(query);
@@ -47,6 +60,8 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
     @Override
     public Object sqlQueryUndo() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        
     }
     
 }

@@ -122,7 +122,8 @@ public class JunitTest {
         try {
             sqlF.creatSQLCreateTableQuery("testUpdateTable", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
             sqlF.creatSQLInsertQuery("testUpdateTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
-            sqlF.createSQLUpdateQuery("testUpdateTable", new String[][]{{"id", "6"}, {"name", "Smith"}, {"trueFalse", "0"}}, new String[][]{{"id", "1"}, {"name", "Strong"}, {"trueFalse", "1"}}).sqlQueryDo();
+            String where ="id=1 and name=\"Strong\" and trueFalse=\"1\" "; //new String[][]{{"id", "1"}, {"name", "Strong"}, {"trueFalse", "1"}}
+            sqlF.createSQLUpdateQuery("testUpdateTable", new String[][]{{"id", "6"}, {"name", "Smith"}, {"trueFalse", "0"}}, where).sqlQueryDo();
             sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
             System.out.println("ok");
         } catch (SQLException ex) {
