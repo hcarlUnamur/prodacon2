@@ -61,16 +61,24 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
     @Override
     public Object sqlQueryUndo() throws SQLException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        ResultSetMetaData meta = datasave.getMetaData();
-        String[][] modif = new String[meta.getColumnCount()][2];
-        int length = meta.getColumnCount();
-        datasave.next();
-        for(int i=0;i<meta.getColumnCount();i++){
-            modif[i][0] = meta.getColumnName(i+1);
-            modif[i][1] = datasave.getString(i+1);
+        while (datasave.next()){
+            ResultSetMetaData meta = datasave.getMetaData();
+            String[][] modif = new String[meta.getColumnCount()][2];
+            int length = meta.getColumnCount();
+                    for(int i=0;i<meta.getColumnCount();i++){
+                System.out.println("+++++++++++"+ meta.getColumnName(i+1) + " / "+ datasave.getString(i+1) );
+                modif[i][0] = meta.getColumnName(i+1);
+                modif[i][1] = datasave.getString(i+1);
+            }
+            StringBuilder where = new StringBuilder();
+            for(int i = 0;i<setValues.length;i++){
+                where.append(" AND  " +setValues[i][0]+ " = '" + setValues[i][1]+"'");
+            }
+            where.delete(0, 4);
+
+            SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, where.toString());
+            update.sqlQueryDo();
         }
-        SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, condValues);
-        update.sqlQueryDo();
         return null;
     }
     
