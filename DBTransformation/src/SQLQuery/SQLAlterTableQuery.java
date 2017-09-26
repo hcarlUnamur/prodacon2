@@ -209,6 +209,8 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
         return null;
     }
 
+    
+    // memo l'instance des sauvegardes des états utilisés lors du undo est raliser lors du sqlQuerydo() et non pas au moment du la création de l'objet
     @Override
     public Object sqlQueryUndo() throws SQLException {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

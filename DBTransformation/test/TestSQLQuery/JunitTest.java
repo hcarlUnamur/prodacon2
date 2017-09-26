@@ -29,6 +29,27 @@ import static org.junit.Assert.*;
 /**
  *
  * @author thibaud
+ * 
+ * //get column name and type
+ * SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"}, getCon(), new String[]{"column_name","column_type"},"table_name='"+getTable()[0]+"' AND column_name='"+column.getColumnName()+"'"); 
+ * 
+ * //get foreign key data
+ *  SQLSelectQuery select3 = new SQLSelectQuery(
+                        new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+                        getCon(),
+                        new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+                        "REFERENCED_TABLE_NAME = '"+getTable()[0]+"' AND CONSTRAINT_NAME='"+constraintName+"'"
+                );
+ * 
+ * 
+ * //get Primary key data
+ * SQLSelectQuery select4 = new SQLSelectQuery(
+                        new String[]{"INFORMATION_SCHEMA.COLUMNS"},
+                        getCon(),
+                        new String[]{"COLUMN_NAME"},
+                        "TABLE_NAME = '"+getTable()[0]+"' AND COLUMN_KEY = 'PRI'"
+                ); 
+ * 
  */
 public class JunitTest {
     // TODO add test methods here.
