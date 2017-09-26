@@ -52,7 +52,7 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return new SQLSelectQuery(table, getConn(), column, where);
     }
     
-    public SQLDeleteQuery createSQLDeleteQuery (String table, String[][] whereValues){
+    public SQLDeleteQuery createSQLDeleteQuery (String table, String whereValues){
         return new SQLDeleteQuery(table, getConn(), whereValues);
     }
     
