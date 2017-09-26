@@ -29,6 +29,8 @@ public class SQLInsertQuery extends SQLManipulationQuery {
         this.columns = new String[]{""};
     }    
     
+    
+    
     public SQLInsertQuery(String table, Connection con, String[] columns, String[] values){
         super(new String[]{table}, con);
         this.values = values;
@@ -51,6 +53,12 @@ public class SQLInsertQuery extends SQLManipulationQuery {
 
     @Override
     public Object sqlQueryUndo() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        StringBuilder where = new StringBuilder();
+        for (int i=0;i<values.length;i++){
+            where.append("AND " +columns[i] +" = \"" + values[i]+"\"");
+        }
+        where.delete(0, 3);
+        SQLDeleteQuery del = new SQLDeleteQuery(getTable()[0], getCon(), where.toString());
+        return null;
     }
 }
