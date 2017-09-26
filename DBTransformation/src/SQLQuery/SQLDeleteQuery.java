@@ -43,8 +43,7 @@ public class SQLDeleteQuery extends SQLManipulationQuery{
     @Override
     public Object sqlQueryDo() throws SQLException {
         Statement stmt = this.getCon().createStatement();
-        String s = getTable()[0];
-        
+        String s = getTable()[0];       
         String cond = whereValues;
         String query = String.format(QUERYFORMAT,s,cond);
         System.out.println(query);
@@ -68,7 +67,6 @@ public class SQLDeleteQuery extends SQLManipulationQuery{
             cols[i]= meta.getColumnClassName(i+1);
             values[i] = datasave.getNString(i);
         }
-        
         SQLInsertQuery insert = new SQLInsertQuery(getTable()[0], getCon(), cols, values);
         insert.sqlQueryDo();
         return null;

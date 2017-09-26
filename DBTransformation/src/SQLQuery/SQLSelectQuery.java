@@ -53,6 +53,6 @@ public class SQLSelectQuery extends SQLQuery {
 
     @Override
     public Object sqlQueryUndo()throws SQLException {
-        throw new UnsupportedOperationException("Not supported. I don't know what can be the undo of a Select Sorry ^^"); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported.Hi,I'm your computer i'm very sorry but I don't know what can be the undo of a Select Sorry ^^"); //To change body of generated methods, choose Tools | Templates.
     }
 }
