@@ -10,6 +10,7 @@ import SQLQuery.SQLCreateTableQuery;
 import SQLQuery.SQLDeleteQuery;
 import SQLQuery.SQLDropTableQuery;
 import SQLQuery.SQLQueryFactory;
+import SQLQuery.SQLUpdateQuery;
 import SQLQuery.StringTool;
 import SQLQuery.Table;
 import java.sql.ResultSet;
@@ -103,7 +104,7 @@ public class JunitTest {
             sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
             SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
             del.sqlQueryDo();
-            //del.sqlQueryUndo();
+            del.sqlQueryUndo();
             sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();
             System.out.println("ok");
         } catch (SQLException ex) {
@@ -123,8 +124,10 @@ public class JunitTest {
             sqlF.creatSQLCreateTableQuery("testUpdateTable", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
             sqlF.creatSQLInsertQuery("testUpdateTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
             String where ="id=1 and name=\"Strong\" and trueFalse=\"1\" "; //new String[][]{{"id", "1"}, {"name", "Strong"}, {"trueFalse", "1"}}
-            sqlF.createSQLUpdateQuery("testUpdateTable", new String[][]{{"id", "6"}, {"name", "Smith"}, {"trueFalse", "0"}}, where).sqlQueryDo();
-            sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
+            SQLUpdateQuery upd = sqlF.createSQLUpdateQuery("testUpdateTable", new String[][]{{"id", "6"}, {"name", "Smith"}, {"trueFalse", "0"}}, where);
+            upd.sqlQueryDo();
+            upd.sqlQueryUndo();
+            //sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
             System.out.println("ok");
         } catch (SQLException ex) {
             System.out.println(ex);
