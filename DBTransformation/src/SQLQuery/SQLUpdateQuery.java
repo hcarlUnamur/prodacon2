@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package SQLQuery;
 
 import java.sql.Connection;
@@ -13,10 +8,6 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author thibaud
- */
 public class SQLUpdateQuery extends SQLManipulationQuery{
     
     private static String QUERYFORMAT = "UPDATE %s SET %s WHERE %s;"; 
@@ -27,23 +18,25 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
     public SQLUpdateQuery(String[] table, Connection con) {
         super(table, con);
     }
-    public SQLUpdateQuery(String table, Connection con, String[][] setValues, String condValues){
-        super(new String[]{table}, con);
-            this.setValues = setValues;
-            this.condValues = condValues;
-            //save data
-            SQLSelectQuery select = new SQLSelectQuery(getTable()[0], getCon(), new String[]{"*"}, condValues);
+    
+    private void makeDataSave(){
+        SQLSelectQuery select = new SQLSelectQuery(getTable()[0], getCon(), new String[]{"*"}, condValues);
             try {
                 datasave = select.sqlQueryDo();
             } catch (SQLException ex) {
                 Logger.getLogger(SQLUpdateQuery.class.getName()).log(Level.SEVERE, null, ex);
             }
-              
-        
+    }
+    
+    public SQLUpdateQuery(String table, Connection con, String[][] setValues, String condValues){
+        super(new String[]{table}, con);
+            this.setValues = setValues;
+            this.condValues = condValues;   
     }
     
     @Override
     public Object sqlQueryDo() throws SQLException {
+        makeDataSave();
         Statement stmt = this.getCon().createStatement();
         String s = getTable()[0];
         String setChange = StringTool.UpdateSetVal(setValues);
@@ -60,7 +53,6 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
 
     @Override
     public Object sqlQueryUndo() throws SQLException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         while (datasave.next()){
             ResultSetMetaData meta = datasave.getMetaData();
             String[][] modif = new String[meta.getColumnCount()][2];

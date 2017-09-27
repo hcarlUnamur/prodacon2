@@ -35,25 +35,18 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
     
     public SQLDropTableQuery(String[] table, Connection con) {
         super(table, con);
-        creatTableSave();
     }
-    /*
-    select column_name,
-       column_type 
-  from information_schema.columns 
- where table_name='person';
-    */
     
     public SQLDropTableQuery(String table, Connection con) {
         super(new String[]{table}, con);
-        creatTableSave();
     }
 
     
     
     @Override
     public Object sqlQueryDo() throws SQLException {
-     Statement stmt = this.getCon().createStatement();
+        creatTableSave();       
+        Statement stmt = this.getCon().createStatement();
         for (String s : this.getTable()){
             String query = String.format(QUERYFORMAT,s);
             stmt.executeUpdate(query);

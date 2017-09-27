@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package SQLQuery;
 
 import java.sql.Connection;
@@ -12,10 +8,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author thibaud
- */
+
 public abstract class AbstractSQLQueryFactory {
     
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  

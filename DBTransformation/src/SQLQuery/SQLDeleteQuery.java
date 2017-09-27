@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package SQLQuery;
 
 import java.sql.Connection;
@@ -13,10 +8,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author thibaud
- */
+
 public class SQLDeleteQuery extends SQLManipulationQuery{
 
     private static String QUERYFORMAT = "DELETE FROM %s WHERE (%s)"; 
@@ -29,19 +21,20 @@ public class SQLDeleteQuery extends SQLManipulationQuery{
     
     public SQLDeleteQuery(String table, Connection con, String whereValues){
         super(new String[]{table}, con);
-        this.whereValues = whereValues;
-        SQLSelectQuery select = new SQLSelectQuery(table, getCon(), new String[]{"*"}, whereValues);
-        try {
-            datasave = select.sqlQueryDo();
-        } catch (SQLException ex) {
-            Logger.getLogger(SQLDeleteQuery.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.whereValues = whereValues;        
     }
 
     
     
     @Override
     public Object sqlQueryDo() throws SQLException {
+        SQLSelectQuery select = new SQLSelectQuery(getTable()[0], getCon(), new String[]{"*"}, whereValues);
+        try {
+            datasave = select.sqlQueryDo();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLDeleteQuery.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         Statement stmt = this.getCon().createStatement();
         String s = getTable()[0];       
         String cond = whereValues;

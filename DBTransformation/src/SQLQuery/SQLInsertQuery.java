@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package SQLQuery;
 
 import java.sql.Connection;
@@ -10,10 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-/**
- *
- * @author thibaud
- */
+
 public class SQLInsertQuery extends SQLManipulationQuery {
     
     private static String QUERYFORMAT = "INSERT INTO %s (%s) VALUES (%s)";
