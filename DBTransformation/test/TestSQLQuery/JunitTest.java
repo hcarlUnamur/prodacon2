@@ -40,7 +40,7 @@ public class JunitTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
  
-    /*
+    
     @Test
     public void testCreateTableQuery(){
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
@@ -353,7 +353,7 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    */
+    
     @Test
     public void testCreateTable2Query(){
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
@@ -363,27 +363,42 @@ public class JunitTest {
             
             ArrayList<Column> listCol = new ArrayList<>();
             listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
+            Table t1 = new Table("t1", listCol, new ArrayList<ForeignKey>(), "id");
+            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            add1.sqlQueryDo();
             
-            Table test2 = new Table("t2", listCol, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(test2);
+            
+            ArrayList<Column> listCol2 = new ArrayList<>();
+            listCol2.add(new Column("id","int")); listCol2.add(new Column("city", "varchar(45)"));  listCol2.add(new Column("idT1",  "int"));
+            ForeignKey fk = new ForeignKey("t1", "id", "idT1", "FK1");
+            ArrayList<ForeignKey> lfk = new ArrayList<>();
+            lfk.add(fk);
+            Table t2 =  new Table("t2", listCol2, lfk, "id");
+            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
-            test2 = sqlF.loadTable("t2");
-            //System.out.println("éééééééééééééééééééééé" + test2.getName() + "**" + test2.getPrimaryKey());
-            //test2.getTablecolumn().forEach((s)->{System.out.println(s.getColumnName()+" "+s.getColumnType());});
+            
+            
+            //t1 = sqlF.loadTable("t1");
+            //System.out.println("éééééééééééééééééééééé" + t1.getName() + "**" + t1.getPrimaryKey());
+            //t1.getTablecolumn().forEach((s)->{System.out.println(s.getColumnName()+" "+s.getColumnType());});
             
             
             
-            add2.sqlQueryUndo();   
-            //add2.sqlQueryDo();
-            //add2.sqlQueryUndo();
+            
+            
+            add2.sqlQueryUndo(); 
+            add1.sqlQueryUndo();   
+              
+            
             
             System.out.println("ok");
         } catch (Exception ex) {
-            System.out.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableQuery()");
+            System.err.println(ex);
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTable2Query()");
             
-            try {sqlF.creatDropTableQuery("t2").sqlQueryDo();} catch (SQLException ex1) {}
-            result = 1;
+           try {sqlF.creatDropTableQuery("t2").sqlQueryDo();} catch (SQLException ex1) {}
+           try {sqlF.creatDropTableQuery("t1").sqlQueryDo();} catch (SQLException ex1) {}
+           result = 1;
         }
         assertEquals(0, result);
     }
