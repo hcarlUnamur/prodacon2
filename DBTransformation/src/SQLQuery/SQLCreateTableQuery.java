@@ -53,6 +53,7 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
         Statement stmt = this.getCon().createStatement();
         String s = getTable()[0];
         String query = String.format(QUERYFORMAT,s,StringTool.ArrayToString(this.column));
+        System.out.println(query);
         stmt.executeUpdate(query);
         try{
          if(stmt!=null)
