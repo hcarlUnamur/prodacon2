@@ -59,6 +59,7 @@ public class Table {
     }
     
     public  Table(String name,Connection con) throws SQLException{
+        foreignKeys = new ArrayList<ForeignKey>();
         Tablecolumn = new ArrayList<Column>();
         this.name = name;
         //create Tablecolumn
