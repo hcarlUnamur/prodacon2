@@ -80,7 +80,7 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return SQLAlterTableQuery.CreateAddForeignKeyQuery(table, getConn(), constraintName, column, referentialTable, referentialColumn);
     }
     
-    public SQLAlterTableQuery creatSQLAlterAddForeignKeyQuery(String table, Column column ,ForeignKey fk){
+    public SQLAlterTableQuery creatSQLAlterAddForeignKeyQuery(String table,ForeignKey fk){
         return SQLAlterTableQuery.CreateAddForeignKeyQuery(table, getConn(), fk.getConstraintName(), new Column(fk.getForeingKeyColumn()," "), fk.getReferencedTableName(), fk.getReferencedColumn());
     }
     
