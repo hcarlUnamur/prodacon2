@@ -76,7 +76,7 @@ public class Table {
                         new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                         con,
                         new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-                        "TABLE_NAME = '"+name+"' "
+                        "CONSTRAINT_NAME <> 'PRIMARY' AND TABLE_NAME = '"+name+"' "
                 );
         ResultSet resultfk = select2.sqlQueryDo();
         while(resultfk.next()){
@@ -133,4 +133,20 @@ public class Table {
         return out.toArray(new String[out.size()]);
     }
     
+    public String toString(){
+        String out =" name : "+name+" \n";
+        out+="primary key : " + primaryKey+" \n";
+        out+="columns : "+" \n";
+        for(Column c : Tablecolumn){
+            out+= c.getColumnName() +" " +c.getColumnType() +" \n";
+        }
+        out+="fk :"+" \n";
+        for(ForeignKey f : foreignKeys){
+            out+= f.getConstraintName() + " ,"+f.getForeingKeyColumn()+ " ,"+f.getReferencedColumn()+ " ,"+f.getReferencedTableName()+ " ,"+" \n";
+        }
+          
+        
+        return  out;
+                
+    }
 }
