@@ -370,20 +370,23 @@ public class JunitTest {
             
             ArrayList<Column> listCol2 = new ArrayList<>();
             listCol2.add(new Column("id","int")); listCol2.add(new Column("city", "varchar(45)"));  listCol2.add(new Column("idT1",  "int"));
+            
             ForeignKey fk = new ForeignKey("t1", "id", "idT1", "FK1");
-            ArrayList<ForeignKey> lfk = new ArrayList<>();
-            lfk.add(fk);
-            Table t2 =  new Table("t2", listCol2, lfk, "id");
+            
+            Table t2 =  new Table("t2", listCol2, new ArrayList<ForeignKey>(), "id");
+            t2.addForeignKey(fk);
             SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            //t1 = sqlF.loadTable("t1");
-            //System.out.println("éééééééééééééééééééééé" + t1.getName() + "**" + t1.getPrimaryKey());
-            //t1.getTablecolumn().forEach((s)->{System.out.println(s.getColumnName()+" "+s.getColumnType());});
+            t1 = sqlF.loadTable("t1");
+            System.out.println("éééééééééééééééééééééé" + t1.getName() + "**" + t1.getPrimaryKey());
+            t1.getTablecolumn().forEach((s)->{System.out.println(s.getColumnName()+" "+s.getColumnType());});
             
-            
-            
+            t2 = sqlF.loadTable("t2");
+            t2.getTablecolumn().forEach((s)->{System.out.println(s.getColumnName()+" "+s.getColumnType());});
+            System.out.println("---------------");
+            t2.getForeignKeys().forEach((s)->{System.out.println("++++++++++++++++++++++++++"+s.getForeingKeyColumn() + "**"+ s.getConstraintName());});
             
             
             add2.sqlQueryUndo(); 
