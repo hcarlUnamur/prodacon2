@@ -51,20 +51,20 @@ public class SQLDeleteQuery extends SQLManipulationQuery{
 
     @Override
     public Object sqlQueryUndo() throws SQLException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.         
-        ResultSetMetaData meta = datasave.getMetaData();
-        int length = meta.getColumnCount();
-        //System.out.println("++++++++++++++length : "+ length);
-        String[] cols = new String[length];
-        String[] values = new String[length];
-        datasave.next();
-        for (int i=0;i<length;i++){
-            //System.out.println("+++++++++++ "+meta.getColumnName(i+1) +" / "+datasave.getString(i+1));
-            cols[i]= meta.getColumnName(i+1);
-            values[i] = datasave.getString(i+1);
+        while(datasave.next()){
+            ResultSetMetaData meta = datasave.getMetaData();
+            int length = meta.getColumnCount();
+            //System.out.println("++++++++++++++length : "+ length);
+            String[] cols = new String[length];
+            String[] values = new String[length];
+            for (int i=0;i<length;i++){
+                //System.out.println("+++++++++++ "+meta.getColumnName(i+1) +" / "+datasave.getString(i+1));
+                cols[i]= meta.getColumnName(i+1);
+                values[i] = datasave.getString(i+1);
+            }
+            SQLInsertQuery insert = new SQLInsertQuery(getTable()[0], getCon(), cols, values);
+            insert.sqlQueryDo();
         }
-        SQLInsertQuery insert = new SQLInsertQuery(getTable()[0], getCon(), cols, values);
-        insert.sqlQueryDo();
         return null;
     }
 }
