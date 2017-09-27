@@ -76,11 +76,11 @@ public class Table {
                         new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                         con,
                         new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-                        "REFERENCED_TABLE_NAME = '"+name+"' "
+                        "TABLE_NAME = '"+name+"' "
                 );
         ResultSet resultfk = select2.sqlQueryDo();
         while(resultfk.next()){
-            foreignKeys.add(new ForeignKey(resultfk.getString("REFERENCED_COLUMN_NAME"), resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("CONSTRAINT_NAME"),resultfk.getString("CONSTRAINT_NAME")));
+            foreignKeys.add(new ForeignKey(resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("REFERENCED_COLUMN_NAME"), resultfk.getString("COLUMN_NAME"),resultfk.getString("CONSTRAINT_NAME")));
         }
         //load PrimaryKey
         SQLSelectQuery select3 = new SQLSelectQuery(
