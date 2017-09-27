@@ -152,7 +152,7 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
                 SQLSelectQuery select3 = new SQLSelectQuery(
                         new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                         getCon(),
-                        new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+                        new String[]{"TABLE_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
                         "REFERENCED_TABLE_NAME = '"+getTable()[0]+"' AND CONSTRAINT_NAME='"+constraintName+"'"
                 ); 
         
