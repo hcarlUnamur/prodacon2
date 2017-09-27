@@ -201,6 +201,7 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
     public Object sqlQueryDo() throws SQLException {
         Statement stmt = this.getCon().createStatement();
         String query = createQueryAndSaveData();
+        System.out.println(query);
         stmt.executeUpdate(query);
         try{
          if(stmt!=null)
