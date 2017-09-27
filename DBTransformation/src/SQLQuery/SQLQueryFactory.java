@@ -1,13 +1,18 @@
 package SQLQuery;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class SQLQueryFactory extends AbstractSQLQueryFactory {
     
-       public SQLQueryFactory(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+    public SQLQueryFactory(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
 
+    public Table loadTable (String tableName) throws SQLException{
+        return (new Table(tableName, this));
+    }
+    
     public SQLCreateTableQuery creatSQLCreateTableQuery(String tableName,String[] columnsAndType){
         return new SQLCreateTableQuery(tableName, getConn(), columnsAndType);
     }
