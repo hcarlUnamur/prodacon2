@@ -65,12 +65,9 @@ public class Table {
         //create Tablecolumn
         SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type"},"table_name='"+name+"'" );
         ResultSet rs = select.sqlQueryDo();
-        System.out.println("coucou");
         while(rs.next()){
-                System.out.println("coucou");
                 String colName = rs.getString("column_name");
                 String colType = rs.getString("column_type");
-                System.out.println("add col : " + colName + " / "+ colType);
                 this.addColumn(new Column(colName, colType));             
             }
         rs.close();
