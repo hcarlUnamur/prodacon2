@@ -66,8 +66,10 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
                 SQLAlterTableQuery addfk = SQLAlterTableQuery.CreateAddForeignKeyQuery(getTable()[0], getCon(), fk.getConstraintName(), new Column(fk.getForeingKeyColumn(), null),fk.getReferencedTableName(), fk.getReferencedColumn()); 
                 addfk.sqlQueryDo();
             }
-            SQLAlterTableQuery addPK = SQLAlterTableQuery.CreateAddPrimaryKeyQuery(t.getName(), getCon(), t.getPrimaryKey());    
-            addPK.sqlQueryDo();
+            if(t.getPrimaryKey()!=null){
+                SQLAlterTableQuery addPK = SQLAlterTableQuery.CreateAddPrimaryKeyQuery(t.getName(), getCon(), t.getPrimaryKey());    
+                addPK.sqlQueryDo();
+            }
         }
         
         return null;
