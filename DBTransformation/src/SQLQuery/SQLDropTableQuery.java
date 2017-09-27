@@ -12,7 +12,8 @@ import java.util.logging.Logger;
 public class SQLDropTableQuery extends SQLStructuresQuery {
     
     private static String QUERYFORMAT = "DROP TABLE %s";
-    private HashMap<String,Table> tableSave; //save to be able to undo a table drop and recreat table with it column and type 
+    private Table tableSave; 
+    //private HashMap<String,Table> tableSave; //save to be able to undo a table drop and recreat table with it column and type 
     private ResultSet datasave;
     
     private void makeDataSave(){
@@ -23,7 +24,7 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
             Logger.getLogger(SQLDropTableQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+    /*
     private void creatTableSave(){
         tableSave = new HashMap<String,Table>();
         for(String s : getTable()){
@@ -42,7 +43,7 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
             }
         }
     };
-    
+    */
     public SQLDropTableQuery(String[] table, Connection con) {
         super(table, con);
     }
@@ -55,7 +56,7 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
     
     @Override
     public Object sqlQueryDo() throws SQLException {
-        creatTableSave();
+        tableSave = new Table(getTable()[0],getCon());
         makeDataSave();
         Statement stmt = this.getCon().createStatement();
         for (String s : this.getTable()){
@@ -71,10 +72,15 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
 
     @Override
     public Object sqlQueryUndo() throws SQLException {      
+        
+        SQLCreateTableQuery recreat = new SQLCreateTableQuery(tableSave, getCon());
+        recreat.sqlQueryDo();
+        /*
         for(String t : this.getTable()){
             SQLCreateTableQuery create = new SQLCreateTableQuery(t, getCon(), tableSave.get(t).toArray());
             create.sqlQueryDo();
         }
+        */
         while(datasave.next()){
             int length = datasave.getMetaData().getColumnCount();
             String[] values = new String[length];
@@ -84,6 +90,7 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
             SQLInsertQuery insert = new SQLInsertQuery(getTable()[0], getCon(), values);
             insert.sqlQueryDo();
         }
+        
         return null;
     }
 }

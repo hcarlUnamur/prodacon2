@@ -10,7 +10,7 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
     }
 
     public Table loadTable (String tableName) throws SQLException{
-        return (new Table(tableName, this));
+        return (new Table(tableName, this.getConn()));
     }
     
     public SQLCreateTableQuery creatSQLCreateTableQuery(String tableName,String[] columnsAndType){

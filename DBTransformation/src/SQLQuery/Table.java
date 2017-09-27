@@ -5,6 +5,7 @@
  */
 package SQLQuery;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
@@ -57,11 +58,11 @@ public class Table {
         primaryKey=null;
     }
     
-    public  Table(String name,SQLQueryFactory fact) throws SQLException{
+    public  Table(String name,Connection con) throws SQLException{
         Tablecolumn = new ArrayList<Column>();
         this.name = name;
         //create Tablecolumn
-        SQLSelectQuery select = fact.createSQLSelectQuery(new String[]{"information_schema.columns"}, new String[]{"column_name","column_type"},"table_name='"+name+"'" );
+        SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type"},"table_name='"+name+"'" );
         ResultSet rs = select.sqlQueryDo();
         System.out.println("coucou");
         while(rs.next()){
@@ -73,8 +74,9 @@ public class Table {
             }
         rs.close();
         //creat foreignkeys
-        SQLSelectQuery select2 = fact.createSQLSelectQuery(
+        SQLSelectQuery select2 = new SQLSelectQuery(
                         new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+                        con,
                         new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
                         "REFERENCED_TABLE_NAME = '"+name+"' "
                 );
@@ -83,8 +85,9 @@ public class Table {
             foreignKeys.add(new ForeignKey(resultfk.getString("REFERENCED_COLUMN_NAME"), resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("CONSTRAINT_NAME"),resultfk.getString("CONSTRAINT_NAME")));
         }
         //load PrimaryKey
-        SQLSelectQuery select3 = fact.createSQLSelectQuery(
+        SQLSelectQuery select3 = new SQLSelectQuery(
                         new String[]{"INFORMATION_SCHEMA.COLUMNS"},
+                        con,
                         new String[]{"COLUMN_NAME"},
                         "TABLE_NAME = '"+name+"' AND COLUMN_KEY = 'PRI'"
                 );
