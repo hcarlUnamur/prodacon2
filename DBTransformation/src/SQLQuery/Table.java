@@ -5,7 +5,12 @@
  */
 package SQLQuery;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Logger;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 /**
  *
@@ -15,10 +20,67 @@ public class Table {
 
     private ArrayList<Column> Tablecolumn;
     private String name;
+    private ArrayList<ForeignKey> foreignKeys;
+    private String primaryKey;
+
+    public ArrayList<ForeignKey> getForeignKeys() {
+        return foreignKeys;
+    }
+
+    public void setForeignKeys(ArrayList<ForeignKey> foreignKeys) {
+        this.foreignKeys = foreignKeys;
+    }
+    
+    public void addForeignKey(ForeignKey fk){
+        foreignKeys.add(fk);
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
+    }
 
     public Table( String name, ArrayList<Column> Tablecolumn) {
         this.Tablecolumn = Tablecolumn;
         this.name = name;
+        foreignKeys = new ArrayList<ForeignKey>();
+        primaryKey=null;
+    }
+    
+    public  Table(String name,SQLQueryFactory fact) throws SQLException{
+        this.name = name;
+        //create Tablecolumn
+        SQLSelectQuery select = fact.createSQLSelectQuery(new String[]{"information_schema.columns"}, new String[]{"column_name","column_type"},"table_name='"+name+"'" );
+        ResultSet rs = select.sqlQueryDo();
+        while(rs.next()){
+                String colName = rs.getString("column_name");
+                String colType = rs.getString("column_type");
+                this.addColumn(new Column(colName, colType));                
+            }
+        rs.close();
+        //creat foreignkeys
+        SQLSelectQuery select2 = fact.createSQLSelectQuery(
+                        new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+                        new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+                        "REFERENCED_TABLE_NAME = '"+name+"' "
+                );
+        ResultSet resultfk = select2.sqlQueryDo();
+        while(resultfk.next()){
+            foreignKeys.add(new ForeignKey(name, resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("COLUMN_NAME"), resultfk.getString("CONSTRAINT_NAME")));
+        }
+        //load PrimaryKey
+        SQLSelectQuery select3 = fact.createSQLSelectQuery(
+                        new String[]{"INFORMATION_SCHEMA.COLUMNS"},
+                        new String[]{"COLUMN_NAME"},
+                        "TABLE_NAME = '"+name+"' AND COLUMN_KEY = 'PRI'"
+                );
+        ResultSet pri = select3.sqlQueryDo();
+        while(pri.next()){
+            primaryKey = pri.getString("COLUMN_NAME");
+        }
     }
 
     public String getName() {
