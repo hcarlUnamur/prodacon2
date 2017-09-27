@@ -27,6 +27,13 @@ public class Table {
         return foreignKeys;
     }
 
+    public Table( String name, ArrayList<Column> Tablecolumn, ArrayList<ForeignKey> foreignKeys, String primaryKey) {
+        this.Tablecolumn = Tablecolumn;
+        this.name = name;
+        this.foreignKeys = foreignKeys;
+        this.primaryKey = primaryKey;
+    }
+
     public void setForeignKeys(ArrayList<ForeignKey> foreignKeys) {
         this.foreignKeys = foreignKeys;
     }
