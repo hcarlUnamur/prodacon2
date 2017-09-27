@@ -13,6 +13,16 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
     
     private static String QUERYFORMAT = "DROP TABLE %s";
     private HashMap<String,Table> tableSave; //save to be able to undo a table drop and recreat table with it column and type 
+    private ResultSet datasave;
+    
+    private void makeDataSave(){
+        SQLSelectQuery select = new SQLSelectQuery(getTable()[0], getCon(), new String[]{"*"},null );
+        try {
+            datasave = select.sqlQueryDo();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLDropTableQuery.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     private void creatTableSave(){
         tableSave = new HashMap<String,Table>();
@@ -45,7 +55,8 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
     
     @Override
     public Object sqlQueryDo() throws SQLException {
-        creatTableSave();       
+        creatTableSave();
+        makeDataSave();
         Statement stmt = this.getCon().createStatement();
         for (String s : this.getTable()){
             String query = String.format(QUERYFORMAT,s);
@@ -59,12 +70,19 @@ public class SQLDropTableQuery extends SQLStructuresQuery {
     }
 
     @Override
-    public Object sqlQueryUndo() throws SQLException {
-        // @TODO : load DB values to be able to readd them  
-        
+    public Object sqlQueryUndo() throws SQLException {      
         for(String t : this.getTable()){
             SQLCreateTableQuery create = new SQLCreateTableQuery(t, getCon(), tableSave.get(t).toArray());
             create.sqlQueryDo();
+        }
+        while(datasave.next()){
+            int length = datasave.getMetaData().getColumnCount();
+            String[] values = new String[length];
+            for(int i=0;i<length;i++){
+                values[i]= datasave.getString(i+1);
+            }            
+            SQLInsertQuery insert = new SQLInsertQuery(getTable()[0], getCon(), values);
+            insert.sqlQueryDo();
         }
         return null;
     }
