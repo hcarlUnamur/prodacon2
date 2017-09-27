@@ -11,6 +11,7 @@ import SQLQuery.SQLCreateTableQuery;
 import SQLQuery.SQLDeleteQuery;
 import SQLQuery.SQLDropTableQuery;
 import SQLQuery.SQLQueryFactory;
+import SQLQuery.SQLSelectQuery;
 import SQLQuery.SQLUpdateQuery;
 import SQLQuery.StringTool;
 import SQLQuery.Table;
@@ -30,25 +31,8 @@ import static org.junit.Assert.*;
  *
  * @author thibaud
  * 
- * //get column name and type
- * SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"}, getCon(), new String[]{"column_name","column_type"},"table_name='"+getTable()[0]+"' AND column_name='"+column.getColumnName()+"'"); 
- * 
- * //get foreign key data
- *  SQLSelectQuery select3 = new SQLSelectQuery(
-                        new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
-                        getCon(),
-                        new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-                        "REFERENCED_TABLE_NAME = '"+getTable()[0]+"' AND CONSTRAINT_NAME='"+constraintName+"'"
-                );
- * 
- * 
- * //get Primary key data
- * SQLSelectQuery select4 = new SQLSelectQuery(
-                        new String[]{"INFORMATION_SCHEMA.COLUMNS"},
-                        getCon(),
-                        new String[]{"COLUMN_NAME"},
-                        "TABLE_NAME = '"+getTable()[0]+"' AND COLUMN_KEY = 'PRI'"
-                ); 
+ * MEMO : Si tout plante, il y a des chances pour que ce ne soit que le select ou/et le drop qui soit problèmatique, puisque s'il ne fonctionne pas, impossible d'effacer
+ * toutes les tables créés dans ces tests.
  * 
  */
 public class JunitTest {
@@ -91,6 +75,7 @@ public class JunitTest {
         int result = 0;
         try {
             sqlF.creatSQLCreateTableQuery("testDropTable1", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
+            
             SQLDropTableQuery drop1 = sqlF.creatDropTableQuery("testDropTable1");
             drop1.sqlQueryDo();
             drop1.sqlQueryUndo();
@@ -100,6 +85,10 @@ public class JunitTest {
             listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
             Table test2 = new Table("testDropTable2", listCol);
             sqlF.creatSQLCreateTableQuery(test2).sqlQueryDo();
+            
+            sqlF.creatSQLInsertQuery("testDropTable2", new String[]{"1", "Strong", "1"}).sqlQueryDo();
+            sqlF.creatSQLInsertQuery("testDropTable2", new String[]{"2", "Omar", "0"}).sqlQueryDo();
+            sqlF.creatSQLInsertQuery("testDropTable2", new String[]{"560", "Roussette", "1"}).sqlQueryDo();
             
             SQLDropTableQuery drop2 = sqlF.creatDropTableQuery("testDropTable2");
             drop2.sqlQueryDo();
@@ -203,6 +192,20 @@ public class JunitTest {
             pk.sqlQueryUndo();
             pk.sqlQueryDo();
             
+            SQLSelectQuery selectPrimaryKey = sqlF.createSQLSelectQuery(
+                        new String[]{"INFORMATION_SCHEMA.COLUMNS"},
+                        new String[]{"COLUMN_NAME"},
+                        "TABLE_NAME = '"+"testAddPrimaryKeyTable"+"' AND COLUMN_KEY = 'PRI'"
+            ); 
+            
+            ResultSet metaData = (selectPrimaryKey.sqlQueryDo());
+            metaData.next();
+           
+            if (!metaData.getString("COLUMN_NAME").equals("id")){
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropPrimaryKeyQuery()");
+            }
+               
             sqlF.creatSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable").sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (SQLException ex) {
@@ -232,6 +235,18 @@ public class JunitTest {
             SQLAlterTableQuery fk = sqlF.creatSQLAlterAddForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), "testAddForeignKeyTable1", "id");
             
             fk.sqlQueryDo();
+
+            SQLSelectQuery selectForeignKey = sqlF.createSQLSelectQuery(new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+                                                               new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+                                                               "REFERENCED_TABLE_NAME = '"+"testAddForeignKeyTable1"+"' AND CONSTRAINT_NAME='"+"FK1"+"'"
+                );
+            ResultSet metaData = selectForeignKey.sqlQueryDo();
+            metaData.next();
+            if (!(metaData.getString("COLUMN_NAME").equals("reference")&&metaData.getString("CONSTRAINT_NAME").equals("FK1"))){
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropForeignKeyQuery()");
+            }
+                
             fk.sqlQueryUndo();
             fk.sqlQueryDo();
             sqlF.creatSQLAlterDropForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), t1).sqlQueryDo();
@@ -263,6 +278,18 @@ public class JunitTest {
             col.sqlQueryUndo();
             col.sqlQueryDo();
             
+            SQLSelectQuery selectColumn = sqlF.createSQLSelectQuery(new String[]{"information_schema.columns"},
+                                                       new String[]{"column_name","column_type"},
+                                                       "table_name='"+"testAddDropColumnTable"+"' AND column_name='"+"city"+"'"
+            );
+            
+            ResultSet metaData = selectColumn.sqlQueryDo();
+            metaData.next();
+            if (!(metaData.getString("COLUMN_NAME").equals("city")&&metaData.getString("COLUMN_TYPE").equals("varchar(45)"))){
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropColumnQuery()");
+            }
+            
             sqlF.creatSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (SQLException ex) {
@@ -285,6 +312,21 @@ public class JunitTest {
             add.sqlQueryDo();
             SQLAlterTableQuery mCol = sqlF.creatSQLAlterModifyColumnTypeQuery("testModifyColumnTypeTable", new Column("name", "int"));
             mCol.sqlQueryDo();
+            
+            
+            SQLSelectQuery selectColumn = sqlF.createSQLSelectQuery(new String[]{"information_schema.columns"},
+                                                       new String[]{"column_name","column_type"},
+                                                       "table_name='"+"testModifyColumnTypeTable"+"' AND column_name='"+"name"+"'"
+            );
+            
+            ResultSet metaData = selectColumn.sqlQueryDo();
+            metaData.next();
+            
+            if (!(metaData.getString("COLUMN_NAME").equals("name")&& metaData.getString("COLUMN_TYPE").equals("int(11)"))){
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterModifyColumnTypeQuery()");
+            }
+            
             mCol.sqlQueryUndo();
             mCol.sqlQueryDo();
             add.sqlQueryUndo();     

@@ -29,7 +29,7 @@ public class SQLSelectQuery extends SQLQuery {
     
     @Override
     public ResultSet sqlQueryDo() throws SQLException {
-        if (where.replaceAll(" ","").equals("") || where==null){where="1=1";}
+        if (where==null || where.replaceAll(" ","").equals("")){where="1=1";}
         Statement stmt = this.getCon().createStatement();
         String query = String.format(
                 QUERYFORMAT,
