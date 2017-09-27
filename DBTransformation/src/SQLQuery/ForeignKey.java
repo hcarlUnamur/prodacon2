@@ -2,10 +2,18 @@ package SQLQuery;
 
 public class ForeignKey {
     
-    private String tableName;
+    private String ReferencedTableName;
     private String ReferencedColumn;
     private String foreingKeyColumn;
     private String constraintName;
+
+    public String getReferencedTableName() {
+        return ReferencedTableName;
+    }
+
+    public void setReferencedTableName(String ReferencedTableName) {
+        this.ReferencedTableName = ReferencedTableName;
+    }
 
     public String getConstraintName() {
         return constraintName;
@@ -16,27 +24,20 @@ public class ForeignKey {
     }
 
     public ForeignKey() {
-        this.tableName = null;
+        this.ReferencedTableName = null;
         this.ReferencedColumn = null;
         this.foreingKeyColumn = null;
+        this.constraintName = null;
     }
 
-    public ForeignKey(String tableName, String ReferencedColumn, String foreingKeyColumn, String constraintName) {
-        this.tableName = tableName;
+    public ForeignKey(String tableReferencedName, String ReferencedColumn, String foreingKeyColumn, String constraintName) {
+
+        this.ReferencedTableName = tableReferencedName;
         this.ReferencedColumn = ReferencedColumn;
         this.foreingKeyColumn = foreingKeyColumn;
         this.constraintName = constraintName;
     }
-    
-    
-        
-    public String getTableName() {
-        return tableName;
-    }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
 
     public String getReferencedColumn() {
         return ReferencedColumn;

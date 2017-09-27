@@ -76,7 +76,7 @@ public class Table {
                 );
         ResultSet resultfk = select2.sqlQueryDo();
         while(resultfk.next()){
-            foreignKeys.add(new ForeignKey(name, resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("COLUMN_NAME"), resultfk.getString("CONSTRAINT_NAME")));
+            foreignKeys.add(new ForeignKey(resultfk.getString("REFERENCED_COLUMN_NAME"), resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("CONSTRAINT_NAME"),resultfk.getString("CONSTRAINT_NAME")));
         }
         //load PrimaryKey
         SQLSelectQuery select3 = fact.createSQLSelectQuery(
@@ -84,6 +84,7 @@ public class Table {
                         new String[]{"COLUMN_NAME"},
                         "TABLE_NAME = '"+name+"' AND COLUMN_KEY = 'PRI'"
                 );
+        primaryKey=null;
         ResultSet pri = select3.sqlQueryDo();
         while(pri.next()){
             primaryKey = pri.getString("COLUMN_NAME");

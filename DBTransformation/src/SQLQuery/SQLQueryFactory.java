@@ -1,5 +1,7 @@
 package SQLQuery;
 
+import java.util.ArrayList;
+
 public class SQLQueryFactory extends AbstractSQLQueryFactory {
     
        public SQLQueryFactory(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
@@ -10,16 +12,14 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return new SQLCreateTableQuery(tableName, getConn(), columnsAndType);
     }
     
-    public SQLCreateTableQuery creatSQLCreateTableQuery(Table table){
-        String[] columns = new String[table.getTablecolumn().size()];
-        int i = 0;
-        for (Column c : table.getTablecolumn()){
-            columns[i]=c.getColumnName() + " " + c.getColumnType();
-            i++;
-        }
-        return new SQLCreateTableQuery(table.getName(), getConn(), columns);
+    public SQLCreateTableQuery creatSQLCreateTableQuery(String tableName,ArrayList<Column> columns){
+        return new SQLCreateTableQuery(tableName, getConn(), columns);
     }
     
+    public SQLCreateTableQuery creatSQLCreateTableQuery(Table table){
+        return new SQLCreateTableQuery(table, getConn());
+    }
+      
     public SQLDropTableQuery creatDropTableQuery (String tableName){
         return new SQLDropTableQuery(tableName, getConn());
     }
