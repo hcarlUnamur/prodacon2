@@ -46,6 +46,7 @@ public class JunitTest {
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
         int result = 0;
         try {
+            
             SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery("testCreateTable1", new String[]{"id int","name varchar(45)","trueFalse bool"});
             add1.sqlQueryDo();
             add1.sqlQueryUndo();
@@ -61,7 +62,7 @@ public class JunitTest {
             
             System.out.println("ok");
         } catch (SQLException ex) {
-            System.out.println(ex);
+            System.err.println(ex);
             System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableQuery()");
             try {sqlF.creatDropTableQuery("testCreateTable1").sqlQueryDo();} catch (SQLException ex1) {}
             try {sqlF.creatDropTableQuery("testCreateTable2").sqlQueryDo();} catch (SQLException ex1) {}
@@ -104,6 +105,9 @@ public class JunitTest {
             }else{
                 System.out.println("ok");
             }
+    
+    
+    
             drop2.sqlQueryDo();
             
             System.out.println("ok");
@@ -349,7 +353,7 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    /*
+    
     @Test
     public void testCreateTable2Query(){
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
@@ -361,9 +365,15 @@ public class JunitTest {
             listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
             
             Table test2 = new Table("t2", listCol, new ArrayList<ForeignKey>(), "id");
-            //SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(test2);
-            //add2.sqlQueryDo();
-            //add2.sqlQueryUndo();   
+            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(test2);
+            add2.sqlQueryDo();
+            test2 = sqlF.loadTable("t2");
+            //System.out.println("éééééééééééééééééééééé" + test2.getName() + "**" + test2.getPrimaryKey());
+            //test2.getTablecolumn().forEach((s)->{System.out.println(s.getColumnName()+" "+s.getColumnType());});
+            
+            
+            
+            add2.sqlQueryUndo();   
             //add2.sqlQueryDo();
             //add2.sqlQueryUndo();
             
@@ -376,7 +386,7 @@ public class JunitTest {
             result = 1;
         }
         assertEquals(0, result);
-    }*/
+    }
     
    
 }
