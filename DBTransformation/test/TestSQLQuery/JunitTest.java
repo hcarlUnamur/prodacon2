@@ -59,11 +59,25 @@ public class JunitTest {
     
     public void ErrorGestion(Exception ex, String functionName, ArrayList<String> ls){
         System.err.println(ex);
-        System.err.println("ko! : " + "TestSQLQuery.JunitTest."+functionName);
+        System.err.println("ko! : " + "TestSQLQuery.JunitTest."+functionName + "()");
         for(String l : ls){
             try {sqlF.creatDropTableQuery(l).sqlQueryDo();} catch (Exception ex1) {}
         }        
     }
+    
+     public int ColumnAnalyser(String functionName, String tableName, String columnName, String columnType) throws Exception{
+        SQLSelectQuery selectColumn = sqlF.createSQLSelectQuery(new String[]{"information_schema.columns"},
+                                                       new String[]{"column_name","column_type"},
+                                                       "table_name='"+tableName+"' AND column_name='"+columnName+"'"
+        );    
+        ResultSet metaData = selectColumn.sqlQueryDo();
+        metaData.next();     
+        if (!(metaData.getString("COLUMN_NAME").equals(columnName)&& metaData.getString("COLUMN_TYPE").equals(columnType))){
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest."+functionName+"()");
+            return 1;   
+        }else{return 0;}
+    }
+    
     
     @Test
     public void testCreateTableQuery(){
@@ -126,10 +140,7 @@ public class JunitTest {
             
             System.out.println("ok");
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testDropTableQuery()");
-            try {sqlF.creatDropTableQuery("testDropTable1").sqlQueryDo();} catch (SQLException ex1) {}
-            try {sqlF.creatDropTableQuery("testDropTable2").sqlQueryDo();} catch (SQLException ex1) {}
+            ErrorGestion(ex, "testDropTableQuery", new ArrayList<>(Arrays.asList("testDropTable1", "testDropTable2")));
             result = 1;
         }
         assertEquals(0, result);
@@ -148,9 +159,7 @@ public class JunitTest {
             sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();
             System.out.println("ok");
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testInsertDeleteQuery()");
-            try {sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();} catch (SQLException ex1) {}
+            ErrorGestion(ex, "testInsertDeleteQuery", new ArrayList<>(Arrays.asList("testInsertTable")));
             result = 1;
         }
         assertEquals(0, result);
@@ -170,9 +179,7 @@ public class JunitTest {
             sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
             System.out.println("ok");
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testUpdateQuery()");
-            try {sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();} catch (SQLException ex1) {}
+            ErrorGestion(ex, "testUpdateQuery", new ArrayList<>(Arrays.asList("testUpdateTable")));
             result = 1;
         }
         assertEquals(0, result);
@@ -198,9 +205,7 @@ public class JunitTest {
             }
             
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testSelectQuery()");
-            try {sqlF.creatDropTableQuery("testSelectTable").sqlQueryDo();} catch (SQLException ex1) {}
+            ErrorGestion(ex, "testSelectQuery", new ArrayList<>(Arrays.asList("testSelectTable")));
             result = 1;
         }
         assertEquals(0, result);
@@ -237,9 +242,7 @@ public class JunitTest {
             sqlF.creatSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable").sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropPrimaryKeyQuery()");
-            try {sqlF.creatDropTableQuery("testAddPrimaryKeyTable").sqlQueryDo();} catch (SQLException ex1) {}
+            ErrorGestion(ex, "AlterAddDropPrimaryKeyQuery", new ArrayList<>(Arrays.asList("testAddPrimaryKeyTable")));
             result = 1;
         }
         assertEquals(0, result);
@@ -284,10 +287,7 @@ public class JunitTest {
             sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();
             System.out.println("ok");
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropForeignKeyQuery()");
-            try {sqlF.creatDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();} catch (SQLException ex1) {}
-            try {sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();} catch (SQLException ex1) {}
+            ErrorGestion(ex, "AlterAddDropForeignKeyQuery", new ArrayList<>(Arrays.asList("testAddForeignKeyTable2", "testAddForeignKeyTable1")));
             result = 1;
         }
         assertEquals(0, result);
@@ -322,9 +322,7 @@ public class JunitTest {
             sqlF.creatSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropColumnQuery()");
-            try {sqlF.creatDropTableQuery("testAddDropColumnTable").sqlQueryDo();} catch (SQLException ex1) {}
+            ErrorGestion(ex, "AlterAddDropColumnQuery", new ArrayList<>(Arrays.asList("testAddDropColumnTable")));
             result = 1;
         }
         assertEquals(0, result);
@@ -341,27 +339,13 @@ public class JunitTest {
             SQLAlterTableQuery mCol = sqlF.creatSQLAlterModifyColumnTypeQuery("testModifyColumnTypeTable", new Column("name", "int"));
             mCol.sqlQueryDo();
             
-            
-            SQLSelectQuery selectColumn = sqlF.createSQLSelectQuery(new String[]{"information_schema.columns"},
-                                                       new String[]{"column_name","column_type"},
-                                                       "table_name='"+"testModifyColumnTypeTable"+"' AND column_name='"+"name"+"'"
-            );
-            
-            ResultSet metaData = selectColumn.sqlQueryDo();
-            metaData.next();
-            
-            if (!(metaData.getString("COLUMN_NAME").equals("name")&& metaData.getString("COLUMN_TYPE").equals("int(11)"))){
-                result = 1;
-                System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterModifyColumnTypeQuery()");
-            }
+            result = ColumnAnalyser("AlterModifyColumnTypeQuery", "testModifyColumnTypeTable", "name", "int(11)");
             
             mCol.sqlQueryUndo();
             mCol.sqlQueryDo();
             add.sqlQueryUndo();     
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterModifyColumnTypeQuery()");
-            try {sqlF.creatDropTableQuery("testModifyColumnTypeTable").sqlQueryDo();} catch (SQLException ex1) {}
+            ErrorGestion(ex, "AlterModifyColumnTypeQuery", new ArrayList<>(Arrays.asList("testModifyColumnTypeTable")));
             result = 1;
         }
         assertEquals(0, result);
@@ -372,8 +356,6 @@ public class JunitTest {
         
         int result = 0;
         try {
-            
-            
             ArrayList<Column> listCol = new ArrayList<>();
             listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
             Table t1 = new Table("t1", listCol, new ArrayList<ForeignKey>(), "id");
@@ -409,11 +391,7 @@ public class JunitTest {
             
             System.out.println("ok");
         } catch (Exception ex) {
-            System.err.println(ex);
-            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTable2Query()");
-            
-           try {sqlF.creatDropTableQuery("t2").sqlQueryDo();} catch (SQLException ex1) {}
-           try {sqlF.creatDropTableQuery("t1").sqlQueryDo();} catch (SQLException ex1) {}
+           ErrorGestion(ex, "testCreateTable2Query", new ArrayList<>(Arrays.asList("t2", "t1")));
            result = 1;
         }
         assertEquals(0, result);
