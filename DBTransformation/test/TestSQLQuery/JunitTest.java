@@ -6,6 +6,7 @@
 package TestSQLQuery;
 
 import SQLQuery.Column;
+import SQLQuery.ForeignKey;
 import SQLQuery.SQLAlterTableQuery;
 import SQLQuery.SQLCreateTableQuery;
 import SQLQuery.SQLDeleteQuery;
@@ -93,6 +94,16 @@ public class JunitTest {
             SQLDropTableQuery drop2 = sqlF.creatDropTableQuery("testDropTable2");
             drop2.sqlQueryDo();
             drop2.sqlQueryUndo();
+            
+            ResultSet essai = sqlF.createSQLSelectQuery("testDropTable2", new String[]{"id", "name", "trueFalse"}, "id = '1' || id = '560'").sqlQueryDo();
+            essai.next(); essai.next();
+            if(!(essai.getString(1).equals("560") && essai.getString(2).equals("Roussette") && essai.getString(3).equals("1"))){
+                System.out.println("Wrong Select Query");
+                System.out.println("ko! : " + "TestSQLQuery.JunitTest.testSelectQuery()");
+                result = 1;
+            }else{
+                System.out.println("ok");
+            }
             drop2.sqlQueryDo();
             
             System.out.println("ok");
@@ -338,8 +349,34 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    
-    
+    /*
+    @Test
+    public void testCreateTable2Query(){
+        SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
+        int result = 0;
+        try {
+            
+            
+            ArrayList<Column> listCol = new ArrayList<>();
+            listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
+            
+            Table test2 = new Table("t2", listCol, new ArrayList<ForeignKey>(), "id");
+            //SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(test2);
+            //add2.sqlQueryDo();
+            //add2.sqlQueryUndo();   
+            //add2.sqlQueryDo();
+            //add2.sqlQueryUndo();
+            
+            System.out.println("ok");
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableQuery()");
+            try {sqlF.creatDropTableQuery("testCreateTable1").sqlQueryDo();} catch (SQLException ex1) {}
+            try {sqlF.creatDropTableQuery("testCreateTable2").sqlQueryDo();} catch (SQLException ex1) {}
+            result = 1;
+        }
+        assertEquals(0, result);
+    }*/
     
    
 }
