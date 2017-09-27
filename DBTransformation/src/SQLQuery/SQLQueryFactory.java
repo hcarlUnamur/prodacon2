@@ -76,7 +76,7 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
     }
     
     public SQLAlterTableQuery creatSQLAlterDropForeignKeyQuery(String table,String constraintName, Column column , Table referentialTable){
-        return SQLAlterTableQuery.CreateDroporeignKeyQuery(table, getConn(), constraintName);
+        return SQLAlterTableQuery.CreateDropForeignKeyQuery(table, getConn(), constraintName);
     }
   
     public SQLAlterTableQuery creatSQLAlterAddPrimaryKeyQuery(String table,Column column){

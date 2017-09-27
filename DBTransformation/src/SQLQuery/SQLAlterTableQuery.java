@@ -86,7 +86,7 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
         return out;
     }
     
-    public static SQLAlterTableQuery CreateDroporeignKeyQuery(String table, Connection con,String constraintName) {
+    public static SQLAlterTableQuery CreateDropForeignKeyQuery(String table, Connection con,String constraintName) {
         SQLAlterTableQuery out = new SQLAlterTableQuery(table, con, Alteration.DropForeignKey);
         out.setConstraintName(constraintName);
         return out;
@@ -230,7 +230,7 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
                 mod.sqlQueryDo();
                 break;
             case AddForeignKey: 
-                SQLAlterTableQuery dropfk = CreateDroporeignKeyQuery(getTable()[0], getCon(), constraintName);
+                SQLAlterTableQuery dropfk = CreateDropForeignKeyQuery(getTable()[0], getCon(), constraintName);
                 dropfk.sqlQueryDo();
                 break;
             case DropForeignKey: 

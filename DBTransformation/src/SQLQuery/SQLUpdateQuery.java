@@ -58,7 +58,6 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
             String[][] modif = new String[meta.getColumnCount()][2];
             int length = meta.getColumnCount();
                     for(int i=0;i<meta.getColumnCount();i++){
-                System.out.println("+++++++++++"+ meta.getColumnName(i+1) + " / "+ datasave.getString(i+1) );
                 modif[i][0] = meta.getColumnName(i+1);
                 modif[i][1] = datasave.getString(i+1);
             }
