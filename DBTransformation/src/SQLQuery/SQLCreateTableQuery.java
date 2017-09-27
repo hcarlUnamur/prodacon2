@@ -14,6 +14,7 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
     
     public SQLCreateTableQuery(String[] tableNames, Connection con) {
         super(tableNames, con);
+        t = null;
     }
     public SQLCreateTableQuery(String tableName, Connection con, String[] column) {
         super(new String[]{tableName}, con);
@@ -64,8 +65,8 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
                 SQLAlterTableQuery addfk = SQLAlterTableQuery.CreateAddForeignKeyQuery(getTable()[0], getCon(), fk.getConstraintName(), new Column(fk.getForeingKeyColumn(), null),fk.getReferencedTableName(), fk.getReferencedColumn()); 
                 addfk.sqlQueryDo();
             }
-        SQLAlterTableQuery addPK = SQLAlterTableQuery.CreateAddPrimaryKeyQuery(t.getName(), getCon(), t.getPrimaryKey());    
-        addPK.sqlQueryDo();
+            SQLAlterTableQuery addPK = SQLAlterTableQuery.CreateAddPrimaryKeyQuery(t.getName(), getCon(), t.getPrimaryKey());    
+            addPK.sqlQueryDo();
         }
         
         return null;
