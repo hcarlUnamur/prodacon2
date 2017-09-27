@@ -58,14 +58,18 @@ public class Table {
     }
     
     public  Table(String name,SQLQueryFactory fact) throws SQLException{
+        Tablecolumn = new ArrayList<Column>();
         this.name = name;
         //create Tablecolumn
         SQLSelectQuery select = fact.createSQLSelectQuery(new String[]{"information_schema.columns"}, new String[]{"column_name","column_type"},"table_name='"+name+"'" );
         ResultSet rs = select.sqlQueryDo();
+        System.out.println("coucou");
         while(rs.next()){
+                System.out.println("coucou");
                 String colName = rs.getString("column_name");
                 String colType = rs.getString("column_type");
-                this.addColumn(new Column(colName, colType));                
+                System.out.println("add col : " + colName + " / "+ colType);
+                this.addColumn(new Column(colName, colType));             
             }
         rs.close();
         //creat foreignkeys

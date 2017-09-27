@@ -40,7 +40,7 @@ public class JunitTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
  
-    
+    /*
     @Test
     public void testCreateTableQuery(){
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
@@ -353,7 +353,7 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    
+    */
     @Test
     public void testCreateTable2Query(){
         SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
@@ -378,11 +378,11 @@ public class JunitTest {
             //add2.sqlQueryUndo();
             
             System.out.println("ok");
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println(ex);
             System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableQuery()");
-            try {sqlF.creatDropTableQuery("testCreateTable1").sqlQueryDo();} catch (SQLException ex1) {}
-            try {sqlF.creatDropTableQuery("testCreateTable2").sqlQueryDo();} catch (SQLException ex1) {}
+            
+            try {sqlF.creatDropTableQuery("t2").sqlQueryDo();} catch (SQLException ex1) {}
             result = 1;
         }
         assertEquals(0, result);
