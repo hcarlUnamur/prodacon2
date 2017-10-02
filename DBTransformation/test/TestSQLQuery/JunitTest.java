@@ -77,7 +77,33 @@ public class JunitTest {
             return 1;   
         }else{return 0;}
     }
-    
+     
+     public int PrimaryKeyAnalyser(String functionName, String tableName, String columnName) throws Exception{
+        SQLSelectQuery selectPrimaryKey = sqlF.createSQLSelectQuery(
+                        new String[]{"INFORMATION_SCHEMA.COLUMNS"},
+                        new String[]{"COLUMN_NAME"},
+                        "TABLE_NAME = '"+tableName+"' AND COLUMN_KEY = 'PRI'"
+        );    
+        ResultSet metaData = selectPrimaryKey.sqlQueryDo();
+        metaData.next();
+        if (!metaData.getString("COLUMN_NAME").equals(columnName)){
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest."+functionName+"()");
+            return 1; 
+        }else{return 0;} 
+    }
+     
+    public int ForeignKeyAnalyser(String functionName, String tableName, String columnName, String constraintName) throws Exception{
+        SQLSelectQuery selectForeignKey = sqlF.createSQLSelectQuery(new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+                                                               new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+                                                               "TABLE_NAME = '"+tableName+"' AND CONSTRAINT_NAME='"+constraintName+"'"
+        );
+        ResultSet metaData = selectForeignKey.sqlQueryDo();
+        metaData.next();
+        if (!(metaData.getString("COLUMN_NAME").equals(columnName)&&metaData.getString("CONSTRAINT_NAME").equals(constraintName))){
+            System.err.println("ko! : " + "TestSQLQuery.JunitTest."+functionName+"()");
+            return 1;
+        }else{return 0;}   
+    }    
     
     @Test
     public void testCreateTableQuery(){
@@ -90,7 +116,7 @@ public class JunitTest {
             
             Table t2 = CreateTable1("testCreateTable2");
             SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
-            add2.sqlQueryDo();
+            add2.sqlQueryDo();            
             add2.sqlQueryUndo();
             
             System.out.println("ok");
@@ -153,7 +179,10 @@ public class JunitTest {
         try {
             sqlF.creatSQLCreateTableQuery("testInsertTable", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
             sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
-            SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
+            sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"6", "String", "1"}).sqlQueryDo();
+            sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"5", "Strang", "0"}).sqlQueryDo();
+            //SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
+            SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable", "1=1");
             del.sqlQueryDo();
             del.sqlQueryUndo();
             sqlF.creatDropTableQuery("testInsertTable").sqlQueryDo();
@@ -172,7 +201,10 @@ public class JunitTest {
         try {
             sqlF.creatSQLCreateTableQuery("testUpdateTable", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
             sqlF.creatSQLInsertQuery("testUpdateTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
-            String where ="id=1 and name=\"Strong\" and trueFalse=\"1\" "; //new String[][]{{"id", "1"}, {"name", "Strong"}, {"trueFalse", "1"}}
+            sqlF.creatSQLInsertQuery("testUpdateTable", new String[]{"6", "String", "1"}).sqlQueryDo();
+            sqlF.creatSQLInsertQuery("testUpdateTable", new String[]{"5", "Strang", "0"}).sqlQueryDo();
+            //String where ="id=1 and name=\"Strong\" and trueFalse=\"1\" "; //new String[][]{{"id", "1"}, {"name", "Strong"}, {"trueFalse", "1"}}
+            String where = "1=1";
             SQLUpdateQuery upd = sqlF.createSQLUpdateQuery("testUpdateTable", new String[][]{{"id", "6"}, {"name", "Smith"}, {"trueFalse", "0"}}, where);
             upd.sqlQueryDo();
             upd.sqlQueryUndo();
@@ -225,19 +257,7 @@ public class JunitTest {
             pk.sqlQueryUndo();
             pk.sqlQueryDo();
             
-            SQLSelectQuery selectPrimaryKey = sqlF.createSQLSelectQuery(
-                        new String[]{"INFORMATION_SCHEMA.COLUMNS"},
-                        new String[]{"COLUMN_NAME"},
-                        "TABLE_NAME = '"+"testAddPrimaryKeyTable"+"' AND COLUMN_KEY = 'PRI'"
-            ); 
-            
-            ResultSet metaData = (selectPrimaryKey.sqlQueryDo());
-            metaData.next();
-           
-            if (!metaData.getString("COLUMN_NAME").equals("id")){
-                result = 1;
-                System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropPrimaryKeyQuery()");
-            }
+            result = PrimaryKeyAnalyser("AlterAddDropPrimaryKeyQuery", "testAddPrimaryKeyTable", "id");
                
             sqlF.creatSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable").sqlQueryDo();
             add.sqlQueryUndo();     
@@ -265,22 +285,7 @@ public class JunitTest {
             ForeignKey fk = new ForeignKey(t1.getName(), "id", "reference", "FK1");
             sqlF.creatSQLAlterAddForeignKeyQuery(t2.getName(), fk).sqlQueryDo();
             
-            
-
-            SQLSelectQuery selectForeignKey = sqlF.createSQLSelectQuery(new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
-                                                               new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-                                                               "TABLE_NAME = '"+"testAddForeignKeyTable2"+"' AND CONSTRAINT_NAME='"+"FK1"+"'"
-                );
-            
-            ResultSet metaData = selectForeignKey.sqlQueryDo();
-            
-            metaData.next();
-            
-            if (!(metaData.getString("COLUMN_NAME").equals("reference")&&metaData.getString("CONSTRAINT_NAME").equals("FK1"))){
-                result = 1;
-                System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropForeignKeyQuery()");
-            }
-                
+            result = ForeignKeyAnalyser("AlterAddDropForeignKeyQuery", "testAddForeignKeyTable2", "reference", "FK1");
             
             sqlF.creatSQLAlterDropForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), t1).sqlQueryDo();
             sqlF.creatDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();
@@ -307,17 +312,7 @@ public class JunitTest {
             col.sqlQueryUndo();
             col.sqlQueryDo();
             
-            SQLSelectQuery selectColumn = sqlF.createSQLSelectQuery(new String[]{"information_schema.columns"},
-                                                       new String[]{"column_name","column_type"},
-                                                       "table_name='"+"testAddDropColumnTable"+"' AND column_name='"+"city"+"'"
-            );
-            
-            ResultSet metaData = selectColumn.sqlQueryDo();
-            metaData.next();
-            if (!(metaData.getString("COLUMN_NAME").equals("city")&&metaData.getString("COLUMN_TYPE").equals("varchar(45)"))){
-                result = 1;
-                System.err.println("ko! : " + "TestSQLQuery.JunitTest.AlterAddDropColumnQuery()");
-            }
+            result = ColumnAnalyser("AlterAddDropColumnQuery", "testAddDropColumnTable", "city", "varchar(45)");
             
             sqlF.creatSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
             add.sqlQueryUndo();     
@@ -352,46 +347,50 @@ public class JunitTest {
     }
     
     @Test
-    public void testCreateTable2Query(){
+    public void testCreateTableForeignKeyQuery(){
         
         int result = 0;
         try {
             ArrayList<Column> listCol = new ArrayList<>();
             listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
-            Table t1 = new Table("t1", listCol, new ArrayList<ForeignKey>(), "id");
+            Table t1 = new Table("tableForeignKey1", listCol, new ArrayList<ForeignKey>(), "id");
             SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
-            
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("id","int")); listCol2.add(new Column("city", "varchar(45)"));  listCol2.add(new Column("idT1",  "int"));
+            listCol2.add(new Column("id","int")); listCol2.add(new Column("city", "varchar(45)"));  listCol2.add(new Column("reference",  "int"));
             
-            ForeignKey fk = new ForeignKey("t1", "id", "idT1", "FK1");
+            ForeignKey fk = new ForeignKey("tableForeignKey1", "id", "reference", "FK1");
             
-            Table t2 =  new Table("t2", listCol2, new ArrayList<ForeignKey>(), "id");
+            Table t2 =  new Table("tableForeignKey2", listCol2, new ArrayList<ForeignKey>(), "id");
             t2.addForeignKey(fk);
             SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
+                        
+            if (!(t1.getPrimaryKey().equals("id"))){
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableForeignKeyQuery()");
+            }
             
-            
-            t1 = sqlF.loadTable("t1");
-            System.out.println("éééééééééééééééééééééé" + t1.getName() + "**" + t1.getPrimaryKey());
-            t1.getTablecolumn().forEach((s)->{System.out.println(s.getColumnName()+" "+s.getColumnType());});
-            
-            t2 = sqlF.loadTable("t2");
+            t2 = sqlF.loadTable("tableForeignKey2");
             t2.getTablecolumn().forEach((s)->{System.out.println(s.getColumnName()+" "+s.getColumnType());});
             System.out.println("---------------");
-            t2.getForeignKeys().forEach((s)->{System.out.println("++++++++++++++++++++++++++"+s.getForeingKeyColumn() + "**"+ s.getConstraintName());});
             
+            t2.getForeignKeys().forEach((s)->{System.out.println("++++++++++++++++++++++++++"+s.getForeingKeyColumn() + "**"+ s.getConstraintName());});
+            ArrayList<ForeignKey> lfk = new ArrayList<>();
+            lfk = t2.getForeignKeys();
+            
+            if (!(lfk.get(0).getForeingKeyColumn().equals("reference") && lfk.get(0).getConstraintName().equals("FK1"))){
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testCreateTableForeignKeyQuery()");
+            }
             
             add2.sqlQueryUndo(); 
-            add1.sqlQueryUndo();   
-              
-            
+            add1.sqlQueryUndo();        
             
             System.out.println("ok");
         } catch (Exception ex) {
-           ErrorGestion(ex, "testCreateTable2Query", new ArrayList<>(Arrays.asList("t2", "t1")));
+           ErrorGestion(ex, "testCreateTableForeignKeyQuery", new ArrayList<>(Arrays.asList("tableForeignKey2", "tableForeignKey1")));
            result = 1;
         }
         assertEquals(0, result);
