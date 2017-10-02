@@ -63,14 +63,31 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
             }
             StringBuilder where = new StringBuilder();
             for(int i = 0;i<setValues.length;i++){
-                where.append(" AND  " +setValues[i][0]+ " = '" + setValues[i][1]+"'");
+                where.append(" AND  " +setValues[i][0]+ "='" + setValues[i][1]+"'");
             }
             where.delete(0, 4);
-
-            SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, where.toString());
+            String whereUndo = undoWhereConstructor(where.toString(),modif);
+            SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, whereUndo);
             update.sqlQueryDo();
         }
         return null;
     }
     
+    private String undoWhereConstructor(String firstWhereDo, String[][] modification){
+        String[] modif = StringTool.UpdateSetVal(modification).split(",");
+        String[] split = firstWhereDo.split("AND");
+        StringBuffer out = new StringBuffer();
+        
+        for (String fw : split){
+            for(String m : modif ){
+                if((fw.split("=")[0]).equals(m.split("=")[0])){
+                    out.append(" AND "+fw);
+                }else{
+                    out.append(" AND "+m);
+                }
+            }
+        }
+        out.delete(0, 4);
+        return out.toString();
+    }
 }
