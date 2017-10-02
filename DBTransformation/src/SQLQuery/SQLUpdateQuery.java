@@ -69,9 +69,9 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
             int length = meta.getColumnCount();
                     for(int i=0;i<meta.getColumnCount();i++){
                 modif[i][0] = meta.getColumnName(i+1);
-                modifColName[0] = meta.getColumnName(i+1);
+                modifColName[i] = meta.getColumnName(i+1);
                 modif[i][1] = datasave.getString(i+1);
-                modifColVal[1] = datasave.getString(i+1);
+                modifColVal[i] = datasave.getString(i+1);
             }
             //sans doute mieux mais doit être bien fait (i)
             //String whereUndo = undoWhereConstructor(where.toString(),modif);
