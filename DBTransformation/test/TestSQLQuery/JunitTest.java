@@ -42,7 +42,8 @@ public class JunitTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
-    
+        
+     
     public Table CreateTable1(String tableName){
         ArrayList<Column> listCol = new ArrayList<>();
         listCol.add(new Column("id","int")); listCol.add(new Column("name", "varchar(45)"));  listCol.add(new Column("trueFalse",  "bool"));
@@ -103,7 +104,21 @@ public class JunitTest {
             System.err.println("ko! : " + "TestSQLQuery.JunitTest."+functionName+"()");
             return 1;
         }else{return 0;}   
-    }    
+    } 
+    
+    public int SelectForTest(String functionName, String tableName, String[] columns, String[] values) throws Exception{  
+        
+        
+            ResultSet metadata = sqlF.createSQLSelectQuery(tableName, new String[]{columns[0], columns[1], columns[2]}, "id = '"+values[0]+"'").sqlQueryDo();
+            metadata.first();
+            if(!(metadata.getString(1).equals(values[0]) && metadata.getString(2).equals(values[1]) && metadata.getString(3).equals(values[2]))){
+                System.err.println("Wrong Select Query");
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest."+functionName+"()");
+                return 1;
+            }else{return 0;}
+        
+    }
+    
     
     @Test
     public void testCreateTableQuery(){
@@ -178,7 +193,7 @@ public class JunitTest {
         int result = 0;
         try {
             sqlF.creatSQLCreateTableQuery("testInsertTable", new String[]{"id int","name varchar(45)","trueFalse bool"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"1", "Strong", "1"}).sqlQueryDo();
+            sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"1", "strong", "1"}).sqlQueryDo();
             sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"6", "String", "1"}).sqlQueryDo();
             sqlF.creatSQLInsertQuery("testInsertTable", new String[]{"5", "Strang", "0"}).sqlQueryDo();
             //SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
@@ -205,10 +220,15 @@ public class JunitTest {
             sqlF.creatSQLInsertQuery("testUpdateTable", new String[]{"5", "Strang", "0"}).sqlQueryDo();
             //String where ="id=1 and name=\"Strong\" and trueFalse=\"1\" "; //new String[][]{{"id", "1"}, {"name", "Strong"}, {"trueFalse", "1"}}
             String where = "1=1";
-            SQLUpdateQuery upd = sqlF.createSQLUpdateQuery("testUpdateTable", new String[][]{{"id", "6"}, {"name", "Smith"}, {"trueFalse", "0"}}, where);
+            SQLUpdateQuery upd = sqlF.createSQLUpdateQuery("testUpdateTable", new String[][]{{"name", "Smith"}, {"trueFalse", "0"}}, where);
             upd.sqlQueryDo();
             upd.sqlQueryUndo();
-            sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
+            
+            /*
+            result = SelectForTest("testUpdateQuery", "testUpdateTable", new String[]{"id","name","trueFalse"}, new String[]{"1", "Strong", "1"});
+            if(result==0){ result = SelectForTest("testUpdateQuery", "testUpdateTable", new String[]{"id","name","trueFalse"}, new String[]{"6", "String", "1"});}
+            if(result==0){ result = SelectForTest("testUpdateQuery", "testUpdateTable", new String[]{"id","name","trueFalse"}, new String[]{"5", "Strang", "0"});}*/
+            //sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
             System.out.println("ok");
         } catch (Exception ex) {
             ErrorGestion(ex, "testUpdateQuery", new ArrayList<>(Arrays.asList("testUpdateTable")));
@@ -395,6 +415,6 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    
+   
    
 }
