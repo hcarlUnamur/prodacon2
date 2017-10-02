@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.misc.MessageUtils;
 
 public class SQLUpdateQuery extends SQLManipulationQuery{
     
@@ -53,6 +54,12 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
 
     @Override
     public Object sqlQueryUndo() throws SQLException {
+        StringBuilder where = new StringBuilder();
+        for(int i = 0;i<setValues.length;i++){
+                where.append(" AND  " +setValues[i][0]+ "='" + setValues[i][1]+"'");
+            }
+            where.delete(0, 4);
+        
         while (datasave.next()){
             ResultSetMetaData meta = datasave.getMetaData();
             String[][] modif = new String[meta.getColumnCount()][2];
@@ -61,17 +68,16 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
                 modif[i][0] = meta.getColumnName(i+1);
                 modif[i][1] = datasave.getString(i+1);
             }
-            StringBuilder where = new StringBuilder();
-            for(int i = 0;i<setValues.length;i++){
-                where.append(" AND  " +setValues[i][0]+ "='" + setValues[i][1]+"'");
-            }
-            where.delete(0, 4);
-            String whereUndo = undoWhereConstructor(where.toString(),modif);
-            System.out.println("oooooooooooooooooo [set] "+whereUndo);
-            System.out.println("oooooooooooooooooo"+whereUndo);
-            SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, whereUndo);
-            update.sqlQueryDo();
+            //String whereUndo = undoWhereConstructor(where.toString(),modif);
+            //System.out.println("oooooooooooooooooo [set] "+whereUndo);
+            //System.out.println("oooooooooooooooooo"+whereUndo);
+            //SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, whereUndo);
+            //update.sqlQueryDo();
+            SQLInsertQuery insertQuery = new SQLInsertQuery(getTable()[0], getCon(), modif);
+            insertQuery.sqlQueryDo();
         }
+        SQLDeleteQuery deleteQuery = new SQLDeleteQuery(getTable()[0],getCon(), where.toString());
+        deleteQuery.sqlQueryDo();
         return null;
     }
     
@@ -83,9 +89,9 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
         for (String fw : split){
             for(String m : modif ){
                 if((fw.split("=")[0]).equals(m.split("=")[0])){
-                    out.append(" AND "+fw);
-                }else{
                     out.append(" AND "+m);
+                }else{
+                    out.append(" AND "+fw);
                 }
             }
         }
