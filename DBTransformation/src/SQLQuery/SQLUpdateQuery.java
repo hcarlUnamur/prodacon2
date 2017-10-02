@@ -67,6 +67,7 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
             }
             where.delete(0, 4);
             String whereUndo = undoWhereConstructor(where.toString(),modif);
+            System.out.println(where);
             SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, whereUndo);
             update.sqlQueryDo();
         }
