@@ -28,12 +28,12 @@ public class SQLInsertQuery extends SQLManipulationQuery {
         this.values = values;
     }
     
-    public SQLInsertQuery(String table, Connection con, String[][] setValues){
-        super(new String[]{table}, con);
-        ArrayList<String[]> ls = new ArrayList<>();
-        this.values = ls.get(0);
-        this.columns = ls.get(1);
-    }
+    //public SQLInsertQuery(String table, Connection con, String[][] setValues){
+    //    super(new String[]{table}, con);
+    //    ArrayList<String[]> ls = new ArrayList<>();
+    //    this.values = ls.get(0);
+    //    this.columns = ls.get(1);
+    //}
     
     @Override
     public Object sqlQueryDo() throws SQLException {

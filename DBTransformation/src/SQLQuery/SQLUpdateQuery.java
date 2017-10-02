@@ -52,6 +52,7 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
         return null;
     }
 
+    //attention l'implémentation actuelle ne prens pas tout els cas par exemple un update qui istence tout les éléments de 1 peut de pas être accepté si il y a une contrainte d'unisité 
     @Override
     public Object sqlQueryUndo() throws SQLException {
         StringBuilder where = new StringBuilder();
@@ -63,17 +64,22 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
         while (datasave.next()){
             ResultSetMetaData meta = datasave.getMetaData();
             String[][] modif = new String[meta.getColumnCount()][2];
+            String[] modifColName = new String[meta.getColumnCount()];
+            String[] modifColVal = new String[meta.getColumnCount()];
             int length = meta.getColumnCount();
                     for(int i=0;i<meta.getColumnCount();i++){
                 modif[i][0] = meta.getColumnName(i+1);
+                modifColName[0] = meta.getColumnName(i+1);
                 modif[i][1] = datasave.getString(i+1);
+                modifColVal[1] = datasave.getString(i+1);
             }
+            // sans doute mieux mais doit être bien fait (i)
             //String whereUndo = undoWhereConstructor(where.toString(),modif);
             //System.out.println("oooooooooooooooooo [set] "+whereUndo);
             //System.out.println("oooooooooooooooooo"+whereUndo);
             //SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, whereUndo);
             //update.sqlQueryDo();
-            SQLInsertQuery insertQuery = new SQLInsertQuery(getTable()[0], getCon(), modif);
+            SQLInsertQuery insertQuery = new SQLInsertQuery(getTable()[0], getCon(),modifColName, modifColVal);
             insertQuery.sqlQueryDo();
         }
         SQLDeleteQuery deleteQuery = new SQLDeleteQuery(getTable()[0],getCon(), where.toString());
