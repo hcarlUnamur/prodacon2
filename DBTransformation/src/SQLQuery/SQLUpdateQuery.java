@@ -73,15 +73,17 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
                 modif[i][1] = datasave.getString(i+1);
                 modifColVal[1] = datasave.getString(i+1);
             }
-            // sans doute mieux mais doit être bien fait (i)
+            //sans doute mieux mais doit être bien fait (i)
             //String whereUndo = undoWhereConstructor(where.toString(),modif);
             //System.out.println("oooooooooooooooooo [set] "+whereUndo);
             //System.out.println("oooooooooooooooooo"+whereUndo);
             //SQLUpdateQuery update = new SQLUpdateQuery(getTable()[0], getCon(), modif, whereUndo);
             //update.sqlQueryDo();
+            System.out.println("######################################################");
             SQLInsertQuery insertQuery = new SQLInsertQuery(getTable()[0], getCon(),modifColName, modifColVal);
             insertQuery.sqlQueryDo();
         }
+        System.out.println("+######################################################+");
         SQLDeleteQuery deleteQuery = new SQLDeleteQuery(getTable()[0],getCon(), where.toString());
         deleteQuery.sqlQueryDo();
         return null;
