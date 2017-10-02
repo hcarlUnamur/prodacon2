@@ -67,7 +67,7 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
             String[] modifColName = new String[meta.getColumnCount()];
             String[] modifColVal = new String[meta.getColumnCount()];
             int length = meta.getColumnCount();
-                    for(int i=0;i<meta.getColumnCount();i++){
+            for(int i=0;i<meta.getColumnCount();i++){
                 modif[i][0] = meta.getColumnName(i+1);
                 modifColName[i] = meta.getColumnName(i+1);
                 modif[i][1] = datasave.getString(i+1);
@@ -93,17 +93,38 @@ public class SQLUpdateQuery extends SQLManipulationQuery{
         String[] modif = StringTool.UpdateSetVal(modification).split(",");
         String[] split = firstWhereDo.split("AND");
         StringBuffer out = new StringBuffer();
+        /*
+        System.out.println("################################");
+        for(String s : modif){System.out.println(s);}
+        System.out.println("--------------------------------");
+        for(String s : split){System.out.println(s);}
+        System.out.println("################################");
+        */
+        for (int i=0;i<modif.length;i++){
+            for(int j =0;j<split.length;j++ ){
+                if(modif[i].split("=")[0].replaceAll(" ", "").toUpperCase().equals(split[j].split("=")[0].replaceAll(" ", "").toUpperCase())){
+                    (modif[i])=split[j]; //+" AND 1=1 ";
+                    //out.append(" AND "+fw+" AND 1=1" );
+                }
+            }
         
-        for (String fw : split){
+        }
+        
+        for(String s : modif){
+            out.append(" And "+s);
+        }
+        out.delete(0, 4);
+        /*for (String fw : split){
             for(String m : modif ){
-                if((fw.split("=")[0]).equals(m.split("=")[0])){
-                    out.append(" AND "+m);
+                if((fw.split("=")[0]).replace(" ", "").toUpperCase().equals((m.split("=")[0]).replace(" ", "").toUpperCase())){
+                    out.append(" AND "+fw+" AND 1=1" );
                 }else{
-                    out.append(" AND "+fw);
+                    out.append(" AND "+m);
                 }
             }
         }
         out.delete(0, 4);
+        */
         return out.toString();
     }
 }
