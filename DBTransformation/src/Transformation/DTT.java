@@ -13,8 +13,8 @@ import EasySQL.ForeignKey;
  */
 public class DTT extends TypeMismatching {
 
-    public DTT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ForeignKey fk) {
-        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
+    public DTT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, String tableName, ForeignKey fk) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, tableName, fk);
     }
    
 }

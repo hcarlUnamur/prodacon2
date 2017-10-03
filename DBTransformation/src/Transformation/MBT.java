@@ -13,7 +13,9 @@ import EasySQL.ForeignKey;
  */
 public class MBT extends TypeMatching {
 
-    public MBT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ForeignKey fk) {
-        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
-    }  
+    public MBT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, String tableName, ForeignKey fk) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, tableName, fk);
+        this.addQuery(getSQLFactory().creatSQLAlterAddForeignKeyQuery(this.getTableName(), fk));
+    }
+ 
 }

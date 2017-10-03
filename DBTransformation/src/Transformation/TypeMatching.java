@@ -13,8 +13,10 @@ import EasySQL.ForeignKey;
  */
 public class TypeMatching extends DBTransformation {
 
-    public TypeMatching(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ForeignKey fk) {
-        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
+    public TypeMatching(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, String tableName, ForeignKey fk) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, tableName, fk);
     }
+
+
  
 }
