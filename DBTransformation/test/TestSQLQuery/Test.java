@@ -2,11 +2,11 @@
 
 package TestSQLQuery;
 
-import SQLQuery.Column;
-import SQLQuery.ForeignKey;
-import SQLQuery.SQLQueryFactory;
-import SQLQuery.SQLUpdateQuery;
-import SQLQuery.Table;
+import EasySQL.Column;
+import EasySQL.ForeignKey;
+import EasySQL.SQLQueryFactory;
+import EasySQL.SQLUpdateQuery;
+import EasySQL.Table;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;

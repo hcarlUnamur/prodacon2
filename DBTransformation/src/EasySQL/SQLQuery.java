@@ -1,4 +1,4 @@
-package SQLQuery;
+package EasySQL;
 
 import java.sql.*;
 

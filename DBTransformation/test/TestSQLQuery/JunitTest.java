@@ -5,17 +5,17 @@
  */
 package TestSQLQuery;
 
-import SQLQuery.Column;
-import SQLQuery.ForeignKey;
-import SQLQuery.SQLAlterTableQuery;
-import SQLQuery.SQLCreateTableQuery;
-import SQLQuery.SQLDeleteQuery;
-import SQLQuery.SQLDropTableQuery;
-import SQLQuery.SQLQueryFactory;
-import SQLQuery.SQLSelectQuery;
-import SQLQuery.SQLUpdateQuery;
-import SQLQuery.StringTool;
-import SQLQuery.Table;
+import EasySQL.Column;
+import EasySQL.ForeignKey;
+import EasySQL.SQLAlterTableQuery;
+import EasySQL.SQLCreateTableQuery;
+import EasySQL.SQLDeleteQuery;
+import EasySQL.SQLDropTableQuery;
+import EasySQL.SQLQueryFactory;
+import EasySQL.SQLSelectQuery;
+import EasySQL.SQLUpdateQuery;
+import EasySQL.StringTool;
+import EasySQL.Table;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

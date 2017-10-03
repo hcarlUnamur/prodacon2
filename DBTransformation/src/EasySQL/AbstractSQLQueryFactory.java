@@ -1,5 +1,5 @@
 
-package SQLQuery;
+package EasySQL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

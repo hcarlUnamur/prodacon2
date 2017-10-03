@@ -1,15 +1,12 @@
-package SQLQuery;
+package EasySQL;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class SQLStructuresQuery extends SQLQuery {
+public class SQLManipulationQuery extends SQLQuery{
 
-    public SQLStructuresQuery(String[] table, Connection con) {
+    public SQLManipulationQuery(String[] table, Connection con) {
         super(table, con);
-    }
-    public SQLStructuresQuery(String table, Connection con) {
-        super(new String[]{table}, con);
     }
     
     
