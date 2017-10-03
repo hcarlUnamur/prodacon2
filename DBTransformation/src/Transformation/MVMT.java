@@ -5,23 +5,16 @@
  */
 package Transformation;
 
+import EasySQL.ForeignKey;
+
 /**
  *
  * @author carl_
  */
 public class MVMT extends TypeMatching {
 
-    public MVMT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
-        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
+    public MVMT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ForeignKey fk) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
     }
 
-    public void transfrom() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
-    public void unDoTransformation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

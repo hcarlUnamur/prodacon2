@@ -16,15 +16,5 @@ public class TypeMatching extends DBTransformation {
     public TypeMatching(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ForeignKey fk) {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
     }
-
-    @Override
-    public void transfrom() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void unDoTransformation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+ 
 }

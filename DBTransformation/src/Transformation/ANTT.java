@@ -17,14 +17,4 @@ public class ANTT extends TypeMismatching {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
     }
 
-    @Override
-    public void transfrom() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void unDoTransformation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }
