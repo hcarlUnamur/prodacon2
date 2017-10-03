@@ -5,16 +5,17 @@
  */
 package Transformation;
 
+import EasySQL.ForeignKey;
+
 /**
  *
  * @author carl_
  */
 public class TypeMatching extends DBTransformation {
 
-    public TypeMatching(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
-        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
+    public TypeMatching(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ForeignKey fk) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
     }
-
 
     @Override
     public void transfrom() {

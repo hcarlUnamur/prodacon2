@@ -5,16 +5,18 @@
  */
 package Transformation;
 
+import EasySQL.ForeignKey;
+
 /**
  *
  * @author carl_
  */
 public class DTT extends TypeMismatching {
 
-    public DTT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
-        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
+    public DTT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ForeignKey fk) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
     }
-
+  
     @Override
     public void transfrom() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

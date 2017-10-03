@@ -5,14 +5,16 @@
  */
 package Transformation;
 
+import EasySQL.ForeignKey;
+
 /**
  *
  * @author carl_
  */
 public class MBT extends TypeMatching {
 
-    public MBT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
-        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
+    public MBT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ForeignKey fk) {
+        super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, fk);
     }
 
     public void transfrom() {
