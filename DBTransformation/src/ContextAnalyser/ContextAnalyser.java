@@ -82,17 +82,17 @@ public class ContextAnalyser {
             // test if same type ( a one parameter type) but with different length      
             if (isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE)){
                 if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
-                    System.out.println("Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
+                    System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
                 }else{
-                    System.out.println("Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +fkColumn.getColumnType() );
+                    System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +fkColumn.getColumnType() );
                 }
             }
             
             if (isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE)){
                 int maxlength1 = getTypelength1(referencedColumn)>getTypelength1(fkColumn) ? getTypelength1(referencedColumn) :getTypelength1(fkColumn);  
                 int maxlength2 = getTypelength2(referencedColumn)>getTypelength2(fkColumn) ? getTypelength2(referencedColumn) :getTypelength2(fkColumn);
-                System.out.println("Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +getTypeName(referencedColumn)+"("+maxlength1+","+maxlength2+")" );
-                System.out.println("Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +getTypeName(fkColumn)+"("+maxlength1+","+maxlength2+")" );
+                System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +getTypeName(referencedColumn)+"("+maxlength1+","+maxlength2+")" );
+                System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +getTypeName(fkColumn)+"("+maxlength1+","+maxlength2+")" );
                 
             }
             
