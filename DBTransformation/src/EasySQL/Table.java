@@ -80,7 +80,7 @@ public class Table {
                 );
         ResultSet resultfk = select2.sqlQueryDo();
         while(resultfk.next()){
-            foreignKeys.add(new ForeignKey(resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("REFERENCED_COLUMN_NAME"), resultfk.getString("COLUMN_NAME"),resultfk.getString("CONSTRAINT_NAME")));
+            foreignKeys.add(new ForeignKey(resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("REFERENCED_COLUMN_NAME"), resultfk.getString("COLUMN_NAME"),resultfk.getString("CONSTRAINT_NAME"),resultfk.getString("TABLE_NAME")));
         }
         //load PrimaryKey
         SQLSelectQuery select3 = new SQLSelectQuery(

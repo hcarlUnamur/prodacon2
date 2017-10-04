@@ -30,7 +30,8 @@ public class MVMT extends TypeMatching {
             ResultSetMetaData metaData = oldData.getMetaData();
             while(oldData.next()){
                 String transformedData = transformationFunction.apply(oldData.getString(getFk().getForeingKeyColumn()));
-                addQuery(getSQLFactory().createSQLUpdateQuery(
+                addQuery(
+                            getSQLFactory().createSQLUpdateQuery(
                             getTableName(),
                             new String[][]{{getFk().getForeingKeyColumn(),transformedData}},
                             resultSetToWhereString(oldData))
@@ -51,4 +52,6 @@ public class MVMT extends TypeMatching {
         out.delete(0, 4);
         return out.toString();
     }
+
+    
 }

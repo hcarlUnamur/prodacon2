@@ -5,7 +5,24 @@ public class ForeignKey {
     private String ReferencedTableName;
     private String ReferencedColumn;
     private String foreingKeyColumn;
+    private String foreingKeyTable;
     private String constraintName;
+
+    public ForeignKey(String ReferencedTableName, String ReferencedColumn, String foreingKeyColumn, String foreingKeyTable, String constraintName) {
+        this.ReferencedTableName = ReferencedTableName;
+        this.ReferencedColumn = ReferencedColumn;
+        this.foreingKeyColumn = foreingKeyColumn;
+        this.foreingKeyTable = foreingKeyTable;
+        this.constraintName = constraintName;
+    }
+
+    public String getForeingKeyTable() {
+        return foreingKeyTable;
+    }
+
+    public void setForeingKeyTable(String foreingKeyTable) {
+        this.foreingKeyTable = foreingKeyTable;
+    }
 
     public String getReferencedTableName() {
         return ReferencedTableName;
