@@ -82,12 +82,11 @@ public class ContextAnalyser {
     private void typeMismatching(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn ){
         System.out.println("*****************Type mismatching ");
         
-        
         if (isTheSameType(fkColumn, referencedColumn)){
             System.out.println("*****************Same type but different length ");
             // test if same type ( a one parameter type) but with different length
-            System.out.println(referencedColumn.getColumnType()+" / "+ fkColumn.getColumnType());
-            System.out.println((referencedColumn.getColumnType().split("(|)|,"))[1] +" / "+ (fkColumn.getColumnType().split("(|)|,"))[1]);
+            //System.out.println(referencedColumn.getColumnType()+" / "+ fkColumn.getColumnType());
+            //System.out.println((referencedColumn.getColumnType().split("\\(|\\)|,"))[1] +" / "+ (fkColumn.getColumnType().split("\\(|\\)|,"))[1]);
             if (isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE)){
                 System.out.println("*****************Case 1 ");
                 if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
@@ -118,24 +117,24 @@ public class ContextAnalyser {
 
     //look if it the column have the same type but can have differents length 
     private static boolean isTheSameType(Column col1,Column col2){
-      return col1.getColumnType().split("(|)")[0].equals(col2.getColumnType().split("(|)")[0]);
+      return col1.getColumnType().split("\\(|\\)")[0].equals(col2.getColumnType().split("\\(|\\)")[0]);
     }
     
     private static String getTypeName(Column col){
-        return col.getColumnType().split("(|)")[0];
+        return col.getColumnType().split("\\(|\\)")[0];
     }
     
     private static int getTypelength1(Column col){
-        return Integer.parseInt(col.getColumnType().split("(|)|,")[1]);
+        return Integer.parseInt(col.getColumnType().split("\\(|\\)|,")[1]);
     }
     
     private static int getTypelength2(Column col){
-        return Integer.parseInt(col.getColumnType().split("(|)|,")[2]);
+        return Integer.parseInt(col.getColumnType().split("\\(|\\)|,")[2]);
     }
     
     private static boolean isIn(String s , String[] table){
             for(String e : table){
-                if(s.equals(e)){return true;}
+                if(s.toUpperCase().equals(e.toUpperCase())){return true;}
             }
         return false;
     };
