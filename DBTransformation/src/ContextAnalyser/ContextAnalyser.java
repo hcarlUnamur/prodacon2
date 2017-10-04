@@ -44,7 +44,7 @@ public class ContextAnalyser {
         for(ForeignKey fk : fks){
             try {
                 Table usedTable = factory.loadTable(fk.getForeingKeyTable());
-                Table referencedTable = factory.loadTable(fk.getForeingKeyTable());
+                Table referencedTable = factory.loadTable(fk.getReferencedTableName());
                 
                System.out.println("#################table Name[used]###########################"); 
                usedTable.getTablecolumn().forEach((o)->System.out.println(o.getColumnName()));
