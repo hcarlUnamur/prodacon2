@@ -117,7 +117,7 @@ public class ContextAnalyser {
     }
     
     private static String getTypeName(Column col){
-        return col.getColumnType().split("(")[0];
+        return col.getColumnType().split("(|)")[0];
     }
     
     private static int getTypelength1(Column col){
