@@ -87,6 +87,7 @@ public class ContextAnalyser {
             System.out.println("*****************Same type but different length ");
             // test if same type ( a one parameter type) but with different length      
             if (isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE)){
+                System.out.println("*****************Case 1 ");
                 if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
                     System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
                 }else{
@@ -95,6 +96,7 @@ public class ContextAnalyser {
             }
             
             if (isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE)){
+                System.out.println("*****************Case 2 ");
                 int maxlength1 = getTypelength1(referencedColumn)>getTypelength1(fkColumn) ? getTypelength1(referencedColumn) :getTypelength1(fkColumn);  
                 int maxlength2 = getTypelength2(referencedColumn)>getTypelength2(fkColumn) ? getTypelength2(referencedColumn) :getTypelength2(fkColumn);
                 System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +getTypeName(referencedColumn)+"("+maxlength1+","+maxlength2+")" );
@@ -103,6 +105,7 @@ public class ContextAnalyser {
             }
             
             if(!isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE) && isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE) ){
+                System.out.println("*****************Case 3 ");
                 System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
             }
             
