@@ -105,7 +105,7 @@ public class ContextAnalyser {
                 
             }
             
-            if(!isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE) && isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE) ){
+            if(!isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE) && !isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE) ){
                 System.out.println("*****************Case 3 ");
                 System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
             }
