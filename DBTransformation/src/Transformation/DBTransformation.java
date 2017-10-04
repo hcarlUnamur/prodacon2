@@ -70,6 +70,7 @@ public abstract class DBTransformation {
         this.dataBaseLogin = dataBaseLogin;
         this.dataBasePassword = dataBasePassword;
         this.tableName=tableName;
+        this.listQuery = new ArrayList();
         this.sqlFactory = new SQLQueryFactory(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
         this.fk = fk;
     }
