@@ -70,11 +70,11 @@ public class ContextAnalyser {
     }
     
     private void perfectTypeMatching(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn ){
-        System.out.println("perfect Type Matching");       
+        System.out.println("*****************Perfect Type Matching");       
     }
     
     private void typeMismatching(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn ){
-        System.out.println("Type mismatching ");
+        System.out.println("*****************Type mismatching ");
         
         
         if (isTheSameType(fkColumn, referencedColumn)){
@@ -97,7 +97,7 @@ public class ContextAnalyser {
             }
             
             if(!isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE) && isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE) ){
-                System.out.println("Different type size but don't need changement (is a zero parameter type) ");
+                System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
             }
             
             
