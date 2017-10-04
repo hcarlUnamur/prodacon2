@@ -46,6 +46,12 @@ public class ContextAnalyser {
                 Table usedTable = factory.loadTable(fk.getForeingKeyTable());
                 Table referencedTable = factory.loadTable(fk.getForeingKeyTable());
                 
+               System.out.println("#################table Name[used]###########################"); 
+               usedTable.getTablecolumn().forEach((o)->System.out.println(o.getColumnName()));
+               System.out.println("#################table Name[ref]###########################");
+               referencedTable.getTablecolumn().forEach((o)->System.out.println(o.getColumnName()));
+               System.out.println("############################################################"); 
+               
                 Column fkColumn = usedTable.getTablecolumn().stream()
                                             .filter(c-> c.getColumnName().equals(fk.getForeingKeyColumn()))
                                             .findFirst()
