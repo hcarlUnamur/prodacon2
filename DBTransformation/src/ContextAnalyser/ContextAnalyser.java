@@ -70,21 +70,29 @@ public class ContextAnalyser {
     }
     
     private void perfectTypeMatching(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn ){
-        System.out.println("*****************Perfect Type Matching");       
+        System.out.println("*****************Perfect Type Matching");
+        // @ToDo : ajouter action 
     }
     
     private void typeMismatching(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn ){
         System.out.println("*****************Type mismatching ");
         
         if (isTheSameType(fkColumn, referencedColumn)){
+            sameTypeButDifferentlength(usedTable, referencedTable, fkColumn, referencedColumn);
+        }
+    }
+    
+    private static void sameTypeButDifferentlength(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn){
             System.out.println("*****************Same type but different length ");
 
             if (isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE)){
                 System.out.println("*****************Case 1 ");
                 if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
                     System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
+                    // @ToDo : ajouter action 
                 }else{
                     System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +fkColumn.getColumnType() );
+                    // @ToDo : ajouter action 
                 }
             }
             
@@ -94,19 +102,16 @@ public class ContextAnalyser {
                 int maxlength2 = getTypelength2(referencedColumn)>getTypelength2(fkColumn) ? getTypelength2(referencedColumn) :getTypelength2(fkColumn);
                 System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +getTypeName(referencedColumn)+"("+maxlength1+","+maxlength2+")" );
                 System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +getTypeName(referencedColumn)+"("+maxlength1+","+maxlength2+")" );
-                
+                // @ToDo : ajouter action  
             }
             
             if(!isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE) && !isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE) ){
                 System.out.println("*****************Case 3 ");
                 System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
+                // @ToDo : ajouter action 
             }
-            
-            
-            
-        }
     }
-
+    
     //look if it the column have the same type but can have differents length 
     private static boolean isTheSameType(Column col1,Column col2){
       return col1.getColumnType().split("\\(|\\)")[0].equals(col2.getColumnType().split("\\(|\\)")[0]);
