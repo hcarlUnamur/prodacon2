@@ -86,8 +86,8 @@ public class ContextAnalyser {
         if (isTheSameType(fkColumn, referencedColumn)){
             System.out.println("*****************Same type but different length ");
             // test if same type ( a one parameter type) but with different length
-            System.out.println(referencedColumn.getColumnName()+" / "+ fkColumn.getColumnType());
-            System.out.println(referencedColumn.getColumnName().split("(|)|,")[1] +" / "+ fkColumn.getColumnType().split("(|)|,")[1]);
+            System.out.println(referencedColumn.getColumnType()+" / "+ fkColumn.getColumnType());
+            System.out.println(referencedColumn.getColumnType().split("(|)|,")[1] +" / "+ fkColumn.getColumnType().split("(|)|,")[1]);
             if (isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE)){
                 System.out.println("*****************Case 1 ");
                 if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
