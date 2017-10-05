@@ -25,6 +25,7 @@ public class Test {
             listCol1.add(new Column("1id", "int"));
             listCol1.add(new Column("1name", "varchar(45)"));
             listCol1.add(new Column("1trueFalse", "int(11)"));
+            listCol1.add(new Column("1float", "float(3,2)"));
             Table t1 = new Table("testTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
@@ -33,6 +34,8 @@ public class Test {
             listCol2.add(new Column("2id", "int"));
             listCol2.add(new Column("2city", "varchar(45)"));
             listCol2.add(new Column("2reference", "int"));
+            listCol2.add(new Column("2float", "float(8,5)"));
+            
             
             Table t2 = new Table("testTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
@@ -47,16 +50,19 @@ public class Test {
             SQLCreateTableQuery add3 = sqlF.creatSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
             
+            
             ForeignKey fk1 = new ForeignKey("testTable1", "1id", "2reference", "testTable2", "FK1");
             ForeignKey fk2 = new ForeignKey("testTable1", "1id", "2city", "testTable2", "FK2");
             ForeignKey fk3 = new ForeignKey("testTable1", "1trueFalse", "3reference", "testTable3", "FK3");
             ForeignKey fk4 = new ForeignKey("testTable1", "1name", "3city", "testTable3", "FK4");
+            ForeignKey fk5 = new ForeignKey("testTable1", "1float", "2float", "testTable2", "FK5");
             
             ArrayList<ForeignKey> lFK = new ArrayList<>();
             lFK.add(fk1);
             lFK.add(fk2);
             lFK.add(fk3);
             lFK.add(fk4);
+            lFK.add(fk5);
             
             ContextAnalyser ca = new ContextAnalyser("localhost/mydb", "3306", "root", "root", lFK);
             
