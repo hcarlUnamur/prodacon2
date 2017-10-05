@@ -27,7 +27,7 @@ public class Test {
             listCol1.add(new Column("1trueFalse", "int(11)"));
             listCol1.add(new Column("1float", "float(3,2)"));
             Table t1 = new Table("testTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
@@ -38,7 +38,7 @@ public class Test {
             
             
             Table t2 = new Table("testTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             ArrayList<Column> listCol3 = new ArrayList<>();
@@ -47,7 +47,7 @@ public class Test {
             listCol3.add(new Column("3reference", "int(3)"));
             
             Table t3 = new Table("testTable3", listCol3, new ArrayList<ForeignKey>(), "3id");
-            SQLCreateTableQuery add3 = sqlF.creatSQLCreateTableQuery(t3);
+            SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
             
             
