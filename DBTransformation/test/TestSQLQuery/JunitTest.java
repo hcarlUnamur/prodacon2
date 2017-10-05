@@ -75,7 +75,7 @@ public class JunitTest {
         System.err.println("ko! : " + "TestSQLQuery.JunitTest." + functionName + "()");
         for (String l : ls) {
             try {
-                sqlF.creatDropTableQuery(l).sqlQueryDo();
+                sqlF.createDropTableQuery(l).sqlQueryDo();
             } catch (Exception ex1) {
             }
         }
@@ -142,9 +142,9 @@ public class JunitTest {
     }
 
     public void PeuplerTable(String tableName) throws SQLException {
-        sqlF.creatSQLInsertQuery(tableName, new String[]{"1", "Strong", "1"}).sqlQueryDo();
-        sqlF.creatSQLInsertQuery(tableName, new String[]{"6", "String", "1"}).sqlQueryDo();
-        sqlF.creatSQLInsertQuery(tableName, new String[]{"5", "Strang", "0"}).sqlQueryDo();
+        sqlF.createSQLInsertQuery(tableName, new String[]{"1", "Strong", "1"}).sqlQueryDo();
+        sqlF.createSQLInsertQuery(tableName, new String[]{"6", "String", "1"}).sqlQueryDo();
+        sqlF.createSQLInsertQuery(tableName, new String[]{"5", "Strang", "0"}).sqlQueryDo();
     }
 
     public int PeuplementTest(String functionName, String tableName) throws Exception {
@@ -162,7 +162,7 @@ public class JunitTest {
     public void testCreateTableQuery1() {
         int result = 0;
         try {
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery("testCreateTable1", new String[]{"id int", "name varchar(45)", "trueFalse bool"});
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery("testCreateTable1", new String[]{"id int", "name varchar(45)", "trueFalse bool"});
             add1.sqlQueryDo();
             add1.sqlQueryUndo();
 
@@ -182,7 +182,7 @@ public class JunitTest {
             listCol.add(new Column("id", "int"));
             listCol.add(new Column("name", "varchar(45)"));
             listCol.add(new Column("trueFalse", "bool"));
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery("testCreateTable2", listCol);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery("testCreateTable2", listCol);
             add2.sqlQueryDo();
             add2.sqlQueryUndo();
             System.out.println("ok");
@@ -198,7 +198,7 @@ public class JunitTest {
         int result = 0;
         try {
             Table t3 = CreateTable1("testCreateTable3");
-            SQLCreateTableQuery add3 = sqlF.creatSQLCreateTableQuery(t3);
+            SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
             add3.sqlQueryUndo();
 
@@ -216,11 +216,11 @@ public class JunitTest {
         int result = 0;
         try {
             Table t1 = CreateTable1("testDropTable1");
-            sqlF.creatSQLCreateTableQuery(t1).sqlQueryDo();
+            sqlF.createSQLCreateTableQuery(t1).sqlQueryDo();
 
             PeuplerTable("testDropTable1");
 
-            SQLDropTableQuery drop1 = sqlF.creatDropTableQuery("testDropTable1");
+            SQLDropTableQuery drop1 = sqlF.createDropTableQuery("testDropTable1");
             drop1.sqlQueryDo();
             drop1.sqlQueryUndo();
 
@@ -241,11 +241,11 @@ public class JunitTest {
         int result = 0;
         try {
             Table t2 = CreateTable1("testDropTable2");
-            sqlF.creatSQLCreateTableQuery(t2).sqlQueryDo();
+            sqlF.createSQLCreateTableQuery(t2).sqlQueryDo();
 
             PeuplerTable("testDropTable2");
 
-            SQLDropTableQuery drop2 = sqlF.creatDropTableQuery(t2);
+            SQLDropTableQuery drop2 = sqlF.createDropTableQuery(t2);
             drop2.sqlQueryDo();
             drop2.sqlQueryUndo();
 
@@ -265,7 +265,7 @@ public class JunitTest {
 
         int result = 0;
         try {
-            sqlF.creatSQLCreateTableQuery("testInsertTable1", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
+            sqlF.createSQLCreateTableQuery("testInsertTable1", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
             PeuplerTable("testInsertTable1");
             //SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable1", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
             SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable1", "1=1");
@@ -274,7 +274,7 @@ public class JunitTest {
 
             result = PeuplementTest("testInsertDeleteQuery1", "testInsertTable1");
 
-            sqlF.creatDropTableQuery("testInsertTable1").sqlQueryDo();
+            sqlF.createDropTableQuery("testInsertTable1").sqlQueryDo();
             System.out.println("ok");
         } catch (Exception ex) {
             ErrorGestion(ex, "testInsertDeleteQuery1", new ArrayList<>(Arrays.asList("testInsertTable1")));
@@ -288,9 +288,9 @@ public class JunitTest {
 
         int result = 0;
         try {
-            sqlF.creatSQLCreateTableQuery("testInsertTable2", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
+            sqlF.createSQLCreateTableQuery("testInsertTable2", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
 
-            sqlF.creatSQLInsertQuery("testInsertTable2", new String[]{"id", "trueFalse"}, new String[]{"1", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testInsertTable2", new String[]{"id", "trueFalse"}, new String[]{"1", "1"}).sqlQueryDo();
 
             //SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable2", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
             SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable2", "1=1");
@@ -305,7 +305,7 @@ public class JunitTest {
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testInsertDeleteQuery2()");
                 result = 1;
             }
-            sqlF.creatDropTableQuery("testInsertTable2").sqlQueryDo();
+            sqlF.createDropTableQuery("testInsertTable2").sqlQueryDo();
             System.out.println("ok");
         } catch (Exception ex) {
             ErrorGestion(ex, "testInsertDeleteQuery2", new ArrayList<>(Arrays.asList("testInsertTable2")));
@@ -319,7 +319,7 @@ public class JunitTest {
 
         int result = 0;
         try {
-            sqlF.creatSQLCreateTableQuery("testUpdateTable", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
+            sqlF.createSQLCreateTableQuery("testUpdateTable", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
             PeuplerTable("testUpdateTable");
             //String where ="id=1 and name=\"Strong\" and trueFalse=\"1\" "; //new String[][]{{"id", "1"}, {"name", "Strong"}, {"trueFalse", "1"}}
             String where = "1=1";
@@ -329,7 +329,7 @@ public class JunitTest {
 
             result = PeuplementTest("testUpdateQuery", "testUpdateTable");
 
-            sqlF.creatDropTableQuery("testUpdateTable").sqlQueryDo();
+            sqlF.createDropTableQuery("testUpdateTable").sqlQueryDo();
             System.out.println("ok");
         } catch (Exception ex) {
             ErrorGestion(ex, "testUpdateQuery", new ArrayList<>(Arrays.asList("testUpdateTable")));
@@ -343,10 +343,10 @@ public class JunitTest {
 
         int result = 0;
         try {
-            sqlF.creatSQLCreateTableQuery("testSelectTable", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testSelectTable", new String[]{"3", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLCreateTableQuery("testSelectTable", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testSelectTable", new String[]{"3", "Strong", "1"}).sqlQueryDo();
             result = SelectForTest("testSelectQuery", "testSelectTable", new String[]{"id", "name", "trueFalse"}, new String[]{"3", "Strong", "1"});
-            sqlF.creatDropTableQuery("testSelectTable").sqlQueryDo();
+            sqlF.createDropTableQuery("testSelectTable").sqlQueryDo();
         } catch (Exception ex) {
             ErrorGestion(ex, "testSelectQuery", new ArrayList<>(Arrays.asList("testSelectTable")));
             result = 1;
@@ -360,9 +360,9 @@ public class JunitTest {
         int result = 0;
         try {
             Table t1 = CreateTable1("testAddPrimaryKeyTable");
-            SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add = sqlF.createSQLCreateTableQuery(t1);
             add.sqlQueryDo();
-            SQLAlterTableQuery pk = sqlF.creatSQLAlterAddPrimaryKeyQuery("testAddPrimaryKeyTable", "id");
+            SQLAlterTableQuery pk = sqlF.createSQLAlterAddPrimaryKeyQuery("testAddPrimaryKeyTable", "id");
 
             pk.sqlQueryDo();
             pk.sqlQueryUndo();
@@ -370,7 +370,7 @@ public class JunitTest {
 
             result = PrimaryKeyAnalyser("AlterAddDropPrimaryKeyQuery", "testAddPrimaryKeyTable", "id");
 
-            sqlF.creatSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable").sqlQueryDo();
+            sqlF.createSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable").sqlQueryDo();
             add.sqlQueryUndo();
         } catch (Exception ex) {
             ErrorGestion(ex, "AlterAddDropPrimaryKeyQuery", new ArrayList<>(Arrays.asList("testAddPrimaryKeyTable")));
@@ -385,22 +385,22 @@ public class JunitTest {
         int result = 0;
         try {
             Table t1 = CreateTable1("testAddForeignKeyTable1");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
-            sqlF.creatSQLAlterAddPrimaryKeyQuery("testAddForeignKeyTable1", "id").sqlQueryDo();
+            sqlF.createSQLAlterAddPrimaryKeyQuery("testAddForeignKeyTable1", "id").sqlQueryDo();
 
             Table t2 = CreateTable2("testAddForeignKeyTable2");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
 
             ForeignKey fk = new ForeignKey(t1.getName(), "id", "reference", "FK1");
-            sqlF.creatSQLAlterAddForeignKeyQuery(t2.getName(), fk).sqlQueryDo();
+            sqlF.createSQLAlterAddForeignKeyQuery(t2.getName(), fk).sqlQueryDo();
 
             result = ForeignKeyAnalyser("AlterAddDropForeignKeyQuery", "testAddForeignKeyTable2", "reference", "FK1");
 
-            sqlF.creatSQLAlterDropForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), t1).sqlQueryDo();
-            sqlF.creatDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();
-            sqlF.creatDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();
+            sqlF.createSQLAlterDropForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), t1).sqlQueryDo();
+            sqlF.createDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();
+            sqlF.createDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();
             System.out.println("ok");
         } catch (Exception ex) {
             ErrorGestion(ex, "AlterAddDropForeignKeyQuery", new ArrayList<>(Arrays.asList("testAddForeignKeyTable2", "testAddForeignKeyTable1")));
@@ -415,9 +415,9 @@ public class JunitTest {
         int result = 0;
         try {
             Table t1 = CreateTable1("testAddDropColumnTable");
-            SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add = sqlF.createSQLCreateTableQuery(t1);
             add.sqlQueryDo();
-            SQLAlterTableQuery col = sqlF.creatSQLAltertableAddColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)"));
+            SQLAlterTableQuery col = sqlF.createSQLAltertableAddColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)"));
 
             col.sqlQueryDo();
             col.sqlQueryUndo();
@@ -425,7 +425,7 @@ public class JunitTest {
 
             result = ColumnAnalyser("AlterAddDropColumnQuery", "testAddDropColumnTable", "city", "varchar(45)");
 
-            sqlF.creatSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
+            sqlF.createSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
             add.sqlQueryUndo();
         } catch (Exception ex) {
             ErrorGestion(ex, "AlterAddDropColumnQuery", new ArrayList<>(Arrays.asList("testAddDropColumnTable")));
@@ -440,9 +440,9 @@ public class JunitTest {
         int result = 0;
         try {
             Table t1 = CreateTable1("testModifyColumnTypeTable");
-            SQLCreateTableQuery add = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add = sqlF.createSQLCreateTableQuery(t1);
             add.sqlQueryDo();
-            SQLAlterTableQuery mCol = sqlF.creatSQLAlterModifyColumnTypeQuery("testModifyColumnTypeTable", new Column("name", "int"));
+            SQLAlterTableQuery mCol = sqlF.createSQLAlterModifyColumnTypeQuery("testModifyColumnTypeTable", new Column("name", "int"));
             mCol.sqlQueryDo();
 
             result = ColumnAnalyser("AlterModifyColumnTypeQuery", "testModifyColumnTypeTable", "name", "int(11)");
@@ -467,7 +467,7 @@ public class JunitTest {
             listCol.add(new Column("name", "varchar(45)"));
             listCol.add(new Column("trueFalse", "bool"));
             Table t1 = new Table("tableLoadTable1", listCol, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
 
             ArrayList<Column> listCol2 = new ArrayList<>();
@@ -479,7 +479,7 @@ public class JunitTest {
 
             Table t2 = new Table("tableLoadTable2", listCol2, new ArrayList<ForeignKey>(), "id");
             t2.addForeignKey(fk);
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
 
             Table tLoadTable = new Table();
@@ -526,7 +526,7 @@ public class JunitTest {
             listCol1.add(new Column("name", "varchar(45)"));
             listCol1.add(new Column("trueFalse", "bool"));
             Table t1 = new Table("testMVMTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
@@ -535,12 +535,12 @@ public class JunitTest {
             listCol2.add(new Column("reference", "varchar(45)"));
             
             Table t2 = new Table("testMVMTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            sqlF.creatSQLInsertQuery("testMVMTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testMVMTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testMVMTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testMVMTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
             ForeignKey fk = new ForeignKey("testMVMTTable1", "id", "reference", "FKMVMT");
             
@@ -573,7 +573,7 @@ public class JunitTest {
             listCol1.add(new Column("name", "varchar(45)"));
             listCol1.add(new Column("trueFalse", "bool"));
             Table t1 = new Table("testMBTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
@@ -582,12 +582,12 @@ public class JunitTest {
             listCol2.add(new Column("reference", "varchar(45)"));
             
             Table t2 = new Table("testMBTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            sqlF.creatSQLInsertQuery("testMBTTable1", new String[]{"coucou", "Strong", "1"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testMBTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testMBTTable1", new String[]{"coucou", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testMBTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
             ForeignKey fk = new ForeignKey("testMBTTable1", "id", "reference", "FKMBT");
             
@@ -620,7 +620,7 @@ public class JunitTest {
             listCol1.add(new Column("name", "varchar(45)"));
             listCol1.add(new Column("trueFalse", "bool"));
             Table t1 = new Table("testLMTTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
@@ -629,12 +629,12 @@ public class JunitTest {
             listCol2.add(new Column("reference", "int"));
             
             Table t2 = new Table("testLMTTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            sqlF.creatSQLInsertQuery("testLMTTTable1", new String[]{"1", "Strong", "1"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testLMTTTable2", new String[]{"deux", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testLMTTTable1", new String[]{"1", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testLMTTTable2", new String[]{"deux", "Strong", "1"}).sqlQueryDo();
             
             ForeignKey fk = new ForeignKey("testLMTTTable1", "id", "reference", "FKLMTT");
             
@@ -668,7 +668,7 @@ public class JunitTest {
             listCol1.add(new Column("name", "varchar(45)"));
             listCol1.add(new Column("trueFalse", "bool"));
             Table t1 = new Table("testANTTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
@@ -677,12 +677,12 @@ public class JunitTest {
             listCol2.add(new Column("reference", "varchar(45)"));
             
             Table t2 = new Table("testANTTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            sqlF.creatSQLInsertQuery("testANTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testANTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testANTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testANTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
             ForeignKey fk = new ForeignKey("testANTTTable1", "id", "reference", "FKANTT");
             
@@ -717,7 +717,7 @@ public class JunitTest {
             listCol1.add(new Column("name", "varchar(45)"));
             listCol1.add(new Column("trueFalse", "bool"));
             Table t1 = new Table("testDTTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
@@ -726,12 +726,12 @@ public class JunitTest {
             listCol2.add(new Column("reference", "varchar(45)"));
             
             Table t2 = new Table("testDTTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            sqlF.creatSQLInsertQuery("testDTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testDTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testDTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testDTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
             ForeignKey fk = new ForeignKey("testDTTTable1", "id", "reference", "FKDTT");
             
@@ -766,7 +766,7 @@ public class JunitTest {
             listCol1.add(new Column("name", "varchar(45)"));
             listCol1.add(new Column("trueFalse", "bool"));
             Table t1 = new Table("testNTTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add1 = sqlF.creatSQLCreateTableQuery(t1);
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
@@ -775,12 +775,12 @@ public class JunitTest {
             listCol2.add(new Column("reference", "varchar(45)"));
             
             Table t2 = new Table("testNTTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
-            SQLCreateTableQuery add2 = sqlF.creatSQLCreateTableQuery(t2);
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            sqlF.creatSQLInsertQuery("testNTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
-            sqlF.creatSQLInsertQuery("testNTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testNTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testNTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
             ForeignKey fk = new ForeignKey("testNTTTable1", "id", "reference", "FKNTT");
             

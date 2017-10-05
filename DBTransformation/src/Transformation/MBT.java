@@ -15,7 +15,7 @@ public class MBT extends TypeMatching {
 
     public MBT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, String tableName, ForeignKey fk) {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, tableName, fk);
-        this.addQuery(getSQLFactory().creatSQLAlterAddForeignKeyQuery(this.getTableName(), fk));
+        this.addQuery(getSQLFactory().createSQLAlterAddForeignKeyQuery(this.getTableName(), fk));
     }
  
 }

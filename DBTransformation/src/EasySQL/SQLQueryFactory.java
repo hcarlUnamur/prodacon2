@@ -13,31 +13,31 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return (new Table(tableName, this.getConn()));
     }
     
-    public SQLCreateTableQuery creatSQLCreateTableQuery(String tableName,String[] columnsAndType){
+    public SQLCreateTableQuery createSQLCreateTableQuery(String tableName,String[] columnsAndType){
         return new SQLCreateTableQuery(tableName, getConn(), columnsAndType);
     }
     
-    public SQLCreateTableQuery creatSQLCreateTableQuery(String tableName,ArrayList<Column> columns){
+    public SQLCreateTableQuery createSQLCreateTableQuery(String tableName,ArrayList<Column> columns){
         return new SQLCreateTableQuery(tableName, getConn(), columns);
     }
     
-    public SQLCreateTableQuery creatSQLCreateTableQuery(Table table){
+    public SQLCreateTableQuery createSQLCreateTableQuery(Table table){
         return new SQLCreateTableQuery(table, getConn());
     }
       
-    public SQLDropTableQuery creatDropTableQuery (String tableName){
+    public SQLDropTableQuery createDropTableQuery (String tableName){
         return new SQLDropTableQuery(tableName, getConn());
     }
     
-    public SQLDropTableQuery creatDropTableQuery (Table table){
+    public SQLDropTableQuery createDropTableQuery (Table table){
         return new SQLDropTableQuery(table.getName(), getConn());
     }
     
-    public SQLInsertQuery creatSQLInsertQuery (String table, String[] values){
+    public SQLInsertQuery createSQLInsertQuery (String table, String[] values){
         return new SQLInsertQuery(table, getConn(), values);
     }
     
-    public SQLInsertQuery creatSQLInsertQuery (String table, String[] columns, String[] values){
+    public SQLInsertQuery createSQLInsertQuery (String table, String[] columns, String[] values){
         return new SQLInsertQuery(table, getConn(), columns, values);
     }
     
@@ -60,51 +60,51 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return new SQLUpdateQuery(table, getConn(), setValues, whereValues);
     }
     
-    public SQLAlterTableQuery creatSQLAltertableAddColumnQuery(String table, Column column){
+    public SQLAlterTableQuery createSQLAltertableAddColumnQuery(String table, Column column){
         return SQLAlterTableQuery.CreateAddColumnQuery(table, getConn(), column);  
     }
     
-    public SQLAlterTableQuery creatSQLAlterDropColumnQuery(String table, Column column){
+    public SQLAlterTableQuery createSQLAlterDropColumnQuery(String table, Column column){
         return SQLAlterTableQuery.CreateDropColumnQuery(table, getConn(), column);
     }
 ;
-    public SQLAlterTableQuery creatSQLAlterModifyColumnTypeQuery(String table, Column column){
+    public SQLAlterTableQuery createSQLAlterModifyColumnTypeQuery(String table, Column column){
         return SQLAlterTableQuery.CreateModifyColumnTypeQuery(table, getConn(), column);
     }
     
-    public SQLAlterTableQuery creatSQLAlterAddForeignKeyQuery(String table,String constraintName, Column column , Table referentialTable){
+    public SQLAlterTableQuery createSQLAlterAddForeignKeyQuery(String table,String constraintName, Column column , Table referentialTable){
         return SQLAlterTableQuery.CreateAddForeignKeyQuery(table, getConn(), constraintName, column, referentialTable);
     }
     
-    public SQLAlterTableQuery creatSQLAlterAddForeignKeyQuery(String table,String constraintName, Column column , String referentialTable, String referentialColumn){
+    public SQLAlterTableQuery createSQLAlterAddForeignKeyQuery(String table,String constraintName, Column column , String referentialTable, String referentialColumn){
         return SQLAlterTableQuery.CreateAddForeignKeyQuery(table, getConn(), constraintName, column, referentialTable, referentialColumn);
     }
     
-    public SQLAlterTableQuery creatSQLAlterAddForeignKeyQuery(String table,ForeignKey fk){
+    public SQLAlterTableQuery createSQLAlterAddForeignKeyQuery(String table,ForeignKey fk){
         return SQLAlterTableQuery.CreateAddForeignKeyQuery(table, getConn(), fk.getConstraintName(), new Column(fk.getForeingKeyColumn(),null), fk.getReferencedTableName(), fk.getReferencedColumn());
     }
     
-    public SQLAlterTableQuery creatSQLAlterDropForeignKeyQuery(String table,String constraintName, Column column , Table referentialTable){
+    public SQLAlterTableQuery createSQLAlterDropForeignKeyQuery(String table,String constraintName, Column column , Table referentialTable){
         return SQLAlterTableQuery.CreateDropForeignKeyQuery(table, getConn(), constraintName);
     }
     
-    public SQLAlterTableQuery creatSQLAlterDropForeignKeyQuery(String table,String constraintName){
+    public SQLAlterTableQuery createSQLAlterDropForeignKeyQuery(String table,String constraintName){
         return SQLAlterTableQuery.CreateDropForeignKeyQuery(table, getConn(), constraintName);
     }
     
-    public SQLAlterTableQuery creatSQLAlterDropForeignKeyQuery(String table,ForeignKey fk){
+    public SQLAlterTableQuery createSQLAlterDropForeignKeyQuery(String table,ForeignKey fk){
         return SQLAlterTableQuery.CreateDropForeignKeyQuery(table, getConn(), fk.getConstraintName());
     }
   
-    public SQLAlterTableQuery creatSQLAlterAddPrimaryKeyQuery(String table,Column column){
+    public SQLAlterTableQuery createSQLAlterAddPrimaryKeyQuery(String table,Column column){
         return SQLAlterTableQuery.CreateAddPrimaryKeyQuery(table, getConn(), column);
     }
     
-    public SQLAlterTableQuery creatSQLAlterAddPrimaryKeyQuery(String table,String columnName){
+    public SQLAlterTableQuery createSQLAlterAddPrimaryKeyQuery(String table,String columnName){
         return SQLAlterTableQuery.CreateAddPrimaryKeyQuery(table, getConn(), columnName);
     }
     
-    public SQLAlterTableQuery creatSQLAlterDropPrimaryKeyQuery(String table){
+    public SQLAlterTableQuery createSQLAlterDropPrimaryKeyQuery(String table){
         return SQLAlterTableQuery.CreateDropPrimaryKeyQuery(table, getConn());
     }
     

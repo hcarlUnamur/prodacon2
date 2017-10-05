@@ -37,7 +37,7 @@ public class MVMT extends TypeMatching {
                             resultSetToWhereString(oldData))
                         );
             }
-            addQuery(getSQLFactory().creatSQLAlterAddForeignKeyQuery(tableName, fk));
+            addQuery(getSQLFactory().createSQLAlterAddForeignKeyQuery(tableName, fk));
         } catch (SQLException ex) {
             Logger.getLogger(MVMT.class.getName()).log(Level.SEVERE, " Erro during the database loading ", ex);
         }
