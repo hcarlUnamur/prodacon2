@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ContextAnalyser;
 
 import EasySQL.Column;
@@ -14,8 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
-
+import EasySQL.Exception.LoadUnexistentTableException;
 /**
  *
  * @author carl_
@@ -31,20 +25,27 @@ public class ContextAnalyser {
     private ArrayList<ForeignKey> fks;
     private HashMap<ForeignKey,DBTransformation> transformations; 
     private EasySQL.SQLQueryFactory factory;
+    private HashMap<String,Table> tableLoaded;
     
-    public ContextAnalyser(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ArrayList<ForeignKey> fks) {
+    public ContextAnalyser(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ArrayList<ForeignKey> fks) throws LoadUnexistentTableException {
 
         this.factory= new EasySQL.SQLQueryFactory(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
         this.fks = fks;
         this.transformations = new HashMap();
+        this.tableLoaded = new HashMap<String,Table>();
+        for(ForeignKey fk : fks){
+            try{
+                tableLoaded.put(fk.getForeingKeyTable(),factory.loadTable(fk.getForeingKeyTable()));
+                tableLoaded.put(fk.getReferencedTableName(),factory.loadTable(fk.getReferencedTableName()));
+            }catch(SQLException e){throw new LoadUnexistentTableException("It's impossible to loade the foreign key table. they can don't exist");}
+        }
     }
     
     // create de transformation map , try to find a transforamtion strategy for all foreignKeys;
     public void analyse(){
         for(ForeignKey fk : fks){
-            try {
-                Table usedTable = factory.loadTable(fk.getForeingKeyTable());
-                Table referencedTable = factory.loadTable(fk.getReferencedTableName());
+                Table usedTable = tableLoaded.get(fk.getForeingKeyTable());
+                Table referencedTable = tableLoaded.get(fk.getReferencedTableName());
                 
                 Column fkColumn = usedTable.getTablecolumn().stream()
                                             .filter(c-> c.getColumnName().equals(fk.getForeingKeyColumn()))
@@ -63,9 +64,6 @@ public class ContextAnalyser {
                 }else{
                     typeMismatching(usedTable, referencedTable, fkColumn, referencedColumn);
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(ContextAnalyser.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
     

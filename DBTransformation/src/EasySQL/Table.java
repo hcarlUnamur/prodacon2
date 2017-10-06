@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import EasySQL.Exception.LoadUnexistentTableException;
 
 /**
  *
@@ -58,42 +59,44 @@ public class Table {
         primaryKey=null;
     }
     
-    public  Table(String name,Connection con) throws SQLException{
-        foreignKeys = new ArrayList<ForeignKey>();
-        Tablecolumn = new ArrayList<Column>();
-        this.name = name;
-        //create Tablecolumn
-        SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type"},"table_name='"+name+"'" );
-        ResultSet rs = select.sqlQueryDo();
-        while(rs.next()){
-                String colName = rs.getString("column_name");
-                String colType = rs.getString("column_type");
-                this.addColumn(new Column(colName, colType));             
+    public  Table(String name,Connection con) throws LoadUnexistentTableException {
+        try{
+            foreignKeys = new ArrayList<ForeignKey>();
+            Tablecolumn = new ArrayList<Column>();
+            this.name = name;
+            //create Tablecolumn
+            SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type"},"table_name='"+name+"'" );
+            ResultSet rs = select.sqlQueryDo();
+            while(rs.next()){
+                    String colName = rs.getString("column_name");
+                    String colType = rs.getString("column_type");
+                    this.addColumn(new Column(colName, colType));             
+                }
+            rs.close();
+            //creat foreignkeys
+            SQLSelectQuery select2 = new SQLSelectQuery(
+                            new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+                            con,
+                            new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+                            "CONSTRAINT_NAME <> 'PRIMARY' AND TABLE_NAME = '"+name+"' "
+                    );
+            ResultSet resultfk = select2.sqlQueryDo();
+            while(resultfk.next()){
+                foreignKeys.add(new ForeignKey(resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("REFERENCED_COLUMN_NAME"), resultfk.getString("COLUMN_NAME"),resultfk.getString("TABLE_NAME"),resultfk.getString("CONSTRAINT_NAME")));
             }
-        rs.close();
-        //creat foreignkeys
-        SQLSelectQuery select2 = new SQLSelectQuery(
-                        new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
-                        con,
-                        new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-                        "CONSTRAINT_NAME <> 'PRIMARY' AND TABLE_NAME = '"+name+"' "
-                );
-        ResultSet resultfk = select2.sqlQueryDo();
-        while(resultfk.next()){
-            foreignKeys.add(new ForeignKey(resultfk.getString("REFERENCED_TABLE_NAME"), resultfk.getString("REFERENCED_COLUMN_NAME"), resultfk.getString("COLUMN_NAME"),resultfk.getString("TABLE_NAME"),resultfk.getString("CONSTRAINT_NAME")));
-        }
-        //load PrimaryKey
-        SQLSelectQuery select3 = new SQLSelectQuery(
-                        new String[]{"INFORMATION_SCHEMA.COLUMNS"},
-                        con,
-                        new String[]{"COLUMN_NAME"},
-                        "TABLE_NAME = '"+name+"' AND COLUMN_KEY = 'PRI'"
-                );
-        primaryKey=null;
-        ResultSet pri = select3.sqlQueryDo();
-        while(pri.next()){
-            primaryKey = pri.getString("COLUMN_NAME");
-        }
+            //load PrimaryKey
+            SQLSelectQuery select3 = new SQLSelectQuery(
+                            new String[]{"INFORMATION_SCHEMA.COLUMNS"},
+                            con,
+                            new String[]{"COLUMN_NAME"},
+                            "TABLE_NAME = '"+name+"' AND COLUMN_KEY = 'PRI'"
+                    );
+            primaryKey=null;
+            ResultSet pri = select3.sqlQueryDo();
+            while(pri.next()){
+                primaryKey = pri.getString("COLUMN_NAME");
+            }
+        }catch(SQLException e){throw new LoadUnexistentTableException("It's impossible to loade the foreign key table. they can don't exist");}
     }
 
     public String getName() {
