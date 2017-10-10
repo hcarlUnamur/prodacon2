@@ -68,5 +68,10 @@ public class LMTT extends TypeMismatching {
         }
         */
     }
+
+    public LMTT(SQLQueryFactory sqlFactory, ForeignKey fk) {
+        super(sqlFactory, fk);
+    }
    
+    
 }

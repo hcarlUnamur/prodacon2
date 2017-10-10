@@ -21,6 +21,15 @@ public abstract class DBTransformation {
     private ForeignKey fk;
     private ArrayList<SQLQuery> listQuery;
 
+    public DBTransformation(SQLQueryFactory sqlFactory,ForeignKey fk) {
+        this.tableName=fk.getForeingKeyTable();
+        this.listQuery = new ArrayList();
+        this.fk = fk;
+        this.sqlFactory = sqlFactory;
+    }
+
+    
+    
     public String getDataBaseHostName() {
         return dataBaseHostName;
     }

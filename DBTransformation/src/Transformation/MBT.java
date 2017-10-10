@@ -6,6 +6,7 @@
 package Transformation;
 
 import EasySQL.ForeignKey;
+import EasySQL.SQLQueryFactory;
 
 /**
  *
@@ -17,5 +18,10 @@ public class MBT extends TypeMatching {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, tableName, fk);
         this.addQuery(getSQLFactory().createSQLAlterAddForeignKeyQuery(this.getTableName(), fk));
     }
+
+    public MBT(SQLQueryFactory sqlFactory, ForeignKey fk) {
+        super(sqlFactory, fk);
+    }
  
+    
 }

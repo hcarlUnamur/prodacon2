@@ -6,6 +6,7 @@
 package Transformation;
 
 import EasySQL.ForeignKey;
+import EasySQL.SQLQueryFactory;
 
 /**
  *
@@ -15,6 +16,10 @@ public class TypeMatching extends DBTransformation {
 
     public TypeMatching(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, String tableName, ForeignKey fk) {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, tableName, fk);
+    }
+
+    public TypeMatching(SQLQueryFactory sqlFactory, ForeignKey fk) {
+        super(sqlFactory, fk);
     }
 
 

@@ -6,6 +6,7 @@
 package Transformation;
 
 import EasySQL.ForeignKey;
+import EasySQL.SQLQueryFactory;
 
 /**
  *
@@ -16,5 +17,10 @@ public class DTT extends TypeMismatching {
     public DTT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, String tableName, ForeignKey fk) {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, tableName, fk);
     }
+
+    public DTT(SQLQueryFactory sqlFactory, ForeignKey fk) {
+        super(sqlFactory, fk);
+    }
    
+    
 }

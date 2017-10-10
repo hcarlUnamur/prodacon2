@@ -1,6 +1,7 @@
 package Transformation;
 
 import EasySQL.ForeignKey;
+import EasySQL.SQLQueryFactory;
 import EasySQL.Table;
 import java.util.function.Function;
 import java.sql.ResultSet;
@@ -22,6 +23,12 @@ public class MVMT extends TypeMatching {
         System.err.println("Warning the MVMT (String,String,String,String,String,ForeignKey) is not recomended");
     }
 
+    public MVMT(SQLQueryFactory sqlFactory, ForeignKey fk) {
+        super(sqlFactory, fk);
+    }
+
+    
+    
     public MVMT(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, String tableName, ForeignKey fk, Function<Object,String> transformationFunction) {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword, tableName, fk);
         this.transformationFunction = transformationFunction;

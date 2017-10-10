@@ -10,13 +10,14 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import EasySQL.Exception.LoadUnexistentTableException;
+import Transformation.MBT;
 /**
  *
  * @author carl_
  */
 public class ContextAnalyser {
     
-    private static String[] NUMERIC_TYPES = {"INT","TINYINT","SMALLINT","MEDIUMINT","BIGINT","FLOAT","DOUBLE","DECIMAL"};
+    private static String[] NUMERIC_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT","FLOAT","DOUBLE","DECIMAL"};
     private static String[] ALPHA_NUMERIC_TYPES = {"CHAR","VARCHAR","BLOB","TEXT","TINYBLOB","TINYTEXT","MEDIUMBLOB","MEDIUMTEXT","LONGBLOB","LONGTEXT","ENUM"};
     private static String[] TIME_TYPES = {"DATE","DATETIME","TIMESTAMP","TIME","YEAR"};
     private static String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
@@ -60,27 +61,28 @@ public class ContextAnalyser {
                 // peut être renvoyé une exception si une des 2 columns est null
                 
                 if (fkColumn.getColumnType().equals(referencedColumn.getColumnType())){
-                    perfectTypeMatching(usedTable, referencedTable, fkColumn, referencedColumn);
+                    perfectTypeMatching(usedTable, referencedTable,fk, fkColumn, referencedColumn);
                 }else{
-                    typeMismatching(usedTable, referencedTable, fkColumn, referencedColumn);
+                    typeMismatching(usedTable, referencedTable,fk, fkColumn, referencedColumn);
                 }
         }
     }
     
-    private void perfectTypeMatching(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn ){
+    private void perfectTypeMatching(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn ){
         System.out.println("*****************Perfect Type Matching");
-        // @ToDo : ajouter action 
+        // @ToDo : ajouter action
+        //transformations.put(fk, new MBT(factory,fk));
     }
     
-    private void typeMismatching(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn ){
+    private void typeMismatching(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn ){
         System.out.println("*****************Type mismatching ");
         
         if (isTheSameType(fkColumn, referencedColumn)){
-            sameTypeButDifferentlength(usedTable, referencedTable, fkColumn, referencedColumn);
+            sameTypeButDifferentlength(usedTable, referencedTable,fk, fkColumn, referencedColumn);
         }
     }
     
-    private static void sameTypeButDifferentlength(Table usedTable, Table referencedTable,Column fkColumn,Column referencedColumn){
+    private static void sameTypeButDifferentlength(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn){
             System.out.println("*****************Same type but different length ");
 
             if (isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE)){
