@@ -7,19 +7,18 @@ import Transformation.DBTransformation;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import EasySQL.Exception.LoadUnexistentTableException;
-import Transformation.MBT;
 /**
  *
  * @author carl_
  */
 public class ContextAnalyser {
     
+    private static String[] INT_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT"};
     private static String[] NUMERIC_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT","FLOAT","DOUBLE","DECIMAL"};
-    private static String[] ALPHA_NUMERIC_TYPES = {"CHAR","VARCHAR","BLOB","TEXT","TINYBLOB","TINYTEXT","MEDIUMBLOB","MEDIUMTEXT","LONGBLOB","LONGTEXT","ENUM"};
-    private static String[] TIME_TYPES = {"DATE","DATETIME","TIMESTAMP","TIME","YEAR"};
+    private static String[] ALPHA_NUMERIC_TYPES = {"ENUM","CHAR","VARCHAR","BLOB","TEXT","TINYBLOB","TINYTEXT","MEDIUMBLOB","MEDIUMTEXT","LONGBLOB","LONGTEXT"};
+    private static String[] TIME_TYPES = {"TIME","YEAR","DATE","TIMESTAMP","DATETIME"};
+    private static String[] TIME_TYPES_TRANSFORMABLE = {"TIMESTAMP","DATETIME"};
     private static String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
     private static String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
     
@@ -34,6 +33,7 @@ public class ContextAnalyser {
         this.fks = fks;
         this.transformations = new HashMap();
         this.tableLoaded = new HashMap<String,Table>();
+        //load concerned by the transformation tables
         for(ForeignKey fk : fks){
             try{
                 tableLoaded.put(fk.getForeingKeyTable(),factory.loadTable(fk.getForeingKeyTable()));
@@ -41,7 +41,7 @@ public class ContextAnalyser {
             }catch(SQLException e){throw new LoadUnexistentTableException("It's impossible to loade the foreign key table. they can don't exist");}
         }
     }
-    
+       
     // create de transformation map , try to find a transforamtion strategy for all foreignKeys;
     public void analyse(){
         for(ForeignKey fk : fks){
@@ -58,7 +58,6 @@ public class ContextAnalyser {
                                             .findFirst()
                                             .get();
                 
-                // peut être renvoyé une exception si une des 2 columns est null
                 
                 if (fkColumn.getColumnType().equals(referencedColumn.getColumnType())){
                     perfectTypeMatching(usedTable, referencedTable,fk, fkColumn, referencedColumn);
@@ -76,9 +75,46 @@ public class ContextAnalyser {
     
     private void typeMismatching(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn ){
         System.out.println("*****************Type mismatching ");
-        
-        if (isTheSameType(fkColumn, referencedColumn)){
+        //signed and unsigned type
+        if(isUnsigned(fkColumn)!=isUnsigned(referencedColumn)){
+            System.out.println("***************** signed and unsigned type");
+            // @ToDo : ajouter action 
+        }
+        //same Type But Different lengths
+        else if (isTheSameType(fkColumn, referencedColumn)){
             sameTypeButDifferentlength(usedTable, referencedTable,fk, fkColumn, referencedColumn);
+        }
+        //super type transformation
+        //int type 
+        else if ((isIn(getTypeName(fkColumn), INT_TYPES) && isIn(getTypeName(referencedColumn), INT_TYPES))){
+            int fktypeindex = getIndexOf(getTypeName(fkColumn), INT_TYPES);
+            int reftypeindex = getIndexOf(getTypeName(referencedColumn), INT_TYPES);
+            if(fktypeindex>reftypeindex){
+                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+ fk.getConstraintName() +" "+fkColumn.getColumnType()  );
+            }
+            else if(fktypeindex<reftypeindex){
+                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType());
+            }       
+        }
+        else if((isIn(getTypeName(fkColumn), ALPHA_NUMERIC_TYPES) && isIn(getTypeName(referencedColumn), ALPHA_NUMERIC_TYPES))){
+            int fktypeindex = getIndexOf(getTypeName(fkColumn), ALPHA_NUMERIC_TYPES);
+            int reftypeindex = getIndexOf(getTypeName(referencedColumn), ALPHA_NUMERIC_TYPES);
+            if(fktypeindex>reftypeindex){
+                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+ fk.getConstraintName() +" "+fkColumn.getColumnType()  );
+            }
+            else if(fktypeindex<reftypeindex){
+                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType());
+            } 
+        }
+        else if((isIn(getTypeName(fkColumn), TIME_TYPES_TRANSFORMABLE) && isIn(getTypeName(referencedColumn), TIME_TYPES_TRANSFORMABLE))){
+            int fktypeindex = getIndexOf(getTypeName(fkColumn), TIME_TYPES_TRANSFORMABLE);
+            int reftypeindex = getIndexOf(getTypeName(referencedColumn), TIME_TYPES_TRANSFORMABLE);
+            if(fktypeindex>reftypeindex){
+                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+ fk.getConstraintName() +" "+fkColumn.getColumnType()  );
+            }
+            else if(fktypeindex<reftypeindex){
+                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType());
+            } 
         }
     }
     
@@ -96,16 +132,24 @@ public class ContextAnalyser {
                 }
             }
             
-            if (isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE)){
+            else if (isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE)){
                 System.out.println("*****************Case 2 ");
-                int maxlength1 = getTypelength1(referencedColumn)>getTypelength1(fkColumn) ? getTypelength1(referencedColumn) :getTypelength1(fkColumn);  
-                int maxlength2 = getTypelength2(referencedColumn)>getTypelength2(fkColumn) ? getTypelength2(referencedColumn) :getTypelength2(fkColumn);
-                System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +getTypeName(referencedColumn)+"("+maxlength1+","+maxlength2+")" );
-                System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +getTypeName(referencedColumn)+"("+maxlength1+","+maxlength2+")" );
+                if(getTypelength2(fkColumn)!=getTypelength2(referencedColumn)){
+                    System.out.println("*****************Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
+                }else if(getTypelength1(fkColumn)!=getTypelength1(referencedColumn)){
+                        if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
+                        System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn + " to " +getTypeName(referencedColumn)+"("+getTypelength1(referencedColumn)+","+getTypelength2(referencedColumn)+")" );
+                        // @ToDo : ajouter action 
+                    }else{
+                        System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +getTypeName(fkColumn)+"("+getTypelength1(fkColumn)+","+getTypelength2(fkColumn)+")" );
+                        // @ToDo : ajouter action 
+                    }
+                }
+
                 // @ToDo : ajouter action  
             }
             
-            if(!isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE) && !isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE) ){
+            else if(!isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE) && !isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE) ){
                 System.out.println("*****************Case 3 ");
                 System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
                 // @ToDo : ajouter action 
@@ -136,4 +180,16 @@ public class ContextAnalyser {
         return false;
     };
     
+    private static int getIndexOf(String element, String[] table){
+        int i =0;
+        while(i<table.length){
+        if (element.equals(table[i])) return i;
+        i++;
+        }
+        return -1;
+    }
+    
+    private static boolean isUnsigned(Column col){
+        return col.getColumnType().contains("unsigned");
+    }
 }
