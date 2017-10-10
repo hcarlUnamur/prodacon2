@@ -76,8 +76,8 @@ public class ContextAnalyser {
     private void typeMismatching(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn ){
         System.out.println("*****************Type mismatching ");
         //signed and unsigned type
-        System.out.println(getTypeName(fkColumn) + " isIn : "+ isIn(getTypeName(fkColumn), INT_TYPES) + " index : "+getIndexOf(getTypeName(fkColumn), INT_TYPES) );
-        System.out.println(getTypeName(referencedColumn) + " isIn : "+ isIn(getTypeName(referencedColumn), INT_TYPES) + " index : "+getIndexOf(getTypeName(referencedColumn), INT_TYPES) );
+        //System.out.println(getTypeName(fkColumn) + " isIn : "+ isIn(getTypeName(fkColumn), INT_TYPES) + " index : "+getIndexOf(getTypeName(fkColumn), INT_TYPES) );
+        //System.out.println(getTypeName(referencedColumn) + " isIn : "+ isIn(getTypeName(referencedColumn), INT_TYPES) + " index : "+getIndexOf(getTypeName(referencedColumn), INT_TYPES) );
 
         if(isUnsigned(fkColumn)!=isUnsigned(referencedColumn)){
             System.out.println("***************** signed and unsigned type");
@@ -93,30 +93,30 @@ public class ContextAnalyser {
             int fktypeindex = getIndexOf(getTypeName(fkColumn), INT_TYPES);
             int reftypeindex = getIndexOf(getTypeName(referencedColumn), INT_TYPES);
             if(fktypeindex>reftypeindex){
-                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+ fk.getConstraintName() +" "+fkColumn.getColumnType()  );
+                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
             }
             else if(fktypeindex<reftypeindex){
-                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType());
+                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnType());
             }       
         }
         else if((isIn(getTypeName(fkColumn), ALPHA_NUMERIC_TYPES) && isIn(getTypeName(referencedColumn), ALPHA_NUMERIC_TYPES))){
             int fktypeindex = getIndexOf(getTypeName(fkColumn), ALPHA_NUMERIC_TYPES);
             int reftypeindex = getIndexOf(getTypeName(referencedColumn), ALPHA_NUMERIC_TYPES);
             if(fktypeindex>reftypeindex){
-                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+ fk.getConstraintName() +" "+fkColumn.getColumnType()  );
+                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
             }
             else if(fktypeindex<reftypeindex){
-                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType());
+                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to "+ referencedColumn.getColumnType());
             } 
         }
         else if((isIn(getTypeName(fkColumn), TIME_TYPES_TRANSFORMABLE) && isIn(getTypeName(referencedColumn), TIME_TYPES_TRANSFORMABLE))){
             int fktypeindex = getIndexOf(getTypeName(fkColumn), TIME_TYPES_TRANSFORMABLE);
             int reftypeindex = getIndexOf(getTypeName(referencedColumn), TIME_TYPES_TRANSFORMABLE);
             if(fktypeindex>reftypeindex){
-                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+ fk.getConstraintName() +" "+fkColumn.getColumnType()  );
+                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
             }
             else if(fktypeindex<reftypeindex){
-                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType());
+                System.out.println("***************** Transformation :"+ fk.getConstraintName() +" "+fkColumn.getColumnType() +" to "+ referencedColumn.getColumnType());
             } 
         }
     }
