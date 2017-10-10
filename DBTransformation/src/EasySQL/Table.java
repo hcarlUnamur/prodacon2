@@ -65,12 +65,13 @@ public class Table {
             Tablecolumn = new ArrayList<Column>();
             this.name = name;
             //create Tablecolumn
-            SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type"},"table_name='"+name+"'" );
+            SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type","CHARACTER_SET_NAME"},"table_name='"+name+"'" );
             ResultSet rs = select.sqlQueryDo();
             while(rs.next()){
                     String colName = rs.getString("column_name");
                     String colType = rs.getString("column_type");
-                    this.addColumn(new Column(colName, colType));             
+                    String charset = rs.getString("CHARACTER_SET_NAME");
+                    this.addColumn(new Column(colName, colType,charset));             
                 }
             rs.close();
             //creat foreignkeys
