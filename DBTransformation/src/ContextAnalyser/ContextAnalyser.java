@@ -186,7 +186,7 @@ public class ContextAnalyser {
     private static int getIndexOf(String element, String[] table){
         int i =0;
         while(i<table.length){
-        if (element.equals(table[i])) return i;
+        if (element.toUpperCase().equals(table[i].toUpperCase())) return i;
         i++;
         }
         return -1;
