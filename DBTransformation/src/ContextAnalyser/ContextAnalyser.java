@@ -76,8 +76,8 @@ public class ContextAnalyser {
     private void typeMismatching(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn ){
         System.out.println("*****************Type mismatching ");
         //signed and unsigned type
-        System.out.println(getTypeName(fkColumn) + " isIn : "+ isIn(getTypeName(fkColumn), INT_TYPES) );
-        System.out.println(getTypeName(referencedColumn) + " isIn : "+ isIn(getTypeName(referencedColumn), INT_TYPES) );
+        System.out.println(getTypeName(fkColumn) + " isIn : "+ isIn(getTypeName(fkColumn), INT_TYPES) + " index : "+getIndexOf(getTypeName(fkColumn), INT_TYPES) );
+        System.out.println(getTypeName(referencedColumn) + " isIn : "+ isIn(getTypeName(referencedColumn), INT_TYPES) + " index : "+getIndexOf(getTypeName(referencedColumn), INT_TYPES) );
 
         if(isUnsigned(fkColumn)!=isUnsigned(referencedColumn)){
             System.out.println("***************** signed and unsigned type");
