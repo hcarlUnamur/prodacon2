@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -60,5 +61,14 @@ public class MVMT extends TypeMatching {
         return out.toString();
     }
 
+    @Override
+    public void analyseValues() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void analyseCascade(ArrayList<Table> tables) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

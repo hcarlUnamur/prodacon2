@@ -7,6 +7,8 @@ package Transformation;
 
 import EasySQL.ForeignKey;
 import EasySQL.SQLQueryFactory;
+import EasySQL.Table;
+import java.util.ArrayList;
 
 /**
  *
@@ -22,5 +24,14 @@ public class TypeMismatching extends DBTransformation {
         super(sqlFactory, fk);
     }
  
+    @Override
+    public void analyseValues() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void analyseCascade(ArrayList<Table> tables) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

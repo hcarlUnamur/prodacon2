@@ -38,7 +38,7 @@ public class SQLQueryFree extends SQLQuery {
     }
     
     @Override
-    public Object sqlQueryDo() throws SQLException {
+    public ResultSet sqlQueryDo() throws SQLException {
         if(type.equals(null)){throw new EasySQL.Exception.IncompleteClassRuntimeException("attribut SQLQueryType type missing for apperation sqlQueryDo");}
         Statement stmt = this.getCon().createStatement();
         if(type.equals(SQLQueryType.Updater)){            
