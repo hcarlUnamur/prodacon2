@@ -174,7 +174,7 @@ public abstract class DBTransformation {
             ResultSet queryResult =sqlFactory.createSQLCreateFreeQuery(SQLQueryType.Getter,s).sqlQueryDo();
             while(queryResult.next()){
                 unmatchingValue.add(queryResult.getString(0));
-                        }
+            }
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -186,11 +186,11 @@ public abstract class DBTransformation {
         return cascadeTransforamtion;
     }
 
-    public void setCascadeTransforamtion(ArrayList<SQLQuery> cascadeTransforamtion) {
+    public void setCascadeTransformation(ArrayList<SQLQuery> cascadeTransforamtion) {
         this.cascadeTransforamtion = cascadeTransforamtion;
     }
     
-    public void addCascadeTrasnforamtion(SQLQuery e){
+    public void addCascadeTransformation(SQLQuery e){
         cascadeTransforamtion.add(e);
     }
     
