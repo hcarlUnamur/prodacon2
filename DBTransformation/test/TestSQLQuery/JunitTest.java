@@ -12,9 +12,9 @@ import EasySQL.SQLCreateTableQuery;
 import EasySQL.SQLDeleteQuery;
 import EasySQL.SQLDropTableQuery;
 import EasySQL.SQLQueryFactory;
+import EasySQL.SQLQueryType;
 import EasySQL.SQLSelectQuery;
 import EasySQL.SQLUpdateQuery;
-import EasySQL.StringTool;
 import EasySQL.Table;
 import Transformation.ANTT;
 import Transformation.DTT;
@@ -26,14 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import java.util.HashMap;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -464,7 +457,7 @@ public class JunitTest {
         try {
             ArrayList<Column> listCol = new ArrayList<>();
             listCol.add(new Column("id", "int"));
-            listCol.add(new Column("name", "varchar(45)"));
+            listCol.add(new Column("name", "varchar(45)CHARACTER SET latin1"));
             listCol.add(new Column("trueFalse", "bool"));
             Table t1 = new Table("tableLoadTable1", listCol, new ArrayList<ForeignKey>(), "id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
@@ -472,7 +465,7 @@ public class JunitTest {
 
             ArrayList<Column> listCol2 = new ArrayList<>();
             listCol2.add(new Column("id", "int"));
-            listCol2.add(new Column("city", "varchar(45)"));
+            listCol2.add(new Column("city", "varchar(45)CHARACTER SET latin1"));
             listCol2.add(new Column("reference", "int"));
 
             ForeignKey fk = new ForeignKey("tableLoadTable1", "id", "reference", "FKLoadTable");
@@ -486,6 +479,8 @@ public class JunitTest {
             tLoadTable= sqlF.loadTable("tableLoadTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = tLoadTable.getForeignKeys();
+            
+            
 
             if (!(lfk.get(0).getForeingKeyColumn().equals("reference") && lfk.get(0).getConstraintName().equals("FKLoadTable"))) {
                 result = 1;
@@ -505,6 +500,16 @@ public class JunitTest {
             if (!(lCol.get(0).getColumnName().equals("id") && lCol.get(1).getColumnName().equals("city") && lCol.get(2).getColumnName().equals("reference"))) {
                 result = 1;
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testLoadTable()");
+            }
+            
+            
+            for(Column c : lCol){
+                if (c.getColumnType().equals("varchar(45)")){
+                    if (!c.getCharset().equals("latin1")){
+                        result = 1;
+                        System.err.println("ko! : " + "TestSQLQuery.JunitTest.testLoadTable() : wrong charset");
+                    }
+                }
             }
             add2.sqlQueryUndo();
             add1.sqlQueryUndo();
@@ -616,19 +621,19 @@ public class JunitTest {
         int result = 0;
         try {
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("id", "int(30)"));
-            listCol1.add(new Column("name", "varchar(45)"));
-            listCol1.add(new Column("trueFalse", "bool"));
-            Table t1 = new Table("testLMTTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
+            listCol1.add(new Column("1id", "int(30)"));
+            listCol1.add(new Column("1city", "varchar(45)"));
+            listCol1.add(new Column("1reference", "float(6,2)"));
+            Table t1 = new Table("testLMTTTable1", listCol1, new ArrayList<ForeignKey>(), "1reference");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("id", "varchar(45)"));
-            listCol2.add(new Column("city", "varchar(45)"));
-            listCol2.add(new Column("reference", "int"));
+            listCol2.add(new Column("2id", "varchar(45)"));
+            listCol2.add(new Column("2city", "varchar(45)"));
+            listCol2.add(new Column("2reference", "float(5,2)"));
             
-            Table t2 = new Table("testLMTTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
+            Table t2 = new Table("testLMTTTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
@@ -636,23 +641,30 @@ public class JunitTest {
             sqlF.createSQLInsertQuery("testLMTTTable1", new String[]{"1", "Strong", "1"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testLMTTTable2", new String[]{"deux", "Strong", "1"}).sqlQueryDo();
             
-            ForeignKey fk = new ForeignKey("testLMTTTable1", "id", "reference", "FKLMTT");
-            
-            LMTT m = new LMTT("localhost/mydb", "3306", "root", "root", "testLMTTTable2", fk);
+            ForeignKey fk = new ForeignKey("testLMTTTable1", "1reference", "2reference", "testLMTTTable2", "FKLMTT");
+            HashMap<String, Table> hm = new HashMap();
+            hm.put("testLMTTTable1", t1);
+            hm.put("testLMTTTable2", t2);
+            LMTT m = new LMTT("localhost/mydb", "3306", "root", "root", "testLMTTTable2", fk, hm, "float(6,2)");
             m.transfrom();  
             
             t2 = sqlF.loadTable("testLMTTTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = t2.getForeignKeys();
-            /*
-            if (!(lfk.get(0).getForeingKeyColumn().equals("reference") && lfk.get(0).getConstraintName().equals("FKLMTT"))) {
+            
+            if (!(lfk.get(0).getForeingKeyColumn().equals("2reference") && lfk.get(0).getConstraintName().equals("FKLMTT"))) {
                 result = 1;
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testLMTT()");
             }
-            */
+            if (!(hm.get("testLMTTTable2").getTablecolumn().get(2).getColumnType().equals("float(6,2)"))) {
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testLMTT()");
+            }
+            
             add2.sqlQueryUndo();
             add1.sqlQueryUndo();
-                    } catch (Exception ex) {
+                    
+        } catch (Exception ex) {
             ErrorGestion(ex, "testLMTT", new ArrayList<>(Arrays.asList("testLMTTTable2", "testLMTTTable1")));
             result = 1;     
         }
@@ -664,19 +676,19 @@ public class JunitTest {
         int result = 0;
         try {
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("id", "varchar(45)"));
-            listCol1.add(new Column("name", "varchar(45)"));
-            listCol1.add(new Column("trueFalse", "bool"));
-            Table t1 = new Table("testANTTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
+            listCol1.add(new Column("1id", "varchar(45)"));
+            listCol1.add(new Column("1city", "varchar(10)"));
+            listCol1.add(new Column("1reference", "bool"));
+            Table t1 = new Table("testANTTTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("id", "varchar(45)"));
-            listCol2.add(new Column("city", "varchar(45)"));
-            listCol2.add(new Column("reference", "varchar(45)"));
+            listCol2.add(new Column("2id", "varchar(45)"));
+            listCol2.add(new Column("2city", "varchar(45)"));
+            listCol2.add(new Column("2reference", "varchar(45)"));
             
-            Table t2 = new Table("testANTTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
+            Table t2 = new Table("testANTTTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
@@ -684,7 +696,7 @@ public class JunitTest {
             sqlF.createSQLInsertQuery("testANTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testANTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
-            ForeignKey fk = new ForeignKey("testANTTTable1", "id", "reference", "FKANTT");
+            ForeignKey fk = new ForeignKey("testANTTTable1", "1city", "2city", "FKANTT");
             
             ANTT m = new ANTT("localhost/mydb", "3306", "root", "root", "testANTTTable2", fk);
             m.transfrom();  
@@ -693,7 +705,7 @@ public class JunitTest {
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = t2.getForeignKeys();
             /*
-            if (!(lfk.get(0).getForeingKeyColumn().equals("reference") && lfk.get(0).getConstraintName().equals("FKANTT"))) {
+            if (!(lfk.get(0).getForeingKeyColumn().equals("2city") && lfk.get(0).getConstraintName().equals("FKANTT"))) {
                 result = 1;
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testANTT()");
             }
@@ -713,27 +725,27 @@ public class JunitTest {
         int result = 0;
         try {
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("id", "varchar(45)"));
-            listCol1.add(new Column("name", "varchar(45)"));
-            listCol1.add(new Column("trueFalse", "bool"));
-            Table t1 = new Table("testDTTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
+            listCol1.add(new Column("1id", "int"));
+            listCol1.add(new Column("1city", "varchar(45)"));
+            listCol1.add(new Column("1reference", "bool"));
+            Table t1 = new Table("testDTTTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("id", "varchar(45)"));
-            listCol2.add(new Column("city", "varchar(45)"));
-            listCol2.add(new Column("reference", "varchar(45)"));
+            listCol2.add(new Column("2id", "int"));
+            listCol2.add(new Column("2city", "varchar(45)"));
+            listCol2.add(new Column("2reference", "varchar(45)"));
             
-            Table t2 = new Table("testDTTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
+            Table t2 = new Table("testDTTTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            sqlF.createSQLInsertQuery("testDTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testDTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testDTTTable1", new String[]{"1", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testDTTTable2", new String[]{"2", "Strong", "coucou"}).sqlQueryDo();
             
-            ForeignKey fk = new ForeignKey("testDTTTable1", "id", "reference", "FKDTT");
+            ForeignKey fk = new ForeignKey("testDTTTable1", "1id", "2city", "FKDTT");
             
             DTT m = new DTT("localhost/mydb", "3306", "root", "root", "testDTTTable2", fk);
             m.transfrom();  
@@ -742,7 +754,7 @@ public class JunitTest {
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = t2.getForeignKeys();
             /*
-            if (!(lfk.get(0).getForeingKeyColumn().equals("reference") && lfk.get(0).getConstraintName().equals("FKDTT"))) {
+            if (!(lfk.get(0).getForeingKeyColumn().equals("2city") && lfk.get(0).getConstraintName().equals("FKDTT"))) {
                 result = 1;
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testDTT()");
             }
@@ -762,40 +774,46 @@ public class JunitTest {
         int result = 0;
         try {
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("id", "varchar(45)"));
-            listCol1.add(new Column("name", "varchar(45)"));
-            listCol1.add(new Column("trueFalse", "bool"));
-            Table t1 = new Table("testNTTTable1", listCol1, new ArrayList<ForeignKey>(), "id");
+            listCol1.add(new Column("1id", "tinyInt"));
+            listCol1.add(new Column("1city", "varchar(45)"));
+            listCol1.add(new Column("1reference", "bool"));
+            Table t1 = new Table("testNTTTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("id", "varchar(45)"));
-            listCol2.add(new Column("city", "varchar(45)"));
-            listCol2.add(new Column("reference", "varchar(45)"));
+            listCol2.add(new Column("2id", "int"));
+            listCol2.add(new Column("2city", "varchar(45)"));
+            listCol2.add(new Column("2reference", "varchar(45)"));
             
-            Table t2 = new Table("testNTTTable2", listCol2, new ArrayList<ForeignKey>(), "id");
+            Table t2 = new Table("testNTTTable2", listCol2, new ArrayList<ForeignKey>(), "2city");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
             
-            sqlF.createSQLInsertQuery("testNTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testNTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testNTTTable1", new String[]{"1", "Strong", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testNTTTable2", new String[]{"1", "Strong", "coucou"}).sqlQueryDo();
             
-            ForeignKey fk = new ForeignKey("testNTTTable1", "id", "reference", "FKNTT");
-            
-            NTT m = new NTT("localhost/mydb", "3306", "root", "root", "testNTTTable2", fk);
+            ForeignKey fk = new ForeignKey("testNTTTable1", "1id", "2id", "testNTTTable2", "FKNTT");
+            HashMap<String, Table> hm = new HashMap();
+            hm.put("testNTTTable1", t1);
+            hm.put("testNTTTable2", t2);
+            LMTT m = new LMTT("localhost/mydb", "3306", "root", "root", "testNTTTable2", fk, hm, "int");
             m.transfrom();  
             
             t2 = sqlF.loadTable("testNTTTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = t2.getForeignKeys();
-            /*
-            if (!(lfk.get(0).getForeingKeyColumn().equals("reference") && lfk.get(0).getConstraintName().equals("FKNTT"))) {
+            
+            if (!(lfk.get(0).getForeingKeyColumn().equals("2id") && lfk.get(0).getConstraintName().equals("FKNTT"))) {
                 result = 1;
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testNTT()");
             }
-            */
+            if (!(hm.get("testNTTTable1").getTablecolumn().get(0).getColumnType().equals("int"))) {
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testNTT()");
+            }
+            
             add2.sqlQueryUndo();
             add1.sqlQueryUndo();
             
@@ -806,6 +824,27 @@ public class JunitTest {
         assertEquals(0, result);
     }
     
-   
+   @Test
+    public void testSQLFree() {
+        int result = 0;
+        try {
+            sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "create table testSQLFreeTable (name varchar(45));").sqlQueryDo();
+            sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "insert into testSQLFreeTable(name) values (\"coucou\" );").sqlQueryDo();
+            ResultSet res = (ResultSet) sqlF.createSQLCreateFreeQuery(SQLQueryType.Getter, "select * from testSQLFreeTable;").sqlQueryDo();
+            res.first();
+            
+            if(!(res.getString(1).equals("coucou"))){
+                System.err.println("Wrong SQLFreeQuery");
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testSQLFree()");
+                result = 1;
+            }
+            sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "drop table testSQLFreeTable;").sqlQueryDo();
+            
+        } catch (Exception ex) {
+            ErrorGestion(ex, "testSQLFree", new ArrayList<>(Arrays.asList("testSQLFreeTable")));
+            result = 1;     
+        }
+        assertEquals(0, result);
+    }
 
 }
