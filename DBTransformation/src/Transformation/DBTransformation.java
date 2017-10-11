@@ -4,6 +4,7 @@ import EasySQL.ForeignKey;
 import EasySQL.SQLQuery;
 import EasySQL.SQLQueryFactory;
 import EasySQL.SQLQueryType;
+import EasySQL.SQLSelectQuery;
 import EasySQL.Table;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -180,7 +181,9 @@ public abstract class DBTransformation {
         }
     };
     
-    public abstract void analyseCascade(ArrayList<Table> tables);
+    public void analyseCascade(ArrayList<Table> tables){
+        //TODO : 
+    }
 
     public ArrayList<SQLQuery> getCascadeTransforamtion() {
         return cascadeTransforamtion;
@@ -192,6 +195,34 @@ public abstract class DBTransformation {
     
     public void addCascadeTransformation(SQLQuery e){
         cascadeTransforamtion.add(e);
+    }
+    
+    //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
+    private void loadCascadFk(String tablename, String columnName){
+        try {
+            SQLSelectQuery select2 = new SQLSelectQuery(
+                    new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+                    sqlFactory.getConn(),
+                    new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+                    "REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_TABLE_NAME = '"+tablename+"' AND REFERENCED_COLUMN_NAME = '"+columnName+"';"
+            );
+            ResultSet result =select2.sqlQueryDo();
+            while(result.next()){
+                ForeignKey clef =   new ForeignKey( result.getString("REFERENCED_TABLE_NAME"),
+                                                    result.getString("REFERENCED_COLUMN_NAME"),
+                                                    result.getString("COLUMN_NAME"),
+                                                    result.getString("TABLE_NAME"),
+                                                    result.getString("CONSTRAINT_NAME")
+                                                  );
+                //test pour éviter les cycles
+                if(!cascadeFk.contains(clef)){
+                    loadCascadFk(result.getString("TABLE_NAME"),result.getString("CONSTRAINT_NAME"));
+                    cascadeFk.add(clef);
+                }  
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

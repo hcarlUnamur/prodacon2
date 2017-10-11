@@ -79,7 +79,7 @@ public class Table {
                             new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                             con,
                             new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-                            "CONSTRAINT_NAME <> 'PRIMARY' AND TABLE_NAME = '"+name+"' "
+                            "REFERENCED_TABLE_NAME IS NOT NULL AND TABLE_NAME = '"+name+"' "
                     );
             ResultSet resultfk = select2.sqlQueryDo();
             while(resultfk.next()){

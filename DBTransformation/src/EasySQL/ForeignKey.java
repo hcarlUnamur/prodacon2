@@ -1,5 +1,7 @@
 package EasySQL;
 
+import java.util.Objects;
+
 public class ForeignKey {
     
     private String ReferencedTableName;
@@ -70,6 +72,36 @@ public class ForeignKey {
 
     public void setForeingKeyColumn(String foreingKeyColumn) {
         this.foreingKeyColumn = foreingKeyColumn;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ForeignKey other = (ForeignKey) obj;
+        if (!Objects.equals(this.ReferencedTableName, other.ReferencedTableName)) {
+            return false;
+        }
+        if (!Objects.equals(this.ReferencedColumn, other.ReferencedColumn)) {
+            return false;
+        }
+        if (!Objects.equals(this.foreingKeyColumn, other.foreingKeyColumn)) {
+            return false;
+        }
+        if (!Objects.equals(this.foreingKeyTable, other.foreingKeyTable)) {
+            return false;
+        }
+        if (!Objects.equals(this.constraintName, other.constraintName)) {
+            return false;
+        }
+        return true;
     }
     
     
