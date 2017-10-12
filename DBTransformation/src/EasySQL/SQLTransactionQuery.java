@@ -40,18 +40,15 @@ public class SQLTransactionQuery extends SQLQuery {
     
     @Override
     public Object sqlQueryDo() throws SQLException {
-        //StringBuilder req = new StringBuilder();
+        StringBuilder log = new StringBuilder();
         getCon().setAutoCommit(false);
         Statement stmt = getCon().createStatement();
-        //req.append(" START TRANSACTION; "+System.lineSeparator());
         for(StringQueryGetter q : queries){
-            //req.append(q.getStringSQLQueryDo()+System.lineSeparator());
-            stmt.executeUpdate(q.getStringSQLQueryDo());
+            String sq = q.getStringSQLQueryDo();
+            stmt.executeUpdate(sq);
+            log.append(sq);
         }
-        //req.append(" COMMIT; "+System.lineSeparator());
-
-        //SQLQueryFree free = new SQLQueryFree(getCon(), SQLQueryType.Updater, req.toString());
-        //free.sqlQueryDo();
+        System.out.println(log.toString());
         getCon().commit();
         getCon().setAutoCommit(true);
         return null;
@@ -59,16 +56,17 @@ public class SQLTransactionQuery extends SQLQuery {
 
     @Override
     public Object sqlQueryUndo() throws SQLException {
-        StringBuilder req = new StringBuilder();
-        req.append(" SET autocommit=0; ");
-        req.append(" START TRANSACTION; ");
+        StringBuilder log = new StringBuilder();
+        getCon().setAutoCommit(false);
+        Statement stmt = getCon().createStatement();
         for(int i = (queries.size()-1);i>=0;i--){
-            req.append(queries.get(i).getStringSQLQueryUndo());
+            String sq = queries.get(i).getStringSQLQueryUndo();
+            stmt.executeUpdate(sq);
+             log.append(sq);
         }
-        req.append(" COMMIT; ");
-        req.append("SET autocommit=1;");
-        SQLQueryFree free = new SQLQueryFree( getCon(), SQLQueryType.Updater, req.toString());
-        free.sqlQueryDo();
+        System.out.println(log.toString());
+        getCon().commit();
+        getCon().setAutoCommit(true);
         return null;
     }
     
