@@ -17,12 +17,6 @@ import EasySQL.SQLSelectQuery;
 import EasySQL.SQLTransactionQuery;
 import EasySQL.SQLUpdateQuery;
 import EasySQL.Table;
-import Transformation.ANTT;
-import Transformation.DTT;
-import Transformation.LMTT;
-import Transformation.MBT;
-import Transformation.MVMT;
-import Transformation.NTT;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -522,7 +516,7 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    
+    /*
     @Test
     public void testMVMT() {
         int result = 0;
@@ -549,9 +543,7 @@ public class JunitTest {
             sqlF.createSQLInsertQuery("testMVMTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
             ForeignKey fk = new ForeignKey("testMVMTTable1", "id", "reference", "FKMVMT");
-            
-            MVMT m = new MVMT("localhost/mydb", "3306", "root", "root", "testMVMTTable2", fk, (Object s)->{return ((String) s).toUpperCase();});
-            m.transfrom();  
+             
             
             t2 = sqlF.loadTable("testMVMTTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
@@ -596,9 +588,7 @@ public class JunitTest {
             sqlF.createSQLInsertQuery("testMBTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
             ForeignKey fk = new ForeignKey("testMBTTable1", "id", "reference", "FKMBT");
-            
-            MBT m = new MBT("localhost/mydb", "3306", "root", "root", "testMBTTable2", fk);
-            m.transfrom();  
+             
             
             t2 = sqlF.loadTable("testMBTTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
@@ -763,12 +753,12 @@ public class JunitTest {
             t2 = sqlF.loadTable("testDTTTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = t2.getForeignKeys();
-            /*
+            
             if (!(lfk.get(0).getForeingKeyColumn().equals("2city") && lfk.get(0).getConstraintName().equals("FKDTT"))) {
                 result = 1;
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testDTT()");
             }
-            */
+            
             add2.sqlQueryUndo();
             add1.sqlQueryUndo();
             
@@ -834,7 +824,7 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    
+    */
    @Test
     public void testSQLFree() {
         int result = 0;
