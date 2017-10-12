@@ -7,6 +7,7 @@ package EasySQL;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -39,16 +40,20 @@ public class SQLTransactionQuery extends SQLQuery {
     
     @Override
     public Object sqlQueryDo() throws SQLException {
-        StringBuilder req = new StringBuilder();
-        req.append(" SET autocommit=0; " + System.lineSeparator());
-        req.append(" START TRANSACTION; "+System.lineSeparator());
+        //StringBuilder req = new StringBuilder();
+        getCon().setAutoCommit(false);
+        Statement stmt = getCon().createStatement();
+        //req.append(" START TRANSACTION; "+System.lineSeparator());
         for(StringQueryGetter q : queries){
-            req.append(q.getStringSQLQueryDo()+System.lineSeparator());
+            //req.append(q.getStringSQLQueryDo()+System.lineSeparator());
+            stmt.executeUpdate(q.getStringSQLQueryDo());
         }
-        req.append(" COMMIT; "+System.lineSeparator());
-        req.append("SET autocommit=1;"+System.lineSeparator());
-        SQLQueryFree free = new SQLQueryFree(getCon(), SQLQueryType.Updater, req.toString());
-        free.sqlQueryDo();
+        //req.append(" COMMIT; "+System.lineSeparator());
+
+        //SQLQueryFree free = new SQLQueryFree(getCon(), SQLQueryType.Updater, req.toString());
+        //free.sqlQueryDo();
+        getCon().commit();
+        getCon().setAutoCommit(true);
         return null;
     }
 
