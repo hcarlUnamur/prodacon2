@@ -13,6 +13,11 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return (new Table(tableName, this.getConn()));
     }
     
+    
+    public SQLTransactionQuery creatTransactionQuery(){
+        return new SQLTransactionQuery(getConn());
+    }
+    
     public SQLQueryFree createSQLCreateFreeQuery(SQLQueryType queryType,String query){
         return new SQLQueryFree(null, getConn(), queryType, query);
     }

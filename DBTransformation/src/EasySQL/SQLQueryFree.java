@@ -28,6 +28,12 @@ public class SQLQueryFree extends SQLQuery {
         this.type=type;
         this.query=query;
     }
+     
+    public SQLQueryFree(Connection con,SQLQueryType type,String query) {
+        super(null, con);
+        this.type=type;
+        this.query=query;
+    } 
 
     public SQLQueryType getType() {
         return type;

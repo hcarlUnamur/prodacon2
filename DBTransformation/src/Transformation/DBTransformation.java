@@ -124,7 +124,7 @@ public abstract class DBTransformation {
         }
     }    
     public void unDoTransformation() throws SQLException{
-        for (int i=(this.listQuery.size()-1);i>0;i--){
+        for (int i=(this.listQuery.size()-1);i>=0;i--){
             listQuery.get(i).sqlQueryUndo();
         }
     }

@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class SQLAlterTableQuery extends SQLStructuresQuery{
+public class SQLAlterTableQuery extends SQLStructuresQuery implements StringQueryGetter{
 
     private static String sqlQuery="ALTER TABLE %s %s %s;";
     private static String sqlQueryForeignKey="ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s;";
@@ -251,4 +251,51 @@ public class SQLAlterTableQuery extends SQLStructuresQuery{
         }
         return null;
     }
+    
+    public String getStringSQLQueryDo() throws SQLException{
+        Statement stmt = this.getCon().createStatement();
+        String query = createQueryAndSaveData();
+        return query;
+    
+    }
+    
+    public String getStringSQLQueryUndo() throws SQLException{
+        String out ="";   
+        switch(alteration){
+            case AddColumn: 
+                SQLAlterTableQuery dropC = CreateDropColumnQuery(getTable()[0], getCon(), column);
+                out=dropC.getStringSQLQueryDo();
+                break;
+            case DropColumn: 
+                datasave.next();
+                SQLAlterTableQuery addC = CreateAddColumnQuery(getTable()[0], getCon(),new Column(datasave.getString(1), datasave.getString(2)));
+                out=addC.getStringSQLQueryDo();
+                break;
+            case ModifyColumnType: 
+                datasave.next();
+                SQLAlterTableQuery mod = CreateModifyColumnTypeQuery(getTable()[0], getCon(),new Column(datasave.getString(1), datasave.getString(2)));
+                out=mod.getStringSQLQueryDo();
+                break;
+            case AddForeignKey: 
+                SQLAlterTableQuery dropfk = CreateDropForeignKeyQuery(getTable()[0], getCon(), constraintName);
+                out=dropfk.getStringSQLQueryDo();
+                break;
+            case DropForeignKey: 
+                //TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
+                datasave.next();
+                SQLAlterTableQuery addfk = CreateAddForeignKeyQuery(getTable()[0], getCon(), constraintName, new Column(datasave.getString("COLUMN_NAME"),null), datasave.getString("REFERENCED_TABLE_NAME"), datasave.getString("REFERENCED_COLUMN_NAME"));
+                out =addfk.getStringSQLQueryDo();
+                break;
+            case AddPrimaryKey:
+                SQLAlterTableQuery dropPK = CreateDropPrimaryKeyQuery(getTable()[0], getCon());
+                out = dropPK.getStringSQLQueryDo();
+                break;
+            case DropPrimaryKey:
+                SQLAlterTableQuery addpk = CreateAddPrimaryKeyQuery(getTable()[0], getCon(), datasave.getString("COLUMN_NAME"));
+                out = addpk.getStringSQLQueryDo();
+                break;                
+        }
+        return out;
+    }
+    
 }
