@@ -239,7 +239,9 @@ public class DBTransformation {
                                                     result.getString("CONSTRAINT_NAME")
                                                   );
                 //test pour éviter les cycles
+                System.out.println("rec2");
                 if(!cascadeFk.contains(clef)){
+                    System.out.println("rec3");
                     loadCascadFk(result.getString("TABLE_NAME"),result.getString("CONSTRAINT_NAME"));
                     cascadeFk.add(clef);
                 }  
