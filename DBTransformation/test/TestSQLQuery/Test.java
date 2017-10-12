@@ -11,9 +11,12 @@ import EasySQL.SQLQueryType;
 import EasySQL.SQLTransactionQuery;
 import EasySQL.SQLUpdateQuery;
 import EasySQL.Table;
+import Transformation.DBTransformation;
+import Transformation.TransformationTarget;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,39 +28,65 @@ public class Test {
              
             
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("1id", "varchar(40)"));
-            listCol1.add(new Column("1name", "varchar(45)"));
-            listCol1.add(new Column("1trueFalse", "int(11)"));
-            listCol1.add(new Column("1float", "float(3,2)"));
+            listCol1.add(new Column("1id", "varchar(10)"));
             Table t1 = new Table("testTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
+            sqlF.createSQLInsertQuery("testTable1", new String[]{"Strong"}).sqlQueryDo();
+            
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("2id", "int"));
-            listCol2.add(new Column("2city", "varchar(10)"));
-            listCol2.add(new Column("2reference", "int signed"));
-            listCol2.add(new Column("2float", "float(8,2)"));
-          
+            listCol2.add(new Column("2id", "varchar(5)")); 
             Table t2 = new Table("testTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
+            sqlF.createSQLInsertQuery("testTable2", new String[]{"s"}).sqlQueryDo();
+            /*
             ArrayList<Column> listCol3 = new ArrayList<>();
-            listCol3.add(new Column("3id", "varchar(40)"));
-            listCol3.add(new Column("3city", "varchar(40)"));
-            listCol3.add(new Column("3reference", "int unsigned"));
-            listCol3.add(new Column("3float", "float(3,3)"));
+            listCol3.add(new Column("3id", "varchar(6)"));
             
             Table t3 = new Table("testTable3", listCol3, new ArrayList<ForeignKey>(), "3id");
             SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
             
-            sqlF.createSQLInsertQuery("testTable2", new String[]{"1", "Strong", "1", "1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable1", new String[]{"Strong", "Strong", "1", "1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable1", new String[]{"Strang", "23", "6", "7"}).sqlQueryDo();
-            //sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "START TRANSACTION; ALTER TABLE testTable2 MODIFY COLUMN 2city varchar(40); COMMIT;").sqlQueryDo();
+            ArrayList<Column> listCol4 = new ArrayList<>();
+            listCol4.add(new Column("4id", "varchar(6)"));
             
+            Table t4 = new Table("testTable4", listCol4, new ArrayList<ForeignKey>(), "4id");
+            SQLCreateTableQuery add4 = sqlF.createSQLCreateTableQuery(t4);
+            add4.sqlQueryDo();
+            
+            ArrayList<Column> listCol5 = new ArrayList<>();
+            listCol5.add(new Column("5id", "varchar(7)"));
+            
+            Table t5 = new Table("testTable5", listCol5, new ArrayList<ForeignKey>(), "5id");
+            SQLCreateTableQuery add5 = sqlF.createSQLCreateTableQuery(t5);
+            add5.sqlQueryDo();
+            */
+            ForeignKey fk1 = new ForeignKey("testTable1", "1id", "2id", "testTable2", "FK1");
+            /*
+            ForeignKey fk2 = new ForeignKey("testTable2", "2id", "3id", "testTable3", "FK2");
+            ForeignKey fk3 = new ForeignKey("testTable2", "2id", "4id", "testTable4", "FK3");
+            ForeignKey fk4 = new ForeignKey("testTable2", "2id", "5id", "testTable5", "FK4");
+            */
+            HashMap<String, Table> hm = new HashMap();
+            hm.put("testTable1", t1);
+            hm.put("testTable2", t2);
+            /*
+            hm.put("testTable3", t3);
+            hm.put("testTable4", t4);
+            hm.put("testTable5", t5);
+            */
+            DBTransformation bdt1 = new DBTransformation("localhost/mydb", "3306", "root", "root", hm, fk1, TransformationTarget.ForeignKeyTable, "varchar(10)");
+            bdt1.analyse();
+            
+            
+            
+            
+            
+            /*           
+           
             SQLTransactionQuery transac = sqlF.creatTransactionQuery();
             transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTable2", new Column("2city", "varchar(40)")));
             transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTable2", "fk1", new Column("2city", "varchar(40)"), "testTable1", "1id"));
