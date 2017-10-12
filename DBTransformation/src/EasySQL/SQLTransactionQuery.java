@@ -46,7 +46,6 @@ public class SQLTransactionQuery extends SQLQuery {
         }
         req.append(" COMMIT; ");
         SQLQueryFree free = new SQLQueryFree( getCon(), SQLQueryType.Updater, req.toString());
-        System.out.println(req.toString());
         free.sqlQueryDo();
         return null;
     }
@@ -54,11 +53,13 @@ public class SQLTransactionQuery extends SQLQuery {
     @Override
     public Object sqlQueryUndo() throws SQLException {
         StringBuilder req = new StringBuilder();
+        req.append(" SET autocommit=0; ");
         req.append(" START TRANSACTION; ");
         for(int i = (queries.size()-1);i>=0;i--){
             req.append(queries.get(i).getStringSQLQueryUndo());
         }
         req.append(" COMMIT; ");
+        req.append("SET autocommit=1;");
         SQLQueryFree free = new SQLQueryFree( getCon(), SQLQueryType.Updater, req.toString());
         free.sqlQueryDo();
         return null;
