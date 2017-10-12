@@ -26,7 +26,7 @@ public class Test {
              
             
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("1id", "TINYINT"));
+            listCol1.add(new Column("1id", "varchar(40)"));
             listCol1.add(new Column("1name", "varchar(45)"));
             listCol1.add(new Column("1trueFalse", "int(11)"));
             listCol1.add(new Column("1float", "float(3,2)"));
@@ -44,22 +44,30 @@ public class Test {
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
-            //sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "START TRANSACTION; ALTER TABLE testTable2 MODIFY COLUMN 2city varchar(40); COMMIT;").sqlQueryDo();
-            
-            SQLTransactionQuery transac = sqlF.creatTransactionQuery();
-            transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTable2", new Column("2city", "varchar(40)")));
-            transac.sqlQueryDo();
-            
-            /*
             ArrayList<Column> listCol3 = new ArrayList<>();
-            listCol3.add(new Column("3id", "int"));
-            listCol3.add(new Column("3city", "char"));
+            listCol3.add(new Column("3id", "varchar(40)"));
+            listCol3.add(new Column("3city", "varchar(40)"));
             listCol3.add(new Column("3reference", "int unsigned"));
             listCol3.add(new Column("3float", "float(3,3)"));
             
             Table t3 = new Table("testTable3", listCol3, new ArrayList<ForeignKey>(), "3id");
             SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
+            
+            sqlF.createSQLInsertQuery("testTable2", new String[]{"1", "Strong", "1", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable1", new String[]{"Strong", "Strong", "1", "1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable1", new String[]{"Strang", "23", "6", "7"}).sqlQueryDo();
+            //sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "START TRANSACTION; ALTER TABLE testTable2 MODIFY COLUMN 2city varchar(40); COMMIT;").sqlQueryDo();
+            
+            SQLTransactionQuery transac = sqlF.creatTransactionQuery();
+            transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTable2", new Column("2city", "varchar(40)")));
+            transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTable2", "fk1", new Column("2city", "varchar(40)"), "testTable1", "1id"));
+            transac.addQuery(sqlF.createSQLUpdateQuery("testTable2", new String[][]{{"2city", "Strang"}}, "1=1"));
+            transac.sqlQueryDo();
+            transac.sqlQueryUndo();
+            
+            /*
+            
                        
             ForeignKey fk1 = new ForeignKey("testTable1", "1name", "2city", "testTable2", "FK1");
             ForeignKey fk2 = new ForeignKey("testTable1", "1id", "2id", "testTable2", "FK2");
