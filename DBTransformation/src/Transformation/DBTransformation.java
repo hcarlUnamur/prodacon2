@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author carl_
  */
-public abstract class DBTransformation {
+public class DBTransformation {
     
     private String dataBaseHostName;
     private String dataBasePortNumber;
