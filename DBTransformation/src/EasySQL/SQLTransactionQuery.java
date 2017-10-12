@@ -46,6 +46,7 @@ public class SQLTransactionQuery extends SQLQuery {
         }
         req.append(" COMMIT; ");
         SQLQueryFree free = new SQLQueryFree( getCon(), SQLQueryType.Updater, req.toString());
+        System.out.println(req.toString());
         free.sqlQueryDo();
         return null;
     }
