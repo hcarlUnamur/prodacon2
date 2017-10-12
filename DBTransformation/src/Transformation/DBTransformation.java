@@ -32,14 +32,29 @@ public abstract class DBTransformation {
     private ArrayList<ForeignKey> cascadeFk;
     private ArrayList<SQLQuery> cascadeTransforamtion;
     private boolean encodageMatching;
+    
+    private HashMap<String,Table> tableDico;
+    private TransformationTarget target;
+    private String newType;
 
-    public DBTransformation(SQLQueryFactory sqlFactory,ForeignKey fk) {
+    public DBTransformation(SQLQueryFactory sqlFactory,HashMap<String,Table> tableDico,ForeignKey fk, TransformationTarget target,String newType) {
         this.tableName=fk.getForeingKeyTable();
         this.listQuery = new ArrayList();
         this.fk = fk;
         this.sqlFactory = sqlFactory;
         this.cascadeFk = new ArrayList();
         this.unmatchingValue = new ArrayList();
+        this.target=target;
+        this.tableDico=tableDico;
+        this.newType = newType;
+    }
+
+    public TransformationTarget getTarget() {
+        return target;
+    }
+
+    public void setTarget(TransformationTarget target) {
+        this.target = target;
     }
 
     public String getDataBasePassword() {
@@ -133,7 +148,7 @@ public abstract class DBTransformation {
         return tableName;
     } 
 
-    public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,String tableName, ForeignKey fk) {
+    public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,HashMap<String,Table> tableDico,String tableName, ForeignKey fk, TransformationTarget target, String newType) {
         this.dataBaseHostName = dataBaseHostName;
         this.dataBasePortNumber = dataBasePortNumber;
         this.dataBaseLogin = dataBaseLogin;
@@ -144,11 +159,14 @@ public abstract class DBTransformation {
         this.fk = fk;
         this.cascadeFk = new ArrayList();
         this.unmatchingValue = new ArrayList(); 
+        this.target=target;
+        this.tableDico=tableDico;
+        this.newType = newType;
     }
 
-    public void analyse(ArrayList<Table> tables){
+    public void analyse(){
         analyseValues();
-        analyseCascade(tables);      
+        analyseCascade();      
     }
     
     public void makeCascadeTransformation(){
@@ -181,8 +199,12 @@ public abstract class DBTransformation {
         }
     };
     
-    public void analyseCascade(ArrayList<Table> tables){
-        //TODO : 
+    public void analyseCascade(){
+        if(target.equals(TransformationTarget.ForeignKeyTable)){
+            loadCascadFk(fk.getForeingKeyTable(), fk.getForeingKeyColumn());
+        }else if(target.equals(TransformationTarget.ReferencedTable)){
+            loadCascadFk(fk.getReferencedTableName(), fk.getReferencedColumn());
+        }
     }
 
     public ArrayList<SQLQuery> getCascadeTransforamtion() {
@@ -200,6 +222,7 @@ public abstract class DBTransformation {
     //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
     private void loadCascadFk(String tablename, String columnName){
         try {
+            if(!tableDico.containsKey(tablename)){tableDico.put(tablename, sqlFactory.loadTable(tablename));}
             SQLSelectQuery select2 = new SQLSelectQuery(
                     new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                     sqlFactory.getConn(),
