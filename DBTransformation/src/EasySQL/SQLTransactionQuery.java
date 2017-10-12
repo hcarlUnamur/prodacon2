@@ -40,11 +40,13 @@ public class SQLTransactionQuery extends SQLQuery {
     @Override
     public Object sqlQueryDo() throws SQLException {
         StringBuilder req = new StringBuilder();
+        req.append(" SET autocommit=0; ");
         req.append(" START TRANSACTION; ");
         for(StringQueryGetter q : queries){
             req.append(q.getStringSQLQueryDo());
         }
         req.append(" COMMIT; ");
+        req.append("SET autocommit=1;");
         SQLQueryFree free = new SQLQueryFree( getCon(), SQLQueryType.Updater, req.toString());
         free.sqlQueryDo();
         return null;
