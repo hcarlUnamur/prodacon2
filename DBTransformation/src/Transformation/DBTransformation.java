@@ -221,6 +221,7 @@ public class DBTransformation {
     
     //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
     private void loadCascadFk(String tablename, String columnName){
+        System.out.println("rec");
         try {
             if(!tableDico.containsKey(tablename)){tableDico.put(tablename, sqlFactory.loadTable(tablename));}
             SQLSelectQuery select2 = new SQLSelectQuery(
