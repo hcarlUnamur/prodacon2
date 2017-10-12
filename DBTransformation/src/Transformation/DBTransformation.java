@@ -221,7 +221,6 @@ public class DBTransformation {
     
     //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
     private void loadCascadFk(String tablename, String columnName){
-        System.out.println("rec"+tablename+"/"+columnName);
         try {
             if(!tableDico.containsKey(tablename)){tableDico.put(tablename, sqlFactory.loadTable(tablename));}
             SQLSelectQuery select2 = new SQLSelectQuery(
@@ -239,10 +238,8 @@ public class DBTransformation {
                                                     result.getString("CONSTRAINT_NAME")
                                                   );
                 //test pour éviter les cycles
-                System.out.println("rec2"+tablename+"/"+columnName);
                 if(!cascadeFk.contains(clef)){
-                    System.out.println("rec3"+tablename+"/"+columnName);
-                    loadCascadFk(result.getString("TABLE_NAME"),result.getString("CONSTRAINT_NAME"));
+                    loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"));
                     cascadeFk.add(clef);
                 }  
             }
