@@ -148,12 +148,12 @@ public class DBTransformation {
         return tableName;
     } 
 
-    public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,HashMap<String,Table> tableDico,String tableName, ForeignKey fk, TransformationTarget target, String newType) {
+    public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,HashMap<String,Table> tableDico, ForeignKey fk, TransformationTarget target, String newType) {
         this.dataBaseHostName = dataBaseHostName;
         this.dataBasePortNumber = dataBasePortNumber;
         this.dataBaseLogin = dataBaseLogin;
         this.dataBasePassword = dataBasePassword;
-        this.tableName=tableName;
+        this.tableName=fk.getForeingKeyTable();
         this.listQuery = new ArrayList();
         this.sqlFactory = new SQLQueryFactory(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
         this.fk = fk;
