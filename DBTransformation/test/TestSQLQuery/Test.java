@@ -8,6 +8,7 @@ import EasySQL.ForeignKey;
 import EasySQL.SQLCreateTableQuery;
 import EasySQL.SQLQueryFactory;
 import EasySQL.SQLQueryType;
+import EasySQL.SQLTransactionQuery;
 import EasySQL.SQLUpdateQuery;
 import EasySQL.Table;
 import Transformation.MVMT;
@@ -43,6 +44,13 @@ public class Test {
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
+            //sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "START TRANSACTION; ALTER TABLE testTable2 MODIFY COLUMN 2city varchar(40); COMMIT;").sqlQueryDo();
+            
+            SQLTransactionQuery transac = sqlF.creatTransactionQuery();
+            transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTable2", new Column("2city", "varchar(40)")));
+            transac.sqlQueryDo();
+            
+            /*
             ArrayList<Column> listCol3 = new ArrayList<>();
             listCol3.add(new Column("3id", "int"));
             listCol3.add(new Column("3city", "char"));
@@ -78,7 +86,7 @@ public class Test {
             add1.sqlQueryUndo();
             add2.sqlQueryUndo();
             add3.sqlQueryUndo();
-            
+            */
             /*
             MVMT m = new MVMT("localhost/mydb", "3306", "root", "root", "testMVMTTable2", fk, (Object s)->{return ((String) s).toUpperCase();});
             m.transfrom();   
