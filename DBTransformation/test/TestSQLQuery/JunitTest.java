@@ -14,6 +14,7 @@ import EasySQL.SQLDropTableQuery;
 import EasySQL.SQLQueryFactory;
 import EasySQL.SQLQueryType;
 import EasySQL.SQLSelectQuery;
+import EasySQL.SQLTransactionQuery;
 import EasySQL.SQLUpdateQuery;
 import EasySQL.Table;
 import Transformation.ANTT;
@@ -679,7 +680,7 @@ public class JunitTest {
             listCol1.add(new Column("1id", "varchar(45)"));
             listCol1.add(new Column("1city", "varchar(10)"));
             listCol1.add(new Column("1reference", "bool"));
-            Table t1 = new Table("testANTTTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
+            Table t1 = new Table("testANTTTable1", listCol1, new ArrayList<ForeignKey>(), "1city");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
@@ -696,20 +697,27 @@ public class JunitTest {
             sqlF.createSQLInsertQuery("testANTTTable1", new String[]{"CouCou", "Strong", "1"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testANTTTable2", new String[]{"deux", "Strong", "coucou"}).sqlQueryDo();
             
-            ForeignKey fk = new ForeignKey("testANTTTable1", "1city", "2city", "FKANTT");
+            ForeignKey fk = new ForeignKey("testANTTTable1", "1city", "2city", "testANTTTable2", "FKANTT");
             
-            ANTT m = new ANTT("localhost/mydb", "3306", "root", "root", "testANTTTable2", fk);
+            HashMap<String, Table> hm = new HashMap();
+            hm.put("testANTTTable1", t1);
+            hm.put("testANTTTable2", t2);
+            LMTT m = new LMTT("localhost/mydb", "3306", "root", "root", "testANTTTable2", fk, hm, "varchar(45)");
             m.transfrom();  
             
             t2 = sqlF.loadTable("testANTTTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = t2.getForeignKeys();
-            /*
+            
             if (!(lfk.get(0).getForeingKeyColumn().equals("2city") && lfk.get(0).getConstraintName().equals("FKANTT"))) {
                 result = 1;
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testANTT()");
             }
-            */
+            if (!(hm.get("testANTTTable2").getTablecolumn().get(2).getColumnType().equals("varchar(45)"))) {
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testANTT()");
+            }
+            
             add2.sqlQueryUndo();
             add1.sqlQueryUndo();
             
@@ -731,7 +739,9 @@ public class JunitTest {
             Table t1 = new Table("testDTTTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
-            
+           
+            //this method is used 
+                       
             ArrayList<Column> listCol2 = new ArrayList<>();
             listCol2.add(new Column("2id", "int"));
             listCol2.add(new Column("2city", "varchar(45)"));
@@ -791,6 +801,7 @@ public class JunitTest {
             add2.sqlQueryDo();
             
             
+            
             sqlF.createSQLInsertQuery("testNTTTable1", new String[]{"1", "Strong", "1"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testNTTTable2", new String[]{"1", "Strong", "coucou"}).sqlQueryDo();
             
@@ -830,6 +841,7 @@ public class JunitTest {
         try {
             sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "create table testSQLFreeTable (name varchar(45));").sqlQueryDo();
             sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "insert into testSQLFreeTable(name) values (\"coucou\" );").sqlQueryDo();
+            sqlF.createSQLCreateFreeQuery(SQLQueryType.Updater, "ALTER TABLE testSQLFreeTable MODIFY COLUMN name varchar(10);").sqlQueryDo();
             ResultSet res = (ResultSet) sqlF.createSQLCreateFreeQuery(SQLQueryType.Getter, "select * from testSQLFreeTable;").sqlQueryDo();
             res.first();
             
@@ -846,5 +858,42 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
+    /*
+    @Test
+    public void testTransaction(){
+        int result = 0;
+        try {
+            ArrayList<Column> listCol1 = new ArrayList<>();
+            listCol1.add(new Column("1id", "varchar(40)"));
+            listCol1.add(new Column("1name", "varchar(45)"));
+            Table t1 = new Table("testTransactionTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
+            add1.sqlQueryDo();
+            
+            ArrayList<Column> listCol2 = new ArrayList<>();
+            listCol2.add(new Column("2id", "int"));
+          
+            Table t2 = new Table("testTransactionTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
+            add2.sqlQueryDo();
+            
+            sqlF.createSQLInsertQuery("testTransactionTable2", new String[]{"1", "Strong"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTransactionTable1", new String[]{"Strong"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTransactionTable1", new String[]{"Strang"}).sqlQueryDo();
+            SQLTransactionQuery transac = sqlF.creatTransactionQuery();
+            transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTransactionTable2", new Column("2city", "varchar(40)")));
+            transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTransactionTable2", "fk1", new Column("2city", "varchar(40)"), "testTransactionTable1", "1id"));
+            transac.addQuery(sqlF.createSQLUpdateQuery("testTransactionTable2", new String[][]{{"2city", "Strang"}}, "1=1"));
+            transac.sqlQueryDo();
+            transac.sqlQueryUndo();
+            
+            add2.sqlQueryUndo();
+            add1.sqlQueryUndo();
+            
+        } catch (Exception ex) {
+            ErrorGestion(ex, "testTransaction", new ArrayList<>(Arrays.asList("testTransactionTable2", "testTransactionTable1")));
+            result = 1;     
+        }
+    }*/
 
 }
