@@ -41,6 +41,7 @@ public class SQLTransactionQuery extends SQLQuery {
     @Override
     public Object sqlQueryDo() throws SQLException {
         StringBuilder log = new StringBuilder();
+        log.append("Transaction{ "+System.lineSeparator());
         getCon().setAutoCommit(false);
         Statement stmt = getCon().createStatement();
         for(StringQueryGetter q : queries){
@@ -48,6 +49,7 @@ public class SQLTransactionQuery extends SQLQuery {
             stmt.executeUpdate(sq);
             log.append(sq);
         }
+        log.append(System.lineSeparator()+"}");
         System.out.println(log.toString());
         getCon().commit();
         getCon().setAutoCommit(true);
@@ -57,6 +59,7 @@ public class SQLTransactionQuery extends SQLQuery {
     @Override
     public Object sqlQueryUndo() throws SQLException {
         StringBuilder log = new StringBuilder();
+        log.append("Transaction{ "+System.lineSeparator());
         getCon().setAutoCommit(false);
         Statement stmt = getCon().createStatement();
         for(int i = (queries.size()-1);i>=0;i--){
@@ -64,6 +67,7 @@ public class SQLTransactionQuery extends SQLQuery {
             stmt.executeUpdate(sq);
              log.append(sq);
         }
+        log.append(System.lineSeparator()+"}");
         System.out.println(log.toString());
         getCon().commit();
         getCon().setAutoCommit(true);
