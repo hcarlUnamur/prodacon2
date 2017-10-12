@@ -192,7 +192,7 @@ public class DBTransformation {
         try {
             ResultSet queryResult =sqlFactory.createSQLCreateFreeQuery(SQLQueryType.Getter,s).sqlQueryDo();
             while(queryResult.next()){
-                unmatchingValue.add(queryResult.getString(0));
+                unmatchingValue.add(queryResult.getString(1));
             }
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
