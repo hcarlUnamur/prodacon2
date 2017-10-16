@@ -228,7 +228,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
 
     @Override
     public boolean hasNext() {
-        return iteratorIndex>this.fks.size();
+        return iteratorIndex<this.fks.size();
     }
 
     @Override
