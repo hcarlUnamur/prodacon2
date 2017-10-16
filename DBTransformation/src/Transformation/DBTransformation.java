@@ -1,17 +1,20 @@
 package Transformation;
 
+import EasySQL.Column;
 import EasySQL.ForeignKey;
+import EasySQL.SQLAlterTableQuery;
 import EasySQL.SQLQuery;
 import EasySQL.SQLQueryFactory;
 import EasySQL.SQLQueryType;
 import EasySQL.SQLSelectQuery;
 import EasySQL.Table;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import EasySQL.SQLTransactionQuery;
+import java.sql.SQLException;
 /**
  *
  * @author carl_
@@ -22,17 +25,14 @@ public class DBTransformation {
     private String dataBasePortNumber;
     private String dataBaseLogin;
     private String dataBasePassword;
-    
     private String tableName;
     private SQLQueryFactory sqlFactory;
     private ForeignKey fk;
-    private ArrayList<SQLQuery> listQuery;
-    
+    private ArrayList<SQLQuery> listQuery;  
     private ArrayList<String> unmatchingValue;
     private ArrayList<ForeignKey> cascadeFk;
-    private ArrayList<SQLQuery> cascadeTransforamtion;
     private boolean encodageMatching;
-    
+    private SQLTransactionQuery cascadTransformation;
     private HashMap<String,Table> tableDico;
     private TransformationTarget target;
     private String newType;
@@ -48,7 +48,6 @@ public class DBTransformation {
         this.tableDico=tableDico;
         this.newType = newType;
     }
-
     public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,HashMap<String,Table> tableDico, ForeignKey fk, TransformationTarget target, String newType) {
         this.dataBaseHostName = dataBaseHostName;
         this.dataBasePortNumber = dataBasePortNumber;
@@ -68,123 +67,113 @@ public class DBTransformation {
     public TransformationTarget getTarget() {
         return target;
     }
-
     public void setTarget(TransformationTarget target) {
         this.target = target;
     }
-
     public String getDataBasePassword() {
         return dataBasePassword;
     }
-
     public void setDataBasePassword(String dataBasePassword) {
         this.dataBasePassword = dataBasePassword;
     }
-
     public SQLQueryFactory getSqlFactory() {
         return sqlFactory;
     }
-
     public void setSqlFactory(SQLQueryFactory sqlFactory) {
         this.sqlFactory = sqlFactory;
     }
-
     public ArrayList<SQLQuery> getListQuery() {
         return listQuery;
     }
-
     public void setListQuery(ArrayList<SQLQuery> listQuery) {
         this.listQuery = listQuery;
     }
-
     public ArrayList<String> getUnmatchingValue() {
         return unmatchingValue;
     }
-
     public void setUnmatchingValue(ArrayList<String> unmatchingValue) {
         this.unmatchingValue = unmatchingValue;
     }
-
     public ArrayList<ForeignKey> getCascadeFk() {
         return cascadeFk;
     }
-
     public void setCascadeFk(ArrayList<ForeignKey> cascadeFk) {
         this.cascadeFk = cascadeFk;
     }
-
     public boolean isEncodageMatching() {
         return encodageMatching;
     }
-
     public void setEncodageMatching(boolean encodageMatching) {
         this.encodageMatching = encodageMatching;
     }
-
     public String getDataBaseHostName() {
         return dataBaseHostName;
     }
-
     public String getDataBasePortNumber() {
         return dataBasePortNumber;
     }
-
     public String getDataBaseLogin() {
         return dataBaseLogin;
     }
-
     public SQLQueryFactory getSQLFactory() {
         return sqlFactory;
     }
-
     public ForeignKey getFk() {
         return fk;
     }
-
     public void setFk(ForeignKey fk) {
         this.fk = fk;
     }
-    
-    public void setCascadeTransformation(ArrayList<SQLQuery> cascadeTransforamtion) {
-        this.cascadeTransforamtion = cascadeTransforamtion;
-    }
-    
-    public void addCascadeTransformation(SQLQuery e){
-        cascadeTransforamtion.add(e);
-    }
-    
     public void addQuery(SQLQuery query){
         this.listQuery.add(query);
     }
+    public String getTableName() {
+        return tableName;
+    } 
     
     public void transfrom() throws SQLException{
+        try{
+            makeCascadeTransformation();
+        }catch(SQLException e){
+             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, "SQLException during Cascade transformation", e);
+             throw new SQLException(); 
+        }
         for(SQLQuery query : listQuery){
             query.sqlQueryDo();
         }
     }    
     public void unDoTransformation() throws SQLException{
+        try{
+            undoCascadeTransformation();
+        }catch(SQLException e){
+            Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, "SQLException during undoing Cascade transformation", e);
+        }
         for (int i=(this.listQuery.size()-1);i>=0;i--){
             listQuery.get(i).sqlQueryUndo();
         }
     }
 
-    public String getTableName() {
-        return tableName;
-    } 
-
     public void analyse(){
         analyseValues();
-        analyseCascade();      
+        analyseCascade();
+        if (target.equals(TransformationTarget.ForeignKeyTable)){
+            addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
+        }else if(target.equals(TransformationTarget.ReferencedTable)){
+            addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
+        }
     }
     
-    public void makeCascadeTransformation(){
-        for(SQLQuery query : cascadeTransforamtion){
-            try {
-                query.sqlQueryDo();
-            } catch (SQLException ex) {
-                Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE,"SQL Exception from makeCascadeTransformation() on DB transformation class", ex);
-            }
+    public void makeCascadeTransformation() throws SQLException{
+        SQLTransactionQuery transaction = sqlFactory.creatTransactionQuery();
+        for(ForeignKey fk : this.cascadeFk){
+            transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
         }
+        this.cascadTransformation = transaction;
+        transaction.sqlQueryDo();
+    }
+    
+    public void undoCascadeTransformation() throws SQLException{
+        this.cascadTransformation.sqlQueryUndo();
     }
     
     public void analyseValues(){
@@ -215,9 +204,6 @@ public class DBTransformation {
         }
     }
 
-    public ArrayList<SQLQuery> getCascadeTransforamtion() {
-        return cascadeTransforamtion;
-    }
     
     //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
     private void loadCascadFk(String tablename, String columnName){
