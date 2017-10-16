@@ -176,7 +176,8 @@ public class DBTransformation extends Transformation {
         addFkQuery.sqlQueryUndo();
         
         for (int i=(this.listQuery.size()-1);i>=0;i--){
-            cascadTransformation.addQuery((SQLAlterTableQuery)listQuery.get(i));
+            cascadTransformation.getQueries().add(0,(SQLAlterTableQuery)listQuery.get(i));
+            //cascadTransformation.addQuery((SQLAlterTableQuery)listQuery.get(i));
         }
         
         try{

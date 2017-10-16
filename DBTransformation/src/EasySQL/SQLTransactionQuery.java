@@ -17,6 +17,14 @@ import java.util.ArrayList;
 public class SQLTransactionQuery extends SQLQuery {
     
     private ArrayList<StringQueryGetter> queries;
+
+    public ArrayList<StringQueryGetter> getQueries() {
+        return queries;
+    }
+
+    public void setQueries(ArrayList<StringQueryGetter> queries) {
+        this.queries = queries;
+    }
     
     @Deprecated
     public SQLTransactionQuery(String[] table, Connection con) {
@@ -46,11 +54,12 @@ public class SQLTransactionQuery extends SQLQuery {
         Statement stmt = getCon().createStatement();
         for(StringQueryGetter q : queries){
             String sq = q.getStringSQLQueryDo();
-            stmt.executeUpdate(sq);
+            stmt.addBatch(sq);
             log.append(sq);
         }
         log.append(System.lineSeparator()+"}");
         System.out.println(log.toString());
+        stmt.executeBatch();
         getCon().commit();
         getCon().setAutoCommit(true);
         return null;
@@ -64,11 +73,13 @@ public class SQLTransactionQuery extends SQLQuery {
         Statement stmt = getCon().createStatement();
         for(int i = (queries.size()-1);i>=0;i--){
             String sq = queries.get(i).getStringSQLQueryUndo();
-            stmt.executeUpdate(sq);
-             log.append(sq);
+            System.out.println("xxxxxxxxxxxxx"+sq+" "+getCon().getAutoCommit());
+            stmt.addBatch(sq);
+            log.append(sq);
         }
         log.append(System.lineSeparator()+"}");
         System.out.println(log.toString());
+        stmt.executeBatch();
         getCon().commit();
         getCon().setAutoCommit(true);
         return null;
