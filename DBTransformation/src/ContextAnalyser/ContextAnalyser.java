@@ -48,10 +48,13 @@ public class ContextAnalyser implements Iterator<Transformation> {
         Table usedTable = null;
         Table referencedTable = null;
         try{
-                usedTable = tableLoaded.put(fk.getForeingKeyTable(),factory.loadTable(fk.getForeingKeyTable()));
-                referencedTable = tableLoaded.put(fk.getReferencedTableName(),factory.loadTable(fk.getReferencedTableName()));
-           }catch(SQLException e){throw new LoadUnexistentTableException("It's impossible to loade the foreign key table. they can don't exist");}
-              
+                usedTable = factory.loadTable(fk.getForeingKeyTable());
+                referencedTable = factory.loadTable(fk.getReferencedTableName());
+        }catch(SQLException e){
+               throw new LoadUnexistentTableException("It's impossible to loade the foreign key table. they can don't exist");
+        }
+        
+        
                 Column fkColumn = usedTable.getTablecolumn().stream()
                                             .filter(c-> c.getColumnName().equals(fk.getForeingKeyColumn()))
                                             .findFirst()
@@ -61,9 +64,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                                             .filter(c-> c.getColumnName().equals(fk.getReferencedColumn()))
                                             .findFirst()
                                             .get();
-                
-                                
-                
+
                 if (fkColumn.getColumnType().equals(referencedColumn.getColumnType())){
                     return perfectTypeMatching(usedTable, referencedTable,fk, fkColumn, referencedColumn);
                 }else{
