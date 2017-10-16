@@ -1,5 +1,6 @@
 package Transformation;
 
+import ContextAnalyser.TransformationType;
 import EasySQL.Column;
 import EasySQL.ForeignKey;
 import EasySQL.SQLAlterTableQuery;
@@ -19,7 +20,7 @@ import java.sql.SQLException;
  *
  * @author carl_
  */
-public class DBTransformation {
+public class DBTransformation extends Transformation {
     
     private String dataBaseHostName;
     private String dataBasePortNumber;
@@ -36,8 +37,9 @@ public class DBTransformation {
     private HashMap<String,Table> tableDico;
     private TransformationTarget target;
     private String newType;
+    private ContextAnalyser.TransformationType transforamtiontype;
 
-    public DBTransformation(SQLQueryFactory sqlFactory,HashMap<String,Table> tableDico,ForeignKey fk, TransformationTarget target,String newType) {
+    public DBTransformation(SQLQueryFactory sqlFactory,HashMap<String,Table> tableDico,ForeignKey fk, TransformationTarget target,String newType,ContextAnalyser.TransformationType transforamtiontype) {
         this.tableName=fk.getForeingKeyTable();
         this.listQuery = new ArrayList();
         this.fk = fk;
@@ -47,8 +49,9 @@ public class DBTransformation {
         this.target=target;
         this.tableDico=tableDico;
         this.newType = newType;
+        this.transforamtiontype = transforamtiontype;
     }
-    public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,HashMap<String,Table> tableDico, ForeignKey fk, TransformationTarget target, String newType) {
+    public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,HashMap<String,Table> tableDico, ForeignKey fk, TransformationTarget target, String newType, ContextAnalyser.TransformationType transforamtiontype) {
         this.dataBaseHostName = dataBaseHostName;
         this.dataBasePortNumber = dataBasePortNumber;
         this.dataBaseLogin = dataBaseLogin;
@@ -62,6 +65,7 @@ public class DBTransformation {
         this.target=target;
         this.tableDico=tableDico;
         this.newType = newType;
+        this.transforamtiontype = transforamtiontype;
     }
     
     public TransformationTarget getTarget() {
@@ -130,6 +134,30 @@ public class DBTransformation {
     public String getTableName() {
         return tableName;
     } 
+    public SQLTransactionQuery getCascadTransformation() {
+        return cascadTransformation;
+    }
+    public void setCascadTransformation(SQLTransactionQuery cascadTransformation) {
+        this.cascadTransformation = cascadTransformation;
+    }
+    public HashMap<String, Table> getTableDico() {
+        return tableDico;
+    }
+    public void setTableDico(HashMap<String, Table> tableDico) {
+        this.tableDico = tableDico;
+    }
+    public String getNewType() {
+        return newType;
+    }
+    public void setNewType(String newType) {
+        this.newType = newType;
+    }
+    public TransformationType getTransforamtiontype() {
+        return transforamtiontype;
+    }
+    public void setTransforamtiontype(TransformationType transforamtiontype) {
+        this.transforamtiontype = transforamtiontype;
+    }
     
     public void transfrom() throws SQLException{
         try{
@@ -161,6 +189,7 @@ public class DBTransformation {
         }else if(target.equals(TransformationTarget.ReferencedTable)){
             addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
         }
+        addQuery(sqlFactory.createSQLAlterAddForeignKeyQuery(tableName, fk));
     }
     
     public void makeCascadeTransformation() throws SQLException{
@@ -194,6 +223,11 @@ public class DBTransformation {
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+                if (this.transforamtiontype.equals(TransformationType.MBT) && !unmatchingValue.isEmpty()){
+                    this.transforamtiontype=TransformationType.MVMT;
+                }
+        
     };
     
     public void analyseCascade(){
