@@ -17,6 +17,8 @@ import EasySQL.SQLSelectQuery;
 import EasySQL.SQLTransactionQuery;
 import EasySQL.SQLUpdateQuery;
 import EasySQL.Table;
+import Transformation.DBTransformation;
+import Transformation.TransformationTarget;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,16 +32,16 @@ import static org.junit.Assert.*;
  * @author thibaud
  *
  * MEMO : Si tout plante, il y a des chances pour que ce ne soit que le select
- * ou/et le drop qui soit problèmatique, puisque s'il ne fonctionne pas,
+ * ou/et le drop qui soit problèmatiques, puisque s'ils ne fonctionnent pas,
  * impossible d'effacer toutes les tables créés dans ces tests.
  *
  */
 public class JunitTest {
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
+    
     SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
 
+    //méthode servant à créer rapidement une table. Cette méthode n'est pas un test.
     public Table CreateTable1(String tableName) {
         ArrayList<Column> listCol = new ArrayList<>();
         listCol.add(new Column("id", "int"));
@@ -49,6 +51,7 @@ public class JunitTest {
         return t1;
     }
 
+    //méthode servant à créer rapidement une autre table. Cette méthode n'est pas un test.
     public Table CreateTable2(String tableName) {
         ArrayList<Column> listCol = new ArrayList<>();
         listCol.add(new Column("id", "int"));
@@ -58,6 +61,8 @@ public class JunitTest {
         return t2;
     }
 
+    //gère une exception arrivant dans n'importe quel test. On imprimme le message de l'exception,
+    //de quel test cette exception vient et enfin on détruit toutes les tables construites dans ce test.
     public void ErrorGestion(Exception ex, String functionName, ArrayList<String> ls) {
         System.err.println(ex);
         System.err.println("ko! : " + "TestSQLQuery.JunitTest." + functionName + "()");
@@ -69,6 +74,8 @@ public class JunitTest {
         }
     }
 
+    //permet d'analyser rapidement si pour une table, un nom de colonne et un type de colonne donné, le type de la colonne de la table est bien le type donné en paramètre.
+    //si ce n'est pas le cas fait échouer le test (return 1).
     public int ColumnAnalyser(String functionName, String tableName, String columnName, String columnType) throws Exception {
         SQLSelectQuery selectColumn = sqlF.createSQLSelectQuery(new String[]{"information_schema.columns"},
                 new String[]{"column_name", "column_type"},
@@ -83,7 +90,9 @@ public class JunitTest {
             return 0;
         }
     }
-
+    
+    //permet d'analyser rapidement si pour une table et une colonne donnée, la colonne de cette table est une primary key ou non?
+    //si ce n'est pas le cas, fait échouer le test (result = 1);
     public int PrimaryKeyAnalyser(String functionName, String tableName, String columnName) throws Exception {
         SQLSelectQuery selectPrimaryKey = sqlF.createSQLSelectQuery(
                 new String[]{"INFORMATION_SCHEMA.COLUMNS"},
@@ -100,6 +109,8 @@ public class JunitTest {
         }
     }
 
+    //permet d'analyser rapidement si pour une table, un nom de colonne et un nom de contrainte donné, la colonne est une foreign key du nom du paramètre donné?
+    //si ce n'est pas le cas, fait échouer le test (result = 1)
     public int ForeignKeyAnalyser(String functionName, String tableName, String columnName, String constraintName) throws Exception {
         SQLSelectQuery selectForeignKey = sqlF.createSQLSelectQuery(new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                 new String[]{"TABLE_NAME,COLUMN_NAME", "COLUMN_NAME", "CONSTRAINT_NAME", "REFERENCED_TABLE_NAME", "REFERENCED_COLUMN_NAME"},
@@ -115,8 +126,9 @@ public class JunitTest {
         }
     }
 
+    //permet de vérifier rapidemment si pour une liste de colonne et une liste de valeurs données, la première ligne de la table à bien les même valeurs que la liste de valeurs passée en paramètre.
+    //si ce n'est pas le cas, fait échouer le test (result = 1).
     public int SelectForTest(String functionName, String tableName, String[] columns, String[] values) throws Exception {
-
         ResultSet metadata = sqlF.createSQLSelectQuery(tableName, new String[]{columns[0], columns[1], columns[2]}, "id = '" + values[0] + "'").sqlQueryDo();
         metadata.first();
         if (!(metadata.getString(1).equals(values[0]) && metadata.getString(2).equals(values[1]) && metadata.getString(3).equals(values[2]))) {
@@ -129,12 +141,16 @@ public class JunitTest {
 
     }
 
+    //permet de rapidement peupler une table donnée avec des valeurs prédéfinie (typiquement, il faut utiliser cette méthode uniquement sur une table crée avec les méthodes
+    //CreateTable1 ou CreateTable2.
     public void PeuplerTable(String tableName) throws SQLException {
         sqlF.createSQLInsertQuery(tableName, new String[]{"1", "Strong", "1"}).sqlQueryDo();
         sqlF.createSQLInsertQuery(tableName, new String[]{"6", "String", "1"}).sqlQueryDo();
         sqlF.createSQLInsertQuery(tableName, new String[]{"5", "Strang", "0"}).sqlQueryDo();
     }
 
+    //permet de vérifier rapidemment si la première ligne d'une table correspond à au moins une des ligne d'une table sortant de la méthode PeuplerTable
+    //si ce n'est pas le cas, fait échouer le test (result = 1)
     public int PeuplementTest(String functionName, String tableName) throws Exception {
         int result = SelectForTest(functionName, tableName, new String[]{"id", "name", "trueFalse"}, new String[]{"1", "Strong", "1"});
         if (result == 0) {
@@ -146,6 +162,7 @@ public class JunitTest {
         return result;
     }
 
+    //permet de tester si la première méthode d'ajout de table en BD ainsi que son Undo fonctionne.
     @Test
     public void testCreateTableQuery1() {
         int result = 0;
@@ -162,6 +179,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la deuxième méthode d'ajout de table en BD ainsi que son Undo fonctionne.
     @Test
     public void testCreateTableQuery2() {
         int result = 0;
@@ -181,6 +199,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la troisième méthode d'ajout de table en BD ainsi que son Undo fonctionne.
     @Test
     public void testCreateTableQuery3() {
         int result = 0;
@@ -197,7 +216,8 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-
+    
+    //permet de tester si la premire méthode de drop de table en BD ainsi que son Undo fonctionne.
     @Test
     public void testDropTableQuery1() {
 
@@ -223,8 +243,9 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la deuxième méthode de drop de table en BD ainsi que son Undo fonctionne.
     @Test
-    public void testDropTableQuery() {
+    public void testDropTableQuery2() {
 
         int result = 0;
         try {
@@ -237,17 +258,18 @@ public class JunitTest {
             drop2.sqlQueryDo();
             drop2.sqlQueryUndo();
 
-            result = PeuplementTest("testDropTableQuery", "testDropTable2");
+            result = PeuplementTest("testDropTableQuery2", "testDropTable2");
             drop2.sqlQueryDo();
 
             System.out.println("ok");
         } catch (Exception ex) {
-            ErrorGestion(ex, "testDropTableQuery", new ArrayList<>(Arrays.asList("testDropTable2")));
+            ErrorGestion(ex, "testDropTableQuery2", new ArrayList<>(Arrays.asList("testDropTable2")));
             result = 1;
         }
         assertEquals(0, result);
     }
 
+    //permet de tester si la première méthode de delete de valeur dans une table en BD ainsi que son Undo fonctionne.
     @Test
     public void testInsertDeleteQuery1() {
 
@@ -271,6 +293,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la deuxième méthode de delete de valeur dans une table en BD ainsi que son Undo fonctionne.
     @Test
     public void testInsertDeleteQuery2() {
 
@@ -302,6 +325,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la méthode d'update de valeur dans une table en BD ainsi que son Undo fonctionne.
     @Test
     public void testUpdateQuery() {
 
@@ -326,6 +350,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la méthode de select de valeur dans une table en BD ainsi que son Undo fonctionne.
     @Test
     public void testSelectQuery() {
 
@@ -342,6 +367,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la méthode d'ajout de primary key dans une table en BD ainsi que son Undo fonctionne.
     @Test
     public void AlterAddDropPrimaryKeyQuery() {
 
@@ -366,7 +392,8 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-
+    
+    //permet de tester si la méthode d'ajout de foreign key dans une table vers une autre en BD ainsi que son Undo fonctionne.
     @Test
     public void AlterAddDropForeignKeyQuery() {
 
@@ -397,6 +424,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la méthode d'ajout et de supprémtion de colonnes dans une table en BD ainsi que leur Undo fonctionne.
     @Test
     public void AlterAddDropColumnQuery() {
 
@@ -422,6 +450,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la méthode de modification du type d'une colonne dans une table en BD ainsi que son Undo fonctionne.
     @Test
     public void AlterModifyColumnTypeQuery() {
 
@@ -445,6 +474,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
+    //permet de tester si la méthode de chargement d'une table (loadTable) fonctionne.
     @Test
     public void testLoadTable() {
 
@@ -544,7 +574,6 @@ public class JunitTest {
             
             ForeignKey fk = new ForeignKey("testMVMTTable1", "id", "reference", "FKMVMT");
              
-            
             t2 = sqlF.loadTable("testMVMTTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = t2.getForeignKeys();
@@ -825,6 +854,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
     */
+    //permet de tester si les methodes permettant d'exécuter rapidement des instruction SQL directement (SQLFree) fonctionnent.
    @Test
     public void testSQLFree() {
         int result = 0;
@@ -848,35 +878,40 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    /*
+    
+    //permet de tester si la méthode de création de transaction fonctionne.
     @Test
     public void testTransaction(){
         int result = 0;
         try {
             ArrayList<Column> listCol1 = new ArrayList<>();
             listCol1.add(new Column("1id", "varchar(40)"));
-            listCol1.add(new Column("1name", "varchar(45)"));
-            Table t1 = new Table("testTransactionTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
+            listCol1.add(new Column("1name", "varchar(40)"));
+            Table t1 = new Table("testTransactionTable1", listCol1, new ArrayList<ForeignKey>(), "1name");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("2id", "int"));
+            listCol2.add(new Column("2id", "varchar(45)"));
           
             Table t2 = new Table("testTransactionTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
-            sqlF.createSQLInsertQuery("testTransactionTable2", new String[]{"1", "Strong"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTransactionTable1", new String[]{"Strong"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTransactionTable1", new String[]{"Strang"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTransactionTable1", new String[]{"1", "Strong"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTransactionTable1", new String[]{"2", "Strang"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTransactionTable2", new String[]{"Strong"}).sqlQueryDo();
             SQLTransactionQuery transac = sqlF.creatTransactionQuery();
-            transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTransactionTable2", new Column("2city", "varchar(40)")));
-            transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTransactionTable2", "fk1", new Column("2city", "varchar(40)"), "testTransactionTable1", "1id"));
-            transac.addQuery(sqlF.createSQLUpdateQuery("testTransactionTable2", new String[][]{{"2city", "Strang"}}, "1=1"));
+            transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTransactionTable2", new Column("2id", "varchar(40)")));
+            transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTransactionTable2", "fk1", new Column("2id", "varchar(40)"), "testTransactionTable1", "1name"));
+            transac.addQuery(sqlF.createSQLUpdateQuery("testTransactionTable2", new String[][]{{"2id", "Strang"}}, "1=1"));
             transac.sqlQueryDo();
+            result = ForeignKeyAnalyser("testTransaction", "testTransactionTable2", "2id", "fk1");
             transac.sqlQueryUndo();
-            
+            try{
+                ForeignKeyAnalyser("testTransaction", "testTransactionTable2", "2id", "fk1");
+                result = 1;
+            } catch (SQLException ex){}
             add2.sqlQueryUndo();
             add1.sqlQueryUndo();
             
@@ -884,6 +919,107 @@ public class JunitTest {
             ErrorGestion(ex, "testTransaction", new ArrayList<>(Arrays.asList("testTransactionTable2", "testTransactionTable1")));
             result = 1;     
         }
-    }*/
+        assertEquals(0, result);
+    }
+    
+    //permet de tester si lors d'une transformation, la méthode transformation regarde bien en cascade si on doit modifier les 
+    //types des colonne de foreign key pointant vers la première table référencée et ainsi de suite.
+    @Test 
+    public void testTransfoCascade(){
+        int result = 0;
+        try{
+           ArrayList<Column> listCol1 = new ArrayList<>();
+            listCol1.add(new Column("1id", "varchar(10)"));
+            Table t1 = new Table("transfoCascade1", listCol1, new ArrayList<ForeignKey>(), "1id");
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
+            add1.sqlQueryDo();
+            
+            //sqlF.createSQLInsertQuery("transfoCascade1", new String[]{"Strong"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("transfoCascade1", new String[]{"Str"}).sqlQueryDo();
+            
+            ArrayList<Column> listCol2 = new ArrayList<>();
+            listCol2.add(new Column("2id", "varchar(5)")); 
+            Table t2 = new Table("transfoCascade2", listCol2, new ArrayList<ForeignKey>(), "2id");
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
+            add2.sqlQueryDo();
+            
+            //sqlF.createSQLInsertQuery("transfoCascade2", new String[]{"s"}).sqlQueryDo();
+            //sqlF.createSQLInsertQuery("transfoCascade2", new String[]{"st"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("transfoCascade2", new String[]{"str"}).sqlQueryDo();
+            
+            ArrayList<Column> listCol3 = new ArrayList<>();
+            listCol3.add(new Column("3id", "varchar(6)"));
+            Table t3 = new Table("transfoCascade3", listCol3, new ArrayList<ForeignKey>(), "3id");
+            SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
+            add3.sqlQueryDo();
+            
+            sqlF.createSQLInsertQuery("transfoCascade3", new String[]{"str"}).sqlQueryDo();
+            
+            ArrayList<Column> listCol4 = new ArrayList<>();
+            listCol4.add(new Column("4id", "varchar(6)"));
+            Table t4 = new Table("transfoCascade4", listCol4, new ArrayList<ForeignKey>(), "4id");
+            SQLCreateTableQuery add4 = sqlF.createSQLCreateTableQuery(t4);
+            add4.sqlQueryDo();
+            
+            sqlF.createSQLInsertQuery("transfoCascade4", new String[]{"str"}).sqlQueryDo();
+            
+            ArrayList<Column> listCol5 = new ArrayList<>();
+            listCol5.add(new Column("5id", "varchar(7)"));
+            Table t5 = new Table("transfoCascade5", listCol5, new ArrayList<ForeignKey>(), "5id");
+            SQLCreateTableQuery add5 = sqlF.createSQLCreateTableQuery(t5);
+            add5.sqlQueryDo();
+            
+            sqlF.createSQLInsertQuery("transfoCascade5", new String[]{"str"}).sqlQueryDo();
+            //sqlF.createSQLInsertQuery("transfoCascade5", new String[]{"nop"}).sqlQueryDo();
+            
+            ForeignKey fk1 = new ForeignKey("transfoCascade1", "1id", "2id", "transfoCascade2", "FK1");
+            ForeignKey fk2 = new ForeignKey("transfoCascade2", "2id", "3id", "transfoCascade3", "FK2");
+            ForeignKey fk3 = new ForeignKey("transfoCascade2", "2id", "4id", "transfoCascade4", "FK3");
+            ForeignKey fk4 = new ForeignKey("transfoCascade4", "4id", "5id", "transfoCascade5", "FK4");
+            
+            sqlF.createSQLAlterAddForeignKeyQuery("transfoCascade3", fk2).sqlQueryDo();
+            sqlF.createSQLAlterAddForeignKeyQuery("transfoCascade4", fk3).sqlQueryDo();
+            sqlF.createSQLAlterAddForeignKeyQuery("transfoCascade5", fk4).sqlQueryDo();
+            
+            HashMap<String, Table> hm = new HashMap();
+            hm.put("transfoCascade1", t1);
+            hm.put("transfoCascade2", t2);
+            hm.put("transfoCascade3", t3);
+            hm.put("transfoCascade4", t4);
+            hm.put("transfoCascade5", t5);
+            
+            
+            DBTransformation bdt1 = new DBTransformation("localhost/mydb", "3306", "root", "root", hm, fk1, TransformationTarget.ForeignKeyTable, "varchar(10)");
+            bdt1.analyse();
+            
+            System.out.println("********************************");
+            bdt1.getCascadeFk().forEach(f->System.out.println(f.getConstraintName()));
+            System.out.println("********************************");
+            bdt1.getUnmatchingValue().forEach(System.out::println);
+             /*
+            t2 = sqlF.loadTable("transfoCascade2");
+            ArrayList<ForeignKey> lfk = new ArrayList<>();
+            lfk = t2.getForeignKeys();
+            
+            if (!(lfk.get(0).getForeingKeyColumn().equals("2id") && lfk.get(0).getConstraintName().equals("FK1"))) {
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testNTT()");
+            }
+            if (!(hm.get("transfoCascade5").getTablecolumn().get(0).getColumnType().equals("varchar(10)"))) {
+                result = 1;
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testANTT()");
+            }*/
+            add5.sqlQueryUndo();
+            add4.sqlQueryUndo();
+            add3.sqlQueryUndo();
+            add2.sqlQueryUndo();
+            add1.sqlQueryUndo();
+            
+        }catch (Exception ex) {
+            ErrorGestion(ex, "testTransformationCascade", new ArrayList<>(Arrays.asList("transfoCascade5", "transfoCascade4", "transfoCascade3", "transfoCascade2", "transfoCascade1")));
+            result = 1; 
+        }
+        assertEquals(0, result);
+    }
 
 }

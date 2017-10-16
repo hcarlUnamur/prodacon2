@@ -12,6 +12,7 @@ import EasySQL.SQLTransactionQuery;
 import EasySQL.SQLUpdateQuery;
 import EasySQL.Table;
 import Transformation.DBTransformation;
+import Transformation.Transformation;
 import Transformation.TransformationTarget;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,17 +35,17 @@ public class Test {
             add1.sqlQueryDo();
             
             //sqlF.createSQLInsertQuery("testTable1", new String[]{"Strong"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable1", new String[]{"Str"}).sqlQueryDo();
+            //sqlF.createSQLInsertQuery("testTable1", new String[]{"Str"}).sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
             listCol2.add(new Column("2id", "varchar(5)")); 
             Table t2 = new Table("testTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
-            
-            //sqlF.createSQLInsertQuery("testTable2", new String[]{"s"}).sqlQueryDo();
-            //sqlF.createSQLInsertQuery("testTable2", new String[]{"st"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable2", new String[]{"str"}).sqlQueryDo();
+            /*
+            sqlF.createSQLInsertQuery("testTable2", new String[]{"s"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable2", new String[]{"St"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable2", new String[]{"Str"}).sqlQueryDo();
             
             ArrayList<Column> listCol3 = new ArrayList<>();
             listCol3.add(new Column("3id", "varchar(6)"));
@@ -69,25 +70,46 @@ public class Test {
             add5.sqlQueryDo();
             
             sqlF.createSQLInsertQuery("testTable5", new String[]{"str"}).sqlQueryDo();
-            //sqlF.createSQLInsertQuery("testTable5", new String[]{"nop"}).sqlQueryDo();
-            
+            sqlF.createSQLInsertQuery("testTable5", new String[]{"nop"}).sqlQueryDo();
+            */
             ForeignKey fk1 = new ForeignKey("testTable1", "1id", "2id", "testTable2", "FK1");
-            ForeignKey fk2 = new ForeignKey("testTable2", "2id", "3id", "testTable3", "FK2");
-            ForeignKey fk3 = new ForeignKey("testTable2", "2id", "4id", "testTable4", "FK3");
-            ForeignKey fk4 = new ForeignKey("testTable4", "4id", "5id", "testTable5", "FK4");
+            //ForeignKey fk2 = new ForeignKey("testTable2", "2id", "3id", "testTable3", "FK2");
+            //ForeignKey fk3 = new ForeignKey("testTable2", "2id", "4id", "testTable4", "FK3");
+            //ForeignKey fk4 = new ForeignKey("testTable4", "4id", "5id", "testTable5", "FK4");
+            //ForeignKey fk5 = new ForeignKey("testTable5", "5id", "1id", "testTable1", "FK5");
             
+            ArrayList<ForeignKey> lFK = new ArrayList<>();
+            lFK.add(fk1);
+            
+            /*
             sqlF.createSQLAlterAddForeignKeyQuery("testTable3", fk2).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable4", fk3).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable5", fk4).sqlQueryDo();
-            
+            sqlF.createSQLAlterAddForeignKeyQuery("testTable1", fk5).sqlQueryDo();
+            */
             HashMap<String, Table> hm = new HashMap();
             hm.put("testTable1", t1);
             hm.put("testTable2", t2);
-            hm.put("testTable3", t3);
-            hm.put("testTable4", t4);
-            hm.put("testTable5", t5);
+            //hm.put("testTable3", t3);
+            //hm.put("testTable4", t4);
+            //hm.put("testTable5", t5);
             
-            
+            ContextAnalyser ca = new ContextAnalyser("localhost/mydb", "3306", "root", "root", lFK);
+            while (ca.hasNext()){
+                System.out.println("OOOOOOOOOOOOOOOO");
+                Transformation transfo = ca.next();
+                
+                if (transfo instanceof DBTransformation){
+                    DBTransformation dbt = (DBTransformation)transfo;
+                    dbt.analyse();
+                    System.out.println("aaaaaaaaaa " + dbt.getTarget());
+                }
+                
+            }
+            System.out.println("NNNNNNNNNNNNNNNNN");
+            add1.sqlQueryUndo();
+            add2.sqlQueryUndo();
+            /*
             DBTransformation bdt1 = new DBTransformation("localhost/mydb", "3306", "root", "root", hm, fk1, TransformationTarget.ForeignKeyTable, "varchar(10)");
             bdt1.analyse();
             
@@ -95,7 +117,7 @@ public class Test {
             bdt1.getCascadeFk().forEach(f->System.out.println(f.getConstraintName()));
             System.out.println("********************************");
             bdt1.getUnmatchingValue().forEach(System.out::println);
-            
+            */
             
             
             
