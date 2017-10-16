@@ -29,7 +29,8 @@ public class DBTransformation extends Transformation {
     private String tableName;
     private SQLQueryFactory sqlFactory;
     private ForeignKey fk;
-    private ArrayList<SQLQuery> listQuery;  
+    private ArrayList<SQLQuery> listQuery;
+    private SQLAlterTableQuery addFkQuery;
     private ArrayList<String> unmatchingValue;
     private ArrayList<ForeignKey> cascadeFk;
     private boolean encodageMatching;
@@ -169,17 +170,18 @@ public class DBTransformation extends Transformation {
         for(SQLQuery query : listQuery){
             query.sqlQueryDo();
         }
+        addFkQuery.sqlQueryDo();
     }    
     public void unDoTransformation() throws SQLException{
-        for (int i=(this.listQuery.size()-1);i>=0;i--){
-            listQuery.get(i).sqlQueryUndo();
-        }
+        addFkQuery.sqlQueryUndo();
         try{
             undoCascadeTransformation();
         }catch(SQLException e){
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, "SQLException during undoing Cascade transformation", e);
         }
-
+        for (int i=(this.listQuery.size()-1);i>=0;i--){
+            listQuery.get(i).sqlQueryUndo();
+        }
     }
 
     public void analyse(){
@@ -190,7 +192,7 @@ public class DBTransformation extends Transformation {
         }else if(target.equals(TransformationTarget.ReferencedTable)){
             addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
         }
-        addQuery(sqlFactory.createSQLAlterAddForeignKeyQuery(tableName, fk));
+        addFkQuery = sqlFactory.createSQLAlterAddForeignKeyQuery(tableName, fk);
     }
     
     public void makeCascadeTransformation() throws SQLException{
