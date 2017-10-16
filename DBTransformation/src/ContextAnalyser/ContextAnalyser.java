@@ -184,7 +184,16 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 System.out.println("*****************Case 3 ");
                 System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
                 // @Do : ajouter action
-                return new EmptyTransformation("Different type size but don't need changement (is a zero parameter type)");
+                if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
+                    System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
+                    // @Do : ajouter action
+                    return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.LMTT);        
+                    
+                }else{
+                    System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +fkColumn.getColumnType() );
+                    // @Do : ajouter action 
+                    return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ReferencedTable, fkColumn.getColumnType(),TransformationType.LMTT); 
+                }
             }
             // juste pour afoir un return de fin noralement ne tombe jamais dedans 
             return new ImpossibleTransformation("Type mismatching and no transforamtion found");
