@@ -184,6 +184,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 System.out.println("*****************Case 3 ");
                 System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
                 // @Do : ajouter action
+                // on fait le même chose que one parameter transfo
                 if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
                     System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
                     // @Do : ajouter action
