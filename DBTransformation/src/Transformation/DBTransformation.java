@@ -174,14 +174,17 @@ public class DBTransformation extends Transformation {
     }    
     public void unDoTransformation() throws SQLException{
         addFkQuery.sqlQueryUndo();
+        
+        for (int i=(this.listQuery.size()-1);i>=0;i--){
+            cascadTransformation.addQuery((SQLAlterTableQuery)listQuery.get(i));
+        }
+        
         try{
             undoCascadeTransformation();
         }catch(SQLException e){
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, "SQLException during undoing Cascade transformation", e);
         }
-        for (int i=(this.listQuery.size()-1);i>=0;i--){
-            listQuery.get(i).sqlQueryUndo();
-        }
+        
     }
 
     public void analyse(){
