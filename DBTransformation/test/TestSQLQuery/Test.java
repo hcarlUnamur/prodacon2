@@ -32,7 +32,7 @@ public class Test {
              
             
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("1id", "tinyInt"));
+            listCol1.add(new Column("1id", "float(5,3)"));
             Table t1 = new Table("testTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
@@ -41,7 +41,7 @@ public class Test {
             //sqlF.createSQLInsertQuery("testTable1", new String[]{"Str"}).sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("2id", "tinyInt")); 
+            listCol2.add(new Column("2id", "float")); 
             Table t2 = new Table("testTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
@@ -51,7 +51,7 @@ public class Test {
             //sqlF.createSQLInsertQuery("testTable2", new String[]{"Str"}).sqlQueryDo();
             
             ArrayList<Column> listCol3 = new ArrayList<>();
-            listCol3.add(new Column("3id", "tinyInt"));
+            listCol3.add(new Column("3id", "float"));
             Table t3 = new Table("testTable3", listCol3, new ArrayList<ForeignKey>(), "3id");
             SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
@@ -59,7 +59,7 @@ public class Test {
             //sqlF.createSQLInsertQuery("testTable3", new String[]{"str"}).sqlQueryDo();
             
             ArrayList<Column> listCol4 = new ArrayList<>();
-            listCol4.add(new Column("4id", "tinyInt"));
+            listCol4.add(new Column("4id", "float"));
             Table t4 = new Table("testTable4", listCol4, new ArrayList<ForeignKey>(), "4id");
             SQLCreateTableQuery add4 = sqlF.createSQLCreateTableQuery(t4);
             add4.sqlQueryDo();
@@ -67,7 +67,7 @@ public class Test {
             //sqlF.createSQLInsertQuery("testTable4", new String[]{"str"}).sqlQueryDo();
             
             ArrayList<Column> listCol5 = new ArrayList<>();
-            listCol5.add(new Column("5id", "tinyInt"));
+            listCol5.add(new Column("5id", "float"));
             Table t5 = new Table("testTable5", listCol5, new ArrayList<ForeignKey>(), "5id");
             SQLCreateTableQuery add5 = sqlF.createSQLCreateTableQuery(t5);
             add5.sqlQueryDo();
@@ -83,7 +83,7 @@ public class Test {
             ArrayList<ForeignKey> lFK = new ArrayList<>();
             lFK.add(fk1);
             
-            sqlF.createSQLAlterAddForeignKeyQuery("testTable2", fk1).sqlQueryDo();
+            //sqlF.createSQLAlterAddForeignKeyQuery("testTable2", fk1).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable3", fk2).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable4", fk3).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable5", fk4).sqlQueryDo();
@@ -110,7 +110,7 @@ public class Test {
                     
                     dbt.transfrom();
                     System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuundo");
-                    dbt.unDoTransformation();
+                    //dbt.unDoTransformation();
                 }
                 else if (transfo instanceof ImpossibleTransformation){
                     ImpossibleTransformation impT = (ImpossibleTransformation)transfo;
