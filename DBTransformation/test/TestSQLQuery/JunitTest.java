@@ -11,6 +11,7 @@ import EasySQL.SQLAlterTableQuery;
 import EasySQL.SQLCreateTableQuery;
 import EasySQL.SQLDeleteQuery;
 import EasySQL.SQLDropTableQuery;
+import EasySQL.SQLInsertQuery;
 import EasySQL.SQLQueryFactory;
 import EasySQL.SQLQueryType;
 import EasySQL.SQLSelectQuery;
@@ -281,7 +282,7 @@ public class JunitTest {
             SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable1", "1=1");
             del.sqlQueryDo();
             del.sqlQueryUndo();
-
+            
             result = PeuplementTest("testInsertDeleteQuery1", "testInsertTable1");
 
             sqlF.createDropTableQuery("testInsertTable1").sqlQueryDo();
@@ -301,14 +302,44 @@ public class JunitTest {
         try {
             sqlF.createSQLCreateTableQuery("testInsertTable2", new String[]{"id int", "name varchar(45)", "trueFalse bool"}).sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testInsertTable2", new String[]{"id", "trueFalse"}, new String[]{"1", "1"}).sqlQueryDo();
-
-            //SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable2", "id = \"1\" && name = \"Strong\" && trueFalse = \"1\"");
+            SQLInsertQuery ins = sqlF.createSQLInsertQuery("testInsertTable2", new String[]{"id", "trueFalse"}, new String[]{"1", "1"});
+            ins.sqlQueryDo();
+            
+            ResultSet metadata = sqlF.createSQLSelectQuery("testInsertTable2", new String[]{"id", "trueFalse"}, "id = '1'").sqlQueryDo();
+            metadata.first();
+            if(!(metadata.getString(1).equals("1") && metadata.getString(2).equals("1"))){
+                System.err.println("Wrong Select Query");
+                System.err.println("ko! : " + "TestSQLQuery.JunitTest.testInsertDeleteQuery2()");
+                result = 1;
+            }
+            ins.sqlQueryUndo();
+            try{
+                metadata = sqlF.createSQLSelectQuery("testInsertTable2", new String[]{"id", "trueFalse"}, "id = '1'").sqlQueryDo();
+                metadata.first();
+                if(!(metadata.getString(1).equals("1") && metadata.getString(2).equals("1"))){
+                    System.err.println("Wrong Select Query");
+                    System.err.println("ko! : " + "TestSQLQuery.JunitTest.testInsertDeleteQuery2()");
+                    result = 1;
+                }
+            }catch (Exception ex){}
+            ins.sqlQueryDo();
+            
             SQLDeleteQuery del = sqlF.createSQLDeleteQuery("testInsertTable2", "1=1");
             del.sqlQueryDo();
+            
+            try{
+                metadata = sqlF.createSQLSelectQuery("testInsertTable2", new String[]{"id", "trueFalse"}, "id = '1'").sqlQueryDo();
+                metadata.first();
+                if(!(metadata.getString(1).equals("1") && metadata.getString(2).equals("1"))){
+                    System.err.println("Wrong Select Query");
+                    System.err.println("ko! : " + "TestSQLQuery.JunitTest.testInsertDeleteQuery2()");
+                    result = 1;
+                }
+            }catch (Exception ex){}
+            
             del.sqlQueryUndo();
 
-            ResultSet metadata = sqlF.createSQLSelectQuery("testInsertTable2", new String[]{"id", "trueFalse"}, "id = '1'").sqlQueryDo();
+            metadata = sqlF.createSQLSelectQuery("testInsertTable2", new String[]{"id", "trueFalse"}, "id = '1'").sqlQueryDo();
             metadata.first();
             
             if(!(metadata.getString(1).equals("1") && metadata.getString(2).equals("1"))){
@@ -380,11 +411,26 @@ public class JunitTest {
 
             pk.sqlQueryDo();
             pk.sqlQueryUndo();
+            try{
+                PrimaryKeyAnalyser("AlterAddDropPrimaryKeyQuery", "testAddPrimaryKeyTable", "id");
+                result = 1;
+            }catch(Exception ex){}
             pk.sqlQueryDo();
 
-            result = PrimaryKeyAnalyser("AlterAddDropPrimaryKeyQuery", "testAddPrimaryKeyTable", "id");
+            if (PrimaryKeyAnalyser("AlterAddDropPrimaryKeyQuery", "testAddPrimaryKeyTable", "id")==1){
+                result = 1;
+            }
 
-            sqlF.createSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable").sqlQueryDo();
+            SQLAlterTableQuery apq = sqlF.createSQLAlterDropPrimaryKeyQuery("testAddPrimaryKeyTable");
+            apq.sqlQueryDo();
+            try{
+                PrimaryKeyAnalyser("AlterAddDropPrimaryKeyQuery", "testAddPrimaryKeyTable", "id");
+                result = 1;
+            }catch(Exception ex){}
+            apq.sqlQueryUndo();
+            if (PrimaryKeyAnalyser("AlterAddDropPrimaryKeyQuery", "testAddPrimaryKeyTable", "id")==1){
+                result = 1;
+            }
             add.sqlQueryUndo();
         } catch (Exception ex) {
             ErrorGestion(ex, "AlterAddDropPrimaryKeyQuery", new ArrayList<>(Arrays.asList("testAddPrimaryKeyTable")));
@@ -409,11 +455,28 @@ public class JunitTest {
             add2.sqlQueryDo();
 
             ForeignKey fk = new ForeignKey(t1.getName(), "id", "reference", "FK1");
-            sqlF.createSQLAlterAddForeignKeyQuery(t2.getName(), fk).sqlQueryDo();
-
+            SQLAlterTableQuery cfk = sqlF.createSQLAlterAddForeignKeyQuery(t2.getName(), fk);
+            cfk.sqlQueryDo();
             result = ForeignKeyAnalyser("AlterAddDropForeignKeyQuery", "testAddForeignKeyTable2", "reference", "FK1");
+            cfk.sqlQueryUndo();
+            try{
+                ForeignKeyAnalyser("AlterAddDropForeignKeyQuery", "testAddForeignKeyTable2", "reference", "FK1");
+                result = 1;
+            }catch(Exception ex){}
+            cfk.sqlQueryDo();
 
-            sqlF.createSQLAlterDropForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), t1).sqlQueryDo();
+            
+            SQLAlterTableQuery dfk = sqlF.createSQLAlterDropForeignKeyQuery("testAddForeignKeyTable2", "FK1", new Column("reference", "int"), t1);
+            dfk.sqlQueryDo();
+            try{
+                ForeignKeyAnalyser("AlterAddDropForeignKeyQuery", "testAddForeignKeyTable2", "reference", "FK1");
+                result = 1;
+            }catch(Exception ex){}
+            dfk.sqlQueryUndo();
+            if (ForeignKeyAnalyser("AlterAddDropForeignKeyQuery", "testAddForeignKeyTable2", "reference", "FK1") == 1){
+                result = 1;
+            }
+            
             sqlF.createDropTableQuery("testAddForeignKeyTable2").sqlQueryDo();
             sqlF.createDropTableQuery("testAddForeignKeyTable1").sqlQueryDo();
             System.out.println("ok");
@@ -441,7 +504,9 @@ public class JunitTest {
 
             result = ColumnAnalyser("AlterAddDropColumnQuery", "testAddDropColumnTable", "city", "varchar(45)");
 
-            sqlF.createSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)")).sqlQueryDo();
+            SQLAlterTableQuery dcq = sqlF.createSQLAlterDropColumnQuery("testAddDropColumnTable", new Column("city", "varchar(45)"));
+            dcq.sqlQueryDo();
+            dcq.sqlQueryUndo();
             add.sqlQueryUndo();
         } catch (Exception ex) {
             ErrorGestion(ex, "AlterAddDropColumnQuery", new ArrayList<>(Arrays.asList("testAddDropColumnTable")));
@@ -878,7 +943,7 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    
+    /*
     //permet de tester si la méthode de création de transaction fonctionne.
     @Test
     public void testTransaction(){
@@ -924,6 +989,7 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
+    */
     /*
     //permet de tester si lors d'une transformation, la méthode transformation regarde bien en cascade si on doit modifier les 
     //types des colonne de foreign key pointant vers la première table référencée et ainsi de suite.

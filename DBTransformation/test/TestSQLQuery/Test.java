@@ -13,6 +13,7 @@ import EasySQL.SQLTransactionQuery;
 import EasySQL.SQLUpdateQuery;
 import EasySQL.Table;
 import Transformation.DBTransformation;
+import Transformation.EmptyTransformation;
 import Transformation.ImpossibleTransformation;
 import Transformation.Transformation;
 import Transformation.TransformationTarget;
@@ -31,7 +32,7 @@ public class Test {
              
             
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("1id", "int"));
+            listCol1.add(new Column("1id", "tinyInt"));
             Table t1 = new Table("testTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
@@ -82,37 +83,12 @@ public class Test {
             ArrayList<ForeignKey> lFK = new ArrayList<>();
             lFK.add(fk1);
             
-            
-            //sqlF.createSQLAlterAddForeignKeyQuery("testTable3", fk2).sqlQueryDo();
-            //sqlF.createSQLAlterModifyColumnTypeQuery("testTable3", new Column("3id", "varchar(10)")).sqlQueryDo();
-                 //sqlF.createSQLAlterAddForeignKeyQuery("testTable2", fk1).sqlQueryDo();       
-           // sqlF.createSQLAlterModifyColumnTypeQuery("testTable2", new Column("2id", "tinyInt")).sqlQueryDo();
-            
-            
+            sqlF.createSQLAlterAddForeignKeyQuery("testTable2", fk1).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable3", fk2).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable4", fk3).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable5", fk4).sqlQueryDo();
-            
-            //SQLTransactionQuery transac = sqlF.creatTransactionQuery();
-            //transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTable3", fk2));
-            //transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTable2", new Column("2id", "varchar(10)")));
-            
-            //transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTable2", fk1));
-            //transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTable2", new Column("2id", "tinyInt")));
-            
-            
-            //transac.sqlQueryDo();
-            
-            
-            
-            //transac.sqlQueryUndo();
-            /*
-            HashMap<String, Table> hm = new HashMap();
-            hm.put("testTable1", t1);
-            hm.put("testTable2", t2);
-            hm.put("testTable3", t3);
-            hm.put("testTable4", t4);
-            hm.put("testTable5", t5);*/
+
+           
             
             ContextAnalyser ca = new ContextAnalyser("localhost/mydb", "3306", "root", "root", lFK);
             while (ca.hasNext()){
@@ -134,11 +110,14 @@ public class Test {
                     
                     dbt.transfrom();
                     System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuundo");
-                    //dbt.unDoTransformation();
+                    dbt.unDoTransformation();
                 }
                 else if (transfo instanceof ImpossibleTransformation){
                     ImpossibleTransformation impT = (ImpossibleTransformation)transfo;
                     System.out.println("MESSAGE : " + impT.getMessage());
+                }else if (transfo instanceof EmptyTransformation){
+                    EmptyTransformation empt = (EmptyTransformation) transfo;
+                    System.out.println("MESSAGE : " + empt.getMessage());
                 }
                 
             }
