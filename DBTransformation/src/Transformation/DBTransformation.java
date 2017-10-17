@@ -191,11 +191,14 @@ public class DBTransformation extends Transformation {
     public void analyse(){
         analyseValues();
         analyseCascade();
+        //déplacer dans le cascade
+        /*
         if (target.equals(TransformationTarget.ForeignKeyTable)){
             addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
         }else if(target.equals(TransformationTarget.ReferencedTable)){
             addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
         }
+        */
         addFkQuery = sqlFactory.createSQLAlterAddForeignKeyQuery(tableName, fk);
     }
     
@@ -208,7 +211,16 @@ public class DBTransformation extends Transformation {
                 query.sqlQueryDo();
         }
         // change the type
+        
         SQLTransactionQuery transaction = sqlFactory.creatTransactionQuery();
+        
+        if (target.equals(TransformationTarget.ForeignKeyTable)){
+            transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
+        }else if(target.equals(TransformationTarget.ReferencedTable)){
+            transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
+        }
+        
+        
         for(ForeignKey fk : this.cascadeFk){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
         }
