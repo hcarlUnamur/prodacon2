@@ -57,6 +57,7 @@ public class SQLInsertQuery extends SQLManipulationQuery {
         }
         where.delete(0, 3);
         SQLDeleteQuery del = new SQLDeleteQuery(getTable()[0], getCon(), where.toString());
+        del.sqlQueryDo();
         return null;
     }
 }
