@@ -86,22 +86,27 @@ public class ForeignKey {
             return false;
         }
         final ForeignKey other = (ForeignKey) obj;
-        if (!Objects.equals(this.ReferencedTableName, other.ReferencedTableName)) {
+        if (!Objects.equals(this.ReferencedTableName.toUpperCase(), other.ReferencedTableName.toUpperCase())) {
             return false;
         }
-        if (!Objects.equals(this.ReferencedColumn, other.ReferencedColumn)) {
+        if (!Objects.equals(this.ReferencedColumn.toUpperCase(), other.ReferencedColumn.toUpperCase())) {
             return false;
         }
-        if (!Objects.equals(this.foreingKeyColumn, other.foreingKeyColumn)) {
+        if (!Objects.equals(this.foreingKeyColumn.toUpperCase(), other.foreingKeyColumn.toUpperCase())) {
             return false;
         }
-        if (!Objects.equals(this.foreingKeyTable, other.foreingKeyTable)) {
+        if (!Objects.equals(this.foreingKeyTable.toUpperCase(), other.foreingKeyTable.toUpperCase())) {
             return false;
         }
-        if (!Objects.equals(this.constraintName, other.constraintName)) {
+        if (!Objects.equals(this.constraintName.toUpperCase(), other.constraintName.toUpperCase())) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ForeignKey{" + "ReferencedTableName=" + ReferencedTableName + ", ReferencedColumn=" + ReferencedColumn + ", foreingKeyColumn=" + foreingKeyColumn + ", foreingKeyTable=" + foreingKeyTable + ", constraintName=" + constraintName + '}';
     }
     
     

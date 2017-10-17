@@ -64,6 +64,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                                             .filter(c-> c.getColumnName().equals(fk.getReferencedColumn()))
                                             .findFirst()
                                             .get();
+                System.out.println("--------------------------------"+fkAlreadyExist(usedTable, fk));
                 if(fkAlreadyExist(usedTable, fk)){
                     return new EmptyTransformation("the Foreign key already exist");
                 }
@@ -260,7 +261,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
         boolean out = false;
         
         for (ForeignKey tableFk : table.getForeignKeys()){
-            if (fk.equals(tableFk)){return true;}
+            if(tableFk.equals(fk)){return true;}
         }
         return out;
     }
