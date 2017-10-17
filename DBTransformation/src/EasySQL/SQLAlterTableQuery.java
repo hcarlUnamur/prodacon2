@@ -291,6 +291,7 @@ public class SQLAlterTableQuery extends SQLStructuresQuery implements StringQuer
                 out = dropPK.getStringSQLQueryDo();
                 break;
             case DropPrimaryKey:
+                datasave.next();
                 SQLAlterTableQuery addpk = CreateAddPrimaryKeyQuery(getTable()[0], getCon(), datasave.getString("COLUMN_NAME"));
                 out = addpk.getStringSQLQueryDo();
                 break;                
