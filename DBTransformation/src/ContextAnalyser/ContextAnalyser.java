@@ -64,8 +64,10 @@ public class ContextAnalyser implements Iterator<Transformation> {
                                             .filter(c-> c.getColumnName().equals(fk.getReferencedColumn()))
                                             .findFirst()
                                             .get();
-
-                if (fkColumn.getColumnType().equals(referencedColumn.getColumnType())){
+                if(fkAlreadyExist(usedTable, fk)){
+                    return new EmptyTransformation("the Foreign key already exist");
+                }
+                else if (fkColumn.getColumnType().equals(referencedColumn.getColumnType())){
                     return perfectTypeMatching(usedTable, referencedTable,fk, fkColumn, referencedColumn);
                 }else{
                     return typeMismatching(usedTable, referencedTable,fk, fkColumn, referencedColumn);
@@ -254,6 +256,13 @@ public class ContextAnalyser implements Iterator<Transformation> {
         return out;
     }
     
-    
+    private boolean fkAlreadyExist (Table table, ForeignKey fk){
+        boolean out = false;
+        
+        for (ForeignKey tableFk : table.getForeignKeys()){
+            if (fk.equals(tableFk)){return true;}
+        }
+        return out;
+    }
 
 }
