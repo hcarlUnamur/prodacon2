@@ -222,7 +222,20 @@ public class DBTransformation extends Transformation {
     }
     
     public void undoCascadeTransformation() throws SQLException{
+        //remove existing fk for the modification
+        ArrayList<SQLQuery> remvfv = new ArrayList();
+        cascadeFk.forEach(fk->remvfv.add(sqlFactory.createSQLAlterDropForeignKeyQuery(fk.getForeingKeyTable(), fk)));
+        for(SQLQuery query : remvfv){
+                query.sqlQueryDo();
+        }
+        
         this.cascadTransformation.sqlQueryUndo();
+    
+        //reconstruct the fk
+        for(SQLQuery query : remvfv){
+                query.sqlQueryUndo();
+        }
+    
     }
     
     public void analyseValues(){
