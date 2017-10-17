@@ -200,12 +200,25 @@ public class DBTransformation extends Transformation {
     }
     
     public void makeCascadeTransformation() throws SQLException{
+        
+        //remove existing fk for the modification
+        ArrayList<SQLQuery> remvfv = new ArrayList();
+        cascadeFk.forEach(fk->remvfv.add(sqlFactory.createSQLAlterDropForeignKeyQuery(fk.getForeingKeyTable(), fk)));
+        for(SQLQuery query : remvfv){
+                query.sqlQueryDo();
+        }
+        // change the type
         SQLTransactionQuery transaction = sqlFactory.creatTransactionQuery();
         for(ForeignKey fk : this.cascadeFk){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
         }
         this.cascadTransformation = transaction;
         transaction.sqlQueryDo();
+        //reconstruct the fk
+        for(SQLQuery query : remvfv){
+                query.sqlQueryUndo();
+        }
+        
     }
     
     public void undoCascadeTransformation() throws SQLException{
