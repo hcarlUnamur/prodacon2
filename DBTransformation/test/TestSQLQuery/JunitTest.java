@@ -885,14 +885,14 @@ public class JunitTest {
         int result = 0;
         try {
             ArrayList<Column> listCol1 = new ArrayList<>();
-            listCol1.add(new Column("1id", "varchar(40)"));
-            listCol1.add(new Column("1name", "varchar(40)"));
-            Table t1 = new Table("testTransactionTable1", listCol1, new ArrayList<ForeignKey>(), "1name");
+            listCol1.add(new Column("1id", "int"));
+            listCol1.add(new Column("1name", "varchar(10)"));
+            Table t1 = new Table("testTransactionTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
             
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("2id", "varchar(45)"));
+            listCol2.add(new Column("2id", "tinyInt"));
           
             Table t2 = new Table("testTransactionTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
@@ -900,14 +900,17 @@ public class JunitTest {
             
             sqlF.createSQLInsertQuery("testTransactionTable1", new String[]{"1", "Strong"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testTransactionTable1", new String[]{"2", "Strang"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTransactionTable2", new String[]{"Strong"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTransactionTable2", new String[]{"1"}).sqlQueryDo();
+            
             SQLTransactionQuery transac = sqlF.creatTransactionQuery();
-            transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTransactionTable2", new Column("2id", "varchar(40)")));
-            transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTransactionTable2", "fk1", new Column("2id", "varchar(40)"), "testTransactionTable1", "1name"));
-            transac.addQuery(sqlF.createSQLUpdateQuery("testTransactionTable2", new String[][]{{"2id", "Strang"}}, "1=1"));
+            transac.addQuery(sqlF.createSQLAlterModifyColumnTypeQuery("testTransactionTable2", new Column("2id", "int")));
+            transac.addQuery(sqlF.createSQLAlterAddForeignKeyQuery("testTransactionTable2", "fk1", new Column("2id", "int"), "testTransactionTable1", "1id"));
+            transac.addQuery(sqlF.createSQLUpdateQuery("testTransactionTable2", new String[][]{{"2id", "2"}}, "1=1"));
             transac.sqlQueryDo();
             result = ForeignKeyAnalyser("testTransaction", "testTransactionTable2", "2id", "fk1");
             transac.sqlQueryUndo();
+            
+            
             try{
                 ForeignKeyAnalyser("testTransaction", "testTransactionTable2", "2id", "fk1");
                 result = 1;
@@ -921,7 +924,7 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-    
+    /*
     //permet de tester si lors d'une transformation, la méthode transformation regarde bien en cascade si on doit modifier les 
     //types des colonne de foreign key pointant vers la première table référencée et ainsi de suite.
     @Test 
@@ -996,7 +999,7 @@ public class JunitTest {
             bdt1.getCascadeFk().forEach(f->System.out.println(f.getConstraintName()));
             System.out.println("********************************");
             bdt1.getUnmatchingValue().forEach(System.out::println);
-             /*
+             
             t2 = sqlF.loadTable("transfoCascade2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
             lfk = t2.getForeignKeys();
@@ -1008,7 +1011,7 @@ public class JunitTest {
             if (!(hm.get("transfoCascade5").getTablecolumn().get(0).getColumnType().equals("varchar(10)"))) {
                 result = 1;
                 System.err.println("ko! : " + "TestSQLQuery.JunitTest.testANTT()");
-            }*/
+            }
             add5.sqlQueryUndo();
             add4.sqlQueryUndo();
             add3.sqlQueryUndo();
@@ -1021,5 +1024,5 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
-
+*/
 }
