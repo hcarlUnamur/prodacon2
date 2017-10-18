@@ -26,6 +26,7 @@ public class Main {
     private String dblogin; 
     private String fkfile;
     private File fileFkFile;
+    private String dbName;
     private ArrayList<ForeignKey> fkArray;
     
     /**
@@ -48,7 +49,7 @@ public class Main {
     }
     
     public static void main(String[] args) {
-        args = "-dbhost localhost -dbname mydb -dbport 1360 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
+        args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
         Main main = new Main(args);
         main.mainMenu();
     }
@@ -98,13 +99,13 @@ public class Main {
         System.out.println("CONTEXT ANALYSER MENU");
         System.out.println();
         
-        ContextAnalyser contextAnalyser = new ContextAnalyser(dbhost, dbport, dblogin, dbpw, fkArray);
+        ContextAnalyser contextAnalyser = new ContextAnalyser(dbhost,dbName, dbport, dblogin, dbpw, fkArray);
         while(contextAnalyser.hasNext()){
             Transformation transfo = contextAnalyser.next();
             if (transfo instanceof DBTransformation){
                 DBTransformation dbtransfo = (DBTransformation)transfo;
                 dbtransfo.analyse();
-                dbtransfo.
+                //dbtransfo.
             }else if (transfo instanceof ImpossibleTransformation){
                 System.out.println(((ImpossibleTransformation) transfo).getMessage());
             }else if (transfo instanceof EmptyTransformation){
@@ -119,6 +120,7 @@ public class Main {
         System.out.println();
         
         System.out.println("dbhost = " + this.dbhost);
+        System.out.println("dbName = " + this.dbName);
         System.out.println("dblogin = " + this.dblogin);
         System.out.println("dbport = " + this.dbport);
         System.out.println("dbpassword = " + this.dbpw);
@@ -129,14 +131,15 @@ public class Main {
         System.out.println("Option: ");
         System.out.println("1. Main Menu");
         System.out.println("2. Set dbhost");
-        System.out.println("3. Set dblogin");
-        System.out.println("4. Set dbport");
-        System.out.println("5. Set dbpassword");
-        System.out.println("6. Set foreign key file path");
-        System.out.println("7. Print foreign keys");
+        System.out.println("3. Set dbname");
+        System.out.println("4. Set dblogin");
+        System.out.println("5. Set dbport");
+        System.out.println("6. Set dbpassword");
+        System.out.println("7. Set foreign key file path");
+        System.out.println("8. Print foreign keys");
         System.out.println("");
         
-        int option = optionSelection(1, 7);
+        int option = optionSelection(1, 8);
         Scanner sc = new Scanner(System.in);
         switch(option){
             case 1 : 
@@ -148,21 +151,26 @@ public class Main {
                 this.argsMenu();
                 break;
             case 3 : 
+                System.out.print("new dbName value : ");     
+                this.dbName = sc.nextLine();
+                this.argsMenu();
+                break;
+            case 4 : 
                 System.out.print("new dblogin value : ");     
                 this.dblogin = sc.nextLine();
                 this.argsMenu();
                 break;
-            case 4 : 
+            case 5 : 
                 System.out.print("new dbport value : ");
                 this.dbport = sc.nextLine();
                 this.argsMenu();
                 break;
-             case 5 : 
+             case 6 : 
                 System.out.print("new dbpassword value : ");
                 this.dbpw = sc.nextLine();
                 this.argsMenu();
                 break;
-            case 6 : 
+            case 7 : 
                 System.out.print("new fk file value : ");
                 this.fkfile = sc.nextLine();
                 this.fileFkFile=new File(this.fkfile);        
@@ -175,7 +183,7 @@ public class Main {
                 }
                 this.argsMenu();
                 break;
-            case 7 :
+            case 8 :
                 this.fkArray.forEach(System.out::println);
                 System.out.println("");
                 System.out.print("Press a key to come back to ARGUMENTS MENU ");
@@ -241,11 +249,16 @@ public class Main {
                     this.dbpw = args[i+1];
                     i++;
                     break;
+                 case "-dbname":
+                    this.dbName = args[i+1];
+                    i++;
+                    break;
                 case "-fkfile":
                     this.fkfile = args[i+1];
                     i++;
                     this.fileFkFile = new File(this.fkfile);
                     break;
+                
             }
         }
     }
