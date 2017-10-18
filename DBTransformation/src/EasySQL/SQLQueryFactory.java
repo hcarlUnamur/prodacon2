@@ -9,6 +9,12 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         super(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
     }
 
+    public SQLQueryFactory(String dataBaseHostName, String dbName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword) {
+        super(dataBaseHostName, dbName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
+    }
+    
+    
+
     public Table loadTable (String tableName) throws SQLException{
         return (new Table(tableName, this.getConn()));
     }

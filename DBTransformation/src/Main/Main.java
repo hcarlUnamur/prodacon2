@@ -48,7 +48,7 @@ public class Main {
     }
     
     public static void main(String[] args) {
-        args = "-dbhost localhost -dbport 1360 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
+        args = "-dbhost localhost -dbname mydb -dbport 1360 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
         Main main = new Main(args);
         main.mainMenu();
     }
@@ -102,9 +102,11 @@ public class Main {
         while(contextAnalyser.hasNext()){
             Transformation transfo = contextAnalyser.next();
             if (transfo instanceof DBTransformation){
-                    
+                DBTransformation dbtransfo = (DBTransformation)transfo;
+                dbtransfo.analyse();
+                dbtransfo.
             }else if (transfo instanceof ImpossibleTransformation){
-                  System.out.println(((ImpossibleTransformation) transfo).getMessage());
+                System.out.println(((ImpossibleTransformation) transfo).getMessage());
             }else if (transfo instanceof EmptyTransformation){
                 System.out.println(((EmptyTransformation) transfo).getMessage());    
             }
