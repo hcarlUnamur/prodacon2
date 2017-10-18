@@ -31,10 +31,9 @@ import static org.junit.Assert.*;
 /**
  *
  * @author thibaud
- *
- * MEMO : Si tout plante, il y a des chances pour que ce ne soit que le select
- * ou/et le drop qui soit problèmatiques, puisque s'ils ne fonctionnent pas,
- * impossible d'effacer toutes les tables créés dans ces tests.
+ * 
+ * MEMO : if everything crashes, there's a chance that it is only the 'select' and/or the 'drop' that has an issue because if it/they don't work, 
+ * it is impossible to erase all the tables created in the tests.
  *
  */
 public class JunitTest {
@@ -42,7 +41,7 @@ public class JunitTest {
     
     SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
 
-    //méthode servant à créer rapidement une table. Cette méthode n'est pas un test.
+    //method that create rapidely a table. This method is not a test but is used only inside tests.
     public Table CreateTable1(String tableName) {
         ArrayList<Column> listCol = new ArrayList<>();
         listCol.add(new Column("id", "int"));
@@ -52,7 +51,7 @@ public class JunitTest {
         return t1;
     }
 
-    //méthode servant à créer rapidement une autre table. Cette méthode n'est pas un test.
+    //method that create rapidely a table different than with 'CreateTable1'. This method is not a test but is used only inside tests.
     public Table CreateTable2(String tableName) {
         ArrayList<Column> listCol = new ArrayList<>();
         listCol.add(new Column("id", "int"));
@@ -62,8 +61,9 @@ public class JunitTest {
         return t2;
     }
 
-    //gère une exception arrivant dans n'importe quel test. On imprimme le message de l'exception,
-    //de quel test cette exception vient et enfin on détruit toutes les tables construites dans ce test.
+    //This method handels an exception that could arise in any test. It prints the exception message, 
+    //from which test the exception has arisen and finally, it destroys all the tables created in that test. 
+    //This method is not a test but is used only inside tests.
     public void ErrorGestion(Exception ex, String functionName, ArrayList<String> ls) {
         System.err.println(ex);
         System.err.println("ko! : " + "TestSQLQuery.JunitTest." + functionName + "()");
@@ -75,8 +75,9 @@ public class JunitTest {
         }
     }
 
-    //permet d'analyser rapidement si pour une table, un nom de colonne et un type de colonne donné, le type de la colonne de la table est bien le type donné en paramètre.
-    //si ce n'est pas le cas fait échouer le test (return 1).
+    
+    //This method allows us to analyse rapidly if, for a given table, a given column name and a given column type, the column type of the table is effectively the type given in parameter.
+    //if that's not the case, it fails the test (return 1).
     public int ColumnAnalyser(String functionName, String tableName, String columnName, String columnType) throws Exception {
         SQLSelectQuery selectColumn = sqlF.createSQLSelectQuery(new String[]{"information_schema.columns"},
                 new String[]{"column_name", "column_type"},
@@ -92,8 +93,8 @@ public class JunitTest {
         }
     }
     
-    //permet d'analyser rapidement si pour une table et une colonne donnée, la colonne de cette table est une primary key ou non?
-    //si ce n'est pas le cas, fait échouer le test (result = 1);
+    //This method allows us to analyse rapidly if, for a given table and a given column, the column of the table is a primery key or not.
+    //if that's not the case, it fails the test (return 1).
     public int PrimaryKeyAnalyser(String functionName, String tableName, String columnName) throws Exception {
         SQLSelectQuery selectPrimaryKey = sqlF.createSQLSelectQuery(
                 new String[]{"INFORMATION_SCHEMA.COLUMNS"},
@@ -110,8 +111,8 @@ public class JunitTest {
         }
     }
 
-    //permet d'analyser rapidement si pour une table, un nom de colonne et un nom de contrainte donné, la colonne est une foreign key du nom du paramètre donné?
-    //si ce n'est pas le cas, fait échouer le test (result = 1)
+    //This method allows us to analyse rapidly if, for a given table, a given column name and a given constraint name, the column of the table is a foreign key of the column name parameter.
+    //if that's not the case, it fails the test (return 1).
     public int ForeignKeyAnalyser(String functionName, String tableName, String columnName, String constraintName) throws Exception {
         SQLSelectQuery selectForeignKey = sqlF.createSQLSelectQuery(new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                 new String[]{"TABLE_NAME,COLUMN_NAME", "COLUMN_NAME", "CONSTRAINT_NAME", "REFERENCED_TABLE_NAME", "REFERENCED_COLUMN_NAME"},
@@ -127,8 +128,8 @@ public class JunitTest {
         }
     }
 
-    //permet de vérifier rapidemment si pour une liste de colonne et une liste de valeurs données, la première ligne de la table à bien les même valeurs que la liste de valeurs passée en paramètre.
-    //si ce n'est pas le cas, fait échouer le test (result = 1).
+    //This method allows us to analyse rapidly if, for a given columns list and a given data values list, the first line of the table has effectively the same values than in the list of values given in parameter.
+    //if that's not the case, it fails the test (return 1).
     public int SelectForTest(String functionName, String tableName, String[] columns, String[] values) throws Exception {
         ResultSet metadata = sqlF.createSQLSelectQuery(tableName, new String[]{columns[0], columns[1], columns[2]}, "id = '" + values[0] + "'").sqlQueryDo();
         metadata.first();
@@ -142,16 +143,16 @@ public class JunitTest {
 
     }
 
-    //permet de rapidement peupler une table donnée avec des valeurs prédéfinie (typiquement, il faut utiliser cette méthode uniquement sur une table crée avec les méthodes
-    //CreateTable1 ou CreateTable2.
+    //This method allows us to populate rapidely a given table with predifined values 
+    //(typicaly, it's recommended to use this method only on tables created with the 'CreateTable1' or 'CreateTable2' methods).
     public void PeuplerTable(String tableName) throws SQLException {
         sqlF.createSQLInsertQuery(tableName, new String[]{"1", "Strong", "1"}).sqlQueryDo();
         sqlF.createSQLInsertQuery(tableName, new String[]{"6", "String", "1"}).sqlQueryDo();
         sqlF.createSQLInsertQuery(tableName, new String[]{"5", "Strang", "0"}).sqlQueryDo();
     }
 
-    //permet de vérifier rapidemment si la première ligne d'une table correspond à au moins une des ligne d'une table sortant de la méthode PeuplerTable
-    //si ce n'est pas le cas, fait échouer le test (result = 1)
+    //This method allows us to analyse rapidly if the first line of a given table correspond with at least one of the lines of a table returned by the 'PeuplerTable' method.
+    //if that's not the case, it fails the test (return 1).
     public int PeuplementTest(String functionName, String tableName) throws Exception {
         int result = SelectForTest(functionName, tableName, new String[]{"id", "name", "trueFalse"}, new String[]{"1", "Strong", "1"});
         if (result == 0) {
@@ -163,7 +164,7 @@ public class JunitTest {
         return result;
     }
 
-    //permet de tester si la première méthode d'ajout de table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the first method for adding a table in DB and its 'UNDO' work.
     @Test
     public void testCreateTableQuery1() {
         int result = 0;
@@ -180,7 +181,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la deuxième méthode d'ajout de table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the second method for adding a table in DB and its 'UNDO' work.
     @Test
     public void testCreateTableQuery2() {
         int result = 0;
@@ -200,7 +201,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la troisième méthode d'ajout de table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the third method for adding a table in DB and its 'UNDO' work.
     @Test
     public void testCreateTableQuery3() {
         int result = 0;
@@ -218,7 +219,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
     
-    //permet de tester si la premire méthode de drop de table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the first method for dropping a table in DB and its 'UNDO' work.
     @Test
     public void testDropTableQuery1() {
 
@@ -244,7 +245,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la deuxième méthode de drop de table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the second method for dropping a table in DB and its 'UNDO' work.
     @Test
     public void testDropTableQuery2() {
 
@@ -270,7 +271,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la première méthode de delete de valeur dans une table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the first method for deleting values in a table in DB and its 'UNDO' work.
     @Test
     public void testInsertDeleteQuery1() {
 
@@ -294,7 +295,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la deuxième méthode de delete de valeur dans une table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the second method for deleting values in a table in DB and its 'UNDO' work.
     @Test
     public void testInsertDeleteQuery2() {
 
@@ -356,7 +357,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la méthode d'update de valeur dans une table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the method for updating values in a table in DB and its 'UNDO' work.
     @Test
     public void testUpdateQuery() {
 
@@ -381,7 +382,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la méthode de select de valeur dans une table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the method for selecting values in a table in DB and its 'UNDO' work.
     @Test
     public void testSelectQuery() {
 
@@ -398,7 +399,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la méthode d'ajout de primary key dans une table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the method for adding a primary in a table in DB and its 'UNDO' work.
     @Test
     public void AlterAddDropPrimaryKeyQuery() {
 
@@ -439,7 +440,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
     
-    //permet de tester si la méthode d'ajout de foreign key dans une table vers une autre en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the method for adding a foreign key in a table in DB and its 'UNDO' work.
     @Test
     public void AlterAddDropForeignKeyQuery() {
 
@@ -487,7 +488,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la méthode d'ajout et de supprémtion de colonnes dans une table en BD ainsi que leur Undo fonctionne.
+    //This method allows us to test if the method for adding and deleting columns in a table in DB and theirs 'UNDO' work.
     @Test
     public void AlterAddDropColumnQuery() {
 
@@ -515,7 +516,7 @@ public class JunitTest {
         assertEquals(0, result);
     }
 
-    //permet de tester si la méthode de modification du type d'une colonne dans une table en BD ainsi que son Undo fonctionne.
+    //This method allows us to test if the method for modifying a column type in a table in DB and its 'UNDO' work.
     @Test
     public void AlterModifyColumnTypeQuery() {
 
@@ -540,6 +541,7 @@ public class JunitTest {
     }
 
     //permet de tester si la méthode de chargement d'une table (loadTable) fonctionne.
+    //This method allows us to test if the method for loading a table (loadTable) works.
     @Test
     public void testLoadTable() {
 
@@ -919,7 +921,8 @@ public class JunitTest {
         assertEquals(0, result);
     }
     */
-    //permet de tester si les methodes permettant d'exécuter rapidement des instruction SQL directement (SQLFree) fonctionnent.
+    
+    //This method allows us to test if the methods for directly and rapidely executing SQL instructions work (SQLFree).
    @Test
     public void testSQLFree() {
         int result = 0;
