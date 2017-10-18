@@ -7,13 +7,17 @@ import Transformation.DBTransformation;
 import Transformation.EmptyTransformation;
 import Transformation.ImpossibleTransformation;
 import Transformation.Transformation;
+import Transformation.TransformationTarget;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -82,7 +86,7 @@ public class Main {
                     System.err.println("Impossible to proceed no foreign key found on file");
                     this.mainMenu();
                 }
-                System.out.println("Not implemented yet");
+                this.contextAnalyserMenu();
                 break;
             case 3:
                 System.out.println("Bye Bye :) ");
@@ -103,26 +107,28 @@ public class Main {
         ContextAnalyser contextAnalyser = null;
         try{
             contextAnalyser = new ContextAnalyser(dbhost,dbName, dbport, dblogin, dbpw, fkArray);
-        }catch(Exception e){
+            while(contextAnalyser.hasNext()){
+                Transformation transfo = contextAnalyser.next();
+                if (transfo instanceof DBTransformation){
+                    DBTransformationMenu((DBTransformation)transfo);
+                }else if (transfo instanceof ImpossibleTransformation){
+                    System.out.println(((ImpossibleTransformation) transfo).getMessage());
+                    
+                }else if (transfo instanceof EmptyTransformation){
+                    System.out.println(((EmptyTransformation) transfo).getMessage());    
+                }
+
+                System.out.println("");
+                System.out.println("Press a key to start with a other fk");
+                scanner.nextLine();
+            }
+        
+        }catch(EasySQL.Exception.DBConnexionErrorException e){
             System.err.println("DB connexion error some parameter can be wrong");
+            this.mainMenu();
         }
         
-        while(contextAnalyser.hasNext()){
-            Transformation transfo = contextAnalyser.next();
-            if (transfo instanceof DBTransformation){
-                DBTransformation dbtransfo = (DBTransformation)transfo;
-                dbtransfo.analyse();
-                //dbtransfo.
-            }else if (transfo instanceof ImpossibleTransformation){
-                System.out.println(((ImpossibleTransformation) transfo).getMessage());
-            }else if (transfo instanceof EmptyTransformation){
-                System.out.println(((EmptyTransformation) transfo).getMessage());    
-            }
-            
-            System.out.println("");
-            System.out.println("Press a key to start with a other fk");
-            scanner.nextLine();
-        }
+        
     }
     
     public  void argsMenu(){
@@ -209,7 +215,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         int out =0;
         try{
-            System.out.print("Select a option : ");
+            System.out.print("Select an option : ");
             String str = sc.nextLine();
             out =Integer.parseInt(str);
             if (out>max || out<min)throw new NumberFormatException();
@@ -272,6 +278,74 @@ public class Main {
                 
             }
         }
+    }
+
+    private void DBTransformationMenu(DBTransformation dbtransfo) {
+        boolean ok = true;
+        boolean needCascadeTransfo=false;
+        dbtransfo.analyse();
+                    
+        System.out.println("Transforamtion type : " +dbtransfo.getTransforamtiontype().name());
+        if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
+            System.out.println("Transformation of " + dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn() +" type to " + dbtransfo.getNewType());
+        }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
+            System.out.println("Transformation of " + dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn()+" type to " + dbtransfo.getNewType());
+        }
+                    
+        ok = dbtransfo.isEncodageMatching(); 
+        System.out.println((dbtransfo.isEncodageMatching()?"[OK]":"[KO]") + " Encodage matching ");
+                    
+        if(dbtransfo.getUnmatchingValue().size()==0){
+            System.out.println("[OK] ALL table values matching");
+        }else{
+            System.out.println("[KO] Some table values unmatching :");
+            ok=false;
+            dbtransfo.getUnmatchingValue().forEach(s->System.out.println("    " + s));
+        }
+                    
+        if(dbtransfo.getCascadeFk().size()==0){
+            System.out.println("[OK] No Cascade Transformation");
+            needCascadeTransfo=false;
+        }else{
+            needCascadeTransfo=true;
+            System.out.println("[KO] Existing Cascade Transforamtion on : ");
+            dbtransfo.getCascadeFk().forEach(s->System.out.println("    "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn()));
+        }
+        System.out.println("");    
+        System.out.println("Option :");
+        System.out.println("1. Run the modification" +
+                ((ok)?"":"(Impossible to process check \"KO\" result") +
+                ((ok && needCascadeTransfo)?" (with cascad modification)":"")
+        );
+        System.out.println("2. Abort transforamtion");
+        System.out.println("3. Add trigger to simulate foreign key");
+        System.out.println("");
+        
+        int option = optionSelection(1, 3);
+        Scanner sc = new Scanner(System.in);
+        
+        switch(option){
+            case 1:
+                if(ok){
+                    try {
+                        dbtransfo.transfrom();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }else{
+                    System.err.println("Impossible to process check \"KO\" result");
+                }
+                break;
+            case 2:
+                System.out.println("Not implemented yet");
+                break;
+                
+            case 3 :
+                System.out.println("Not implemented yet");
+                break;
+        }
+        
+        
     }
     
 }
