@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public abstract class AbstractSQLQueryFactory {
     
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:mysql://%s:%s/";
+    static final String DB_URL = "jdbc:mysql://%s:%s";
     
     private String dataBaseHostName;
     private String dataBasePortNumber;
