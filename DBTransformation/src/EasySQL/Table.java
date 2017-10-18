@@ -82,7 +82,7 @@ public class Table {
                     if(!colType.contains("(") && isIn(colType, TWO_PARAMETER_TYPE)){
                         colType = String.format("%s(%s,%s)",rs.getString("column_type"),numPres,numScal);
                     }else if(!colType.contains("(") && isIn(colType, ONE_PARAMETER_TYPE) ){
-                        colType = String.format("%s(%s)",rs.getString("column_type"),numScal);
+                        colType = String.format("%s(%s)",rs.getString("column_type"),numPres);
                     }
                     this.addColumn(new Column(colName, colType,charset));             
                 }
