@@ -61,16 +61,29 @@ public class Table {
     
     public  Table(String name,Connection con) throws LoadUnexistentTableException {
         try{
+            
+            String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
+            String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
+            
             foreignKeys = new ArrayList<ForeignKey>();
             Tablecolumn = new ArrayList<Column>();
             this.name = name;
             //create Tablecolumn
-            SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type","CHARACTER_SET_NAME"},"table_name='"+name+"'" );
+            SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type","CHARACTER_SET_NAME","NUMERIC_PRECISION","NUMERIC_SCALE"},"table_name='"+name+"'" );
             ResultSet rs = select.sqlQueryDo();
             while(rs.next()){
                     String colName = rs.getString("column_name");
                     String colType = rs.getString("column_type");
                     String charset = rs.getString("CHARACTER_SET_NAME");
+                    
+                    String numPres = rs.getString("NUMERIC_PRECISION")!=null ? rs.getString("NUMERIC_PRECISION") :"0";
+                    String numScal = rs.getString("NUMERIC_SCALE")!=null ? rs.getString("NUMERIC_SCALE") :"0";
+    
+                    if(!colType.contains("(") && isIn(colType, TWO_PARAMETER_TYPE)){
+                        colType = String.format("%s(%s,%s)",rs.getString("column_type"),numPres,numScal);
+                    }else if(!colType.contains("(") && isIn(colType, ONE_PARAMETER_TYPE) ){
+                        colType = String.format("%s(%s)",rs.getString("column_type"),numScal);
+                    }
                     this.addColumn(new Column(colName, colType,charset));             
                 }
             rs.close();
@@ -153,4 +166,11 @@ public class Table {
         return  out;
                 
     }
+    
+    private static boolean isIn(String s , String[] table){
+            for(String e : table){
+                if(s.toUpperCase().equals(e.toUpperCase())){return true;}
+            }
+        return false;
+    };
 }

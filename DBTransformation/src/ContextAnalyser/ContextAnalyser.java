@@ -156,6 +156,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
             
             else if (isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE)){
                 System.out.println("*****************Case 2 ");
+                System.out.println(fkColumn.getColumnType()+""+referencedColumn.getColumnType());
                 if(getTypelength2(fkColumn)!=getTypelength2(referencedColumn)){
                     System.out.println("*****************Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
                     return new ImpossibleTransformation("Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
