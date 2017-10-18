@@ -99,7 +99,14 @@ public class Main {
         System.out.println("CONTEXT ANALYSER MENU");
         System.out.println();
         
-        ContextAnalyser contextAnalyser = new ContextAnalyser(dbhost,dbName, dbport, dblogin, dbpw, fkArray);
+        Scanner scanner = new Scanner(System.in);
+        ContextAnalyser contextAnalyser = null;
+        try{
+            contextAnalyser = new ContextAnalyser(dbhost,dbName, dbport, dblogin, dbpw, fkArray);
+        }catch(Exception e){
+            System.err.println("DB connexion error some parameter can be wrong");
+        }
+        
         while(contextAnalyser.hasNext()){
             Transformation transfo = contextAnalyser.next();
             if (transfo instanceof DBTransformation){
@@ -111,6 +118,10 @@ public class Main {
             }else if (transfo instanceof EmptyTransformation){
                 System.out.println(((EmptyTransformation) transfo).getMessage());    
             }
+            
+            System.out.println("");
+            System.out.println("Press a key to start with a other fk");
+            scanner.nextLine();
         }
     }
     

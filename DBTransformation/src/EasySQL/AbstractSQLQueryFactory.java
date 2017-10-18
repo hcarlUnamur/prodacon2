@@ -1,6 +1,7 @@
 
 package EasySQL;
 
+import EasySQL.Exception.DBConnexionErrorException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -72,10 +73,12 @@ public abstract class AbstractSQLQueryFactory {
             
             conn = DriverManager.getConnection(String.format(DB_URL2,dataBaseHostName,dataBasePortNumber,dbName),props);
             
+            
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AbstractSQLQueryFactory.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(AbstractSQLQueryFactory.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(AbstractSQLQueryFactory.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DBConnexionErrorException("sqlfactory can't create connexion with database ");
         }
 
     
