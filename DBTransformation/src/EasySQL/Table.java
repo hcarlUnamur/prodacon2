@@ -76,6 +76,7 @@ public class Table {
                     String colType = rs.getString("column_type");
                     String charset = rs.getString("CHARACTER_SET_NAME");
                     
+                    // specific case when for example whe store a FLoat without prescice the parameters
                     String numPres = rs.getString("NUMERIC_PRECISION")!=null ? rs.getString("NUMERIC_PRECISION") :"0";
                     String numScal = rs.getString("NUMERIC_SCALE")!=null ? rs.getString("NUMERIC_SCALE") :"0";
     

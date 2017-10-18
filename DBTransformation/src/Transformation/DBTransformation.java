@@ -189,17 +189,36 @@ public class DBTransformation extends Transformation {
     }
 
     public void analyse(){
+        encodageAnalyse();
         analyseValues();
         analyseCascade();
-        //déplacer dans le cascade
-        /*
-        if (target.equals(TransformationTarget.ForeignKeyTable)){
-            addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
-        }else if(target.equals(TransformationTarget.ReferencedTable)){
-            addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
-        }
-        */
+        //déplacer dans le cascade : transforamtion du type de la fk ou ref column
         addFkQuery = sqlFactory.createSQLAlterAddForeignKeyQuery(tableName, fk);
+    }
+    
+    private void encodageAnalyse(){
+        try {
+            Table fkTable = sqlFactory.loadTable(fk.getForeingKeyTable());
+            Table refTable = sqlFactory.loadTable(fk.getForeingKeyTable());
+            
+            String encodagefk = fkTable.getTablecolumn()
+                    .stream()
+                    .filter(s->s.getColumnName().equals(fk.getForeingKeyColumn()))
+                    .findFirst()
+                    .get()
+                    .getCharset();
+            
+            String encodageRef = refTable.getTablecolumn()
+                    .stream()
+                    .filter(s->s.getColumnName().equals(fk.getReferencedColumn()))
+                    .findFirst()
+                    .get()
+                    .getCharset();
+            
+            this.encodageMatching = encodageRef.toUpperCase().equals(encodagefk.toUpperCase());         
+        } catch (SQLException ex) {
+            Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void makeCascadeTransformation() throws SQLException{
