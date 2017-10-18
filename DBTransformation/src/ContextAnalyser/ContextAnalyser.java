@@ -35,7 +35,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
     private HashMap<String,Table> tableLoaded;
     private int iteratorIndex;
     
-    public ContextAnalyser(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ArrayList<ForeignKey> fks) throws LoadUnexistentTableException {
+    public ContextAnalyser(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ArrayList<ForeignKey> fks) {
 
         this.factory= new EasySQL.SQLQueryFactory(dataBaseHostName, dataBasePortNumber, dataBaseLogin, dataBasePassword);
         this.fks = fks;

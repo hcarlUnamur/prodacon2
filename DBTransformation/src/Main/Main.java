@@ -1,16 +1,19 @@
 package Main;
 
+import ContextAnalyser.ContextAnalyser;
 import EasySQL.ForeignKey;
+import EasySQL.SQLQuery;
+import Transformation.DBTransformation;
+import Transformation.EmptyTransformation;
+import Transformation.ImpossibleTransformation;
+import Transformation.Transformation;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -88,6 +91,24 @@ public class Main {
         }
         
 
+    }
+    
+    public void contextAnalyserMenu(){
+        drawLine(100);
+        System.out.println("CONTEXT ANALYSER MENU");
+        System.out.println();
+        
+        ContextAnalyser contextAnalyser = new ContextAnalyser(dbhost, dbport, dblogin, dbpw, fkArray);
+        while(contextAnalyser.hasNext()){
+            Transformation transfo = contextAnalyser.next();
+            if (transfo instanceof DBTransformation){
+                    
+            }else if (transfo instanceof ImpossibleTransformation){
+                  System.out.println(((ImpossibleTransformation) transfo).getMessage());
+            }else if (transfo instanceof EmptyTransformation){
+                System.out.println(((EmptyTransformation) transfo).getMessage());    
+            }
+        }
     }
     
     public  void argsMenu(){
