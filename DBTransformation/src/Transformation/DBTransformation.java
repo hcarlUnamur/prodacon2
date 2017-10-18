@@ -199,7 +199,7 @@ public class DBTransformation extends Transformation {
     private void encodageAnalyse(){
         try {
             Table fkTable = sqlFactory.loadTable(fk.getForeingKeyTable());
-            Table refTable = sqlFactory.loadTable(fk.getForeingKeyTable());
+            Table refTable = sqlFactory.loadTable(fk.getReferencedTableName());
             
             String encodagefk = fkTable.getTablecolumn()
                     .stream()
