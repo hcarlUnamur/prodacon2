@@ -132,7 +132,7 @@ public class Main {
                 }
 
                 System.out.println("");
-                System.out.println("Press a key to start with a other fk");
+                System.out.println("Press a key to start with another fk");
                 scanner.nextLine();
             }
             System.out.println("");
