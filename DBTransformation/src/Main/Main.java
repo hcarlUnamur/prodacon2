@@ -346,6 +346,7 @@ public class Main {
                         try {
                             optionOk=true;
                             dbtransfo.transfrom();
+                            System.err.println("[OK] Transformation done ");
                         } catch (SQLException ex) {
                             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                         }
