@@ -336,6 +336,7 @@ public class DBTransformation extends Transformation {
                     System.out.println("add :" + clef);
                     cascadeFk.add(clef);
                     loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"));
+                    loadCascadFk(result.getString("REFERENCED_TABLE_NAME"),result.getString("REFERENCED_COLUMN_NAME"));
                 }  
             }
         } catch (SQLException ex) {
