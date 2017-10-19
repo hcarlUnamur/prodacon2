@@ -234,7 +234,7 @@ public class Main {
             int i=0;
             while ((text = reader.readLine()) != null) {               
                 String[] tab = text.split(":|,");
-                this.fkArray.add(new ForeignKey(tab[2], tab[3], tab[0], tab[1],"fk_Constraint"+i));
+                this.fkArray.add(new ForeignKey(tab[2], tab[3], tab[1], tab[0],"fk_Constraint"+i));
                 i++;
             }
             try {
