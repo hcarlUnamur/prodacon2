@@ -122,7 +122,10 @@ public class Main {
                 System.out.println("Press a key to start with a other fk");
                 scanner.nextLine();
             }
-        
+            System.out.println("");
+            System.out.println("All foreign key done :) ");
+            this.mainMenu();
+            
         }catch(EasySQL.Exception.DBConnexionErrorException e){
             System.err.println("DB connexion error some parameter can be wrong");
             this.mainMenu();
@@ -337,7 +340,7 @@ public class Main {
                 }
                 break;
             case 2:
-                System.out.println("Not implemented yet");
+                System.out.println("Operation abort");
                 break;
                 
             case 3 :
