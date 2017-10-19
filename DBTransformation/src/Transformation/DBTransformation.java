@@ -248,6 +248,8 @@ public class DBTransformation extends Transformation {
         
         for(ForeignKey fk : this.cascadeFk){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
+            //new ajout pas certain que se soit bon
+            transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
         }
         this.cascadTransformation = transaction;
         transaction.sqlQueryDo();
