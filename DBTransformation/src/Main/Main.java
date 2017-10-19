@@ -65,7 +65,7 @@ public class Main {
     
     public static void main(String[] args) {
         desableInfoLog();
-        args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
+        args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin root -dbpw root -fkfile ./possible_matchesTest.txt".split(" ");
         Main main = new Main(args);
         main.mainMenu();
     }
