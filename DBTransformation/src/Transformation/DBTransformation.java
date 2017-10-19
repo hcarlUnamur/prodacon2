@@ -335,11 +335,11 @@ public class DBTransformation extends Transformation {
                                                     result.getString("CONSTRAINT_NAME")
                                                   );
                 //test pour éviter les cycles
-                System.out.println("clef = "+clef);
-                System.out.println("!cascadeFk.contains(clef) ->"+!cascadeFk.contains(clef));
+                //System.out.println("clef = "+clef);
+                //System.out.println("!cascadeFk.contains(clef) ->"+!cascadeFk.contains(clef));
                 //cascadeFk.forEach(System.out::println);
                 if(!cascadeFk.contains(clef)){
-                    System.out.println("add :" + clef);
+                    //System.out.println("add :" + clef);
                     cascadeFk.add(clef);
                     loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"));
                     loadCascadFk(result.getString("REFERENCED_TABLE_NAME"),result.getString("REFERENCED_COLUMN_NAME"));
