@@ -317,7 +317,7 @@ public class Main {
                 ((ok)?"":"(Impossible to process check \"KO\" result") +
                 ((ok && needCascadeTransfo)?" (with cascad modification)":"")
         );
-        System.out.println("2. Abort transforamtion");
+        System.out.println("2. Abort transformation");
         System.out.println("3. Add trigger to simulate foreign key");
         System.out.println("");
         
