@@ -296,7 +296,7 @@ public class Main {
         }
                     
         ok = dbtransfo.isEncodageMatching(); 
-        System.out.println((dbtransfo.isEncodageMatching()?"[OK]":"[KO]") + " Encodage matching ");
+        System.out.println((dbtransfo.isEncodageMatching()?"[OK]  Encodage matching":"[KO] Encodage mismatching"));
                     
         if(dbtransfo.getUnmatchingValue().size()==0){
             System.out.println("[OK] ALL table values matching");
@@ -311,7 +311,7 @@ public class Main {
             needCascadeTransfo=false;
         }else{
             needCascadeTransfo=true;
-            System.out.println("[KO] Existing Cascade Transformation on : ");
+            System.out.println("[Warning] Existing Cascade Transformation on : ");
             dbtransfo.getCascadeFk().forEach(s->System.out.println("    "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn()));
         }
         System.out.println("");    
