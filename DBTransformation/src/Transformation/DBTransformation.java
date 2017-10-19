@@ -162,7 +162,9 @@ public class DBTransformation extends Transformation {
     
     public void transfrom() throws SQLException{
         try{
-            makeCascadeTransformation();
+            
+                makeCascadeTransformation();
+            
         }catch(SQLException e){
              Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, "SQLException during Cascade transformation", e);
              throw new SQLException(); 
@@ -303,10 +305,12 @@ public class DBTransformation extends Transformation {
     };
     
     public void analyseCascade(){
-        if(target.equals(TransformationTarget.ForeignKeyTable)){
-            loadCascadFk(fk.getForeingKeyTable(), fk.getForeingKeyColumn());
-        }else if(target.equals(TransformationTarget.ReferencedTable)){
-            loadCascadFk(fk.getReferencedTableName(), fk.getReferencedColumn());
+        if(!this.transforamtiontype.equals(transforamtiontype.MBT)){
+            if(target.equals(TransformationTarget.ForeignKeyTable)){
+                loadCascadFk(fk.getForeingKeyTable(), fk.getForeingKeyColumn());
+            }else if(target.equals(TransformationTarget.ReferencedTable)){
+                loadCascadFk(fk.getReferencedTableName(), fk.getReferencedColumn());
+            }
         }
     }
 
