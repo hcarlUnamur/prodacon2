@@ -205,7 +205,7 @@ public class Main {
                 this.fkArray.forEach(System.out::println);
                 System.out.println("");
                 System.out.print("Press a key to come back to ARGUMENTS MENU ");
-                this.fkfile = sc.nextLine();
+                sc.nextLine();
                 this.argsMenu();
                 break;
         }
