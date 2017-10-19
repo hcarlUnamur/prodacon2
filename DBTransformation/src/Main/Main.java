@@ -53,6 +53,7 @@ public class Main {
     }
     
     public static void main(String[] args) {
+        Logger.getGlobal().setLevel(Level.SEVERE);
         args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
         Main main = new Main(args);
         main.mainMenu();
