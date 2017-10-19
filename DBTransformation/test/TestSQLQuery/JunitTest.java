@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 public class JunitTest {
 
     
-    SQLQueryFactory sqlF = new SQLQueryFactory("localhost/mydb", "3306", "root", "root");
+    SQLQueryFactory sqlF = new SQLQueryFactory("localhost", "mydb", "3306", "root", "root");
 
     //method that create rapidely a table. This method is not a test but is used only inside tests.
     public Table CreateTable1(String tableName) {
