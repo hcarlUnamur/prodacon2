@@ -333,6 +333,7 @@ public class Main {
                 case 1:
                     if(ok){
                         try {
+                            optionOk=true;
                             dbtransfo.transfrom();
                         } catch (SQLException ex) {
                             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
