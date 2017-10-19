@@ -317,7 +317,7 @@ public class DBTransformation extends Transformation {
                     new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                     sqlFactory.getConn(),
                     new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-                    "(REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_TABLE_NAME = '"+tablename+"' AND REFERENCED_COLUMN_NAME = '"+columnName+"')  )"
+                    "(REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_TABLE_NAME = '"+tablename+"' AND REFERENCED_COLUMN_NAME = '"+columnName+"') "
             );
             ResultSet result =select2.sqlQueryDo();
             while(result.next()){
