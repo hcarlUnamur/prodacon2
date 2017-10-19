@@ -329,6 +329,7 @@ public class DBTransformation extends Transformation {
                                                   );
                 //test pour éviter les cycles
                 if(!cascadeFk.contains(clef)){
+                    System.out.println("add :" + clef);
                     loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"));
                     cascadeFk.add(clef);
                 }  
