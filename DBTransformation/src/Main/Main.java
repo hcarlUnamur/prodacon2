@@ -314,7 +314,7 @@ public class Main {
         }
                     
         ok = dbtransfo.isEncodageMatching(); 
-        System.out.println((dbtransfo.isEncodageMatching()?"[OK]  Encodage matching":"[KO] Encodage mismatching"));
+        System.out.println((dbtransfo.isEncodageMatching()?"[OK] Encodage matching":"[KO] Encodage mismatching"));
                     
         if(dbtransfo.getUnmatchingValue().size()==0){
             System.out.println("[OK] ALL table values matching");
