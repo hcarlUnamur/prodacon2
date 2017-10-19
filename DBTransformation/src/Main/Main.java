@@ -299,9 +299,11 @@ public class Main {
         boolean ok = true;
         boolean needCascadeTransfo=false;
         dbtransfo.analyse();
-                    
+        
+        boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT);            
+        
         System.out.println("Transformation type : " +dbtransfo.getTransforamtiontype().name());
-        if(dbtransfo.getTransforamtiontype().equals(TransformationType.MBT)){
+        if(isMBT){
             System.out.println("    Juste adding the foreignskey");
         }
         else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
@@ -321,7 +323,7 @@ public class Main {
             dbtransfo.getUnmatchingValue().forEach(s->System.out.println("    " + s));
         }
                     
-        if(dbtransfo.getCascadeFk().size()==0){
+        if(dbtransfo.getCascadeFk().size()==0 || isMBT){
             System.out.println("[OK] No Cascade Transformation");
             needCascadeTransfo=false;
         }else{
@@ -350,7 +352,7 @@ public class Main {
                         try {
                             optionOk=true;
                             dbtransfo.transfrom();
-                            System.err.println("[OK] Transformation done ");
+                            System.out.println("[OK] Transformation done ");
                         } catch (SQLException ex) {
                             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                         }
