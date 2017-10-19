@@ -330,7 +330,7 @@ public class Main {
         }else{
             needCascadeTransfo=true;
             System.out.println("[Warning] Existing Cascade Transformation on : ");
-            dbtransfo.getCascadeFk().forEach(s->System.out.println("    "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn()));
+            dbtransfo.getCascadeFk().forEach(s->System.out.println("    "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn() +" -> "+s.getReferencedTableName()+"."+s.getReferencedColumn()) );
         }
         System.out.println("");    
         System.out.println("Option :");
