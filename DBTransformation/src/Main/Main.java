@@ -54,12 +54,16 @@ public class Main {
         }
     }
     
-    public static void main(String[] args) {
+    private static void desableInfoLog(){
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         rootLogger.setLevel(Level.INFO);
         for (Handler h : rootLogger.getHandlers()) {
             h.setLevel(Level.SEVERE);
         }
+    }
+    
+    public static void main(String[] args) {
+        desableInfoLog();
         args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
         Main main = new Main(args);
         main.mainMenu();

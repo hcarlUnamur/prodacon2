@@ -64,7 +64,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                                             .filter(c-> c.getColumnName().equals(fk.getReferencedColumn()))
                                             .findFirst()
                                             .get();
-                System.out.println("--------------------------------"+fkAlreadyExist(usedTable, fk));
+                //System.out.println("--------------------------------"+fkAlreadyExist(usedTable, fk));
                 if(fkAlreadyExist(usedTable, fk)){
                     return new EmptyTransformation("the Foreign key already exist");
                 }
@@ -77,16 +77,16 @@ public class ContextAnalyser implements Iterator<Transformation> {
     }
     
     private Transformation perfectTypeMatching(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn ){
-        System.out.println("*****************Perfect Type Matching");
+        //System.out.println("*****************Perfect Type Matching");
         // @Do : ajouter action
         return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, fkColumn.getColumnType(),TransformationType.MBT);        
     }
     
     private Transformation typeMismatching(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn ){
-        System.out.println("*****************Type mismatching ");
+        //System.out.println("*****************Type mismatching ");
         //signed and unsigned type
         if(isUnsigned(fkColumn)!=isUnsigned(referencedColumn)){
-            System.out.println("***************** signed and unsigned type");
+            //System.out.println("***************** signed and unsigned type");
             return new ImpossibleTransformation("Type mismatching : signed and unsigned type");
             
         }
@@ -100,11 +100,11 @@ public class ContextAnalyser implements Iterator<Transformation> {
             int fktypeindex = getIndexOf(getTypeName(fkColumn), INT_TYPES);
             int reftypeindex = getIndexOf(getTypeName(referencedColumn), INT_TYPES);
             if(fktypeindex>reftypeindex){
-                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
+                //System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
                 return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ReferencedTable, fkColumn.getColumnType(),TransformationType.NTT);        
             }
             else if(fktypeindex<reftypeindex){
-                System.out.println("***************** Transformation :"+ fk.getForeingKeyTable() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnType());
+                //System.out.println("***************** Transformation :"+ fk.getForeingKeyTable() +" "+fkColumn.getColumnType() +" to " + referencedColumn.getColumnType());
                 return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.NTT);
             }       
         }
@@ -112,11 +112,11 @@ public class ContextAnalyser implements Iterator<Transformation> {
             int fktypeindex = getIndexOf(getTypeName(fkColumn), ALPHA_NUMERIC_TYPES);
             int reftypeindex = getIndexOf(getTypeName(referencedColumn), ALPHA_NUMERIC_TYPES);
             if(fktypeindex>reftypeindex){
-                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
+                //System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
                  return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ReferencedTable, fkColumn.getColumnType(),TransformationType.ANTT);
             }
             else if(fktypeindex<reftypeindex){
-                System.out.println("***************** Transformation :"+ fk.getForeingKeyTable() +" "+fkColumn.getColumnType() +" to "+ referencedColumn.getColumnType());
+                //System.out.println("***************** Transformation :"+ fk.getForeingKeyTable() +" "+fkColumn.getColumnType() +" to "+ referencedColumn.getColumnType());
                 return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.ANTT);
             } 
         }
@@ -124,11 +124,11 @@ public class ContextAnalyser implements Iterator<Transformation> {
             int fktypeindex = getIndexOf(getTypeName(fkColumn), TIME_TYPES_TRANSFORMABLE);
             int reftypeindex = getIndexOf(getTypeName(referencedColumn), TIME_TYPES_TRANSFORMABLE);
             if(fktypeindex>reftypeindex){
-                System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
+                //System.out.println("***************** Transformation :" + referencedColumn.getColumnName() +" " + referencedColumn.getColumnType() +" to "+fkColumn.getColumnType()  );
                 return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ReferencedTable, fkColumn.getColumnType(),TransformationType.TTT);
             }
             else if(fktypeindex<reftypeindex){
-                System.out.println("***************** Transformation :"+ fk.getForeingKeyTable() +" "+fkColumn.getColumnType() +" to "+ referencedColumn.getColumnType());
+                //System.out.println("***************** Transformation :"+ fk.getForeingKeyTable() +" "+fkColumn.getColumnType() +" to "+ referencedColumn.getColumnType());
                 return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.TTT);
             } 
         }else{
@@ -138,31 +138,31 @@ public class ContextAnalyser implements Iterator<Transformation> {
     }
     
     private Transformation sameTypeButDifferentlength(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn){
-            System.out.println("*****************Same type but different length ");
+            //System.out.println("*****************Same type but different length ");
 
             if (isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE)){
-                System.out.println("*****************Case 1 ");
+                //System.out.println("*****************Case 1 ");
                 if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
-                    System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
+                    //System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
                     // @Do : ajouter action
                     return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.LMTT);        
                     
                 }else{
-                    System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +fkColumn.getColumnType() );
+                    //System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +fkColumn.getColumnType() );
                     // @Do : ajouter action 
                     return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ReferencedTable, fkColumn.getColumnType(),TransformationType.LMTT); 
                 }
             }
             
             else if (isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE)){
-                System.out.println("*****************Case 2 ");
-                System.out.println(fkColumn.getColumnType()+""+referencedColumn.getColumnType());
+                //System.out.println("*****************Case 2 ");
+                //System.out.println(fkColumn.getColumnType()+""+referencedColumn.getColumnType());
                 if(getTypelength2(fkColumn)!=getTypelength2(referencedColumn)){
-                    System.out.println("*****************Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
+                    //System.out.println("*****************Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
                     return new ImpossibleTransformation("Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
                 }else if(getTypelength1(fkColumn)!=getTypelength1(referencedColumn)){
                         if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
-                        System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn + " to " +getTypeName(referencedColumn)+"("+getTypelength1(referencedColumn)+","+getTypelength2(referencedColumn)+")" );
+                        //System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn + " to " +getTypeName(referencedColumn)+"("+getTypelength1(referencedColumn)+","+getTypelength2(referencedColumn)+")" );
                         // @Do : ajouter action
                         return new DBTransformation(   factory,
                                                                         tableLoaded, 
@@ -171,7 +171,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                                                                         TransformationType.LMTT
                                                     ); 
                     }else{
-                        System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +getTypeName(fkColumn)+"("+getTypelength1(fkColumn)+","+getTypelength2(fkColumn)+")" );
+                        //System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +getTypeName(fkColumn)+"("+getTypelength1(fkColumn)+","+getTypelength2(fkColumn)+")" );
                         // @Do : ajouter action
                         return  new DBTransformation(   factory,
                                                                         tableLoaded, 
@@ -185,17 +185,17 @@ public class ContextAnalyser implements Iterator<Transformation> {
             }
             
             else if(!isIn(getTypeName(fkColumn), ONE_PARAMETER_TYPE) && !isIn(getTypeName(fkColumn), TWO_PARAMETER_TYPE) ){
-                System.out.println("*****************Case 3 ");
-                System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
+                //System.out.println("*****************Case 3 ");
+                //System.out.println("*****************Different type size but don't need changement (is a zero parameter type) ");
                 // @Do : ajouter action
                 // on fait le même chose que one parameter transfo
                 if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
-                    System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
+                    //System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn.getColumnType() + " to " +referencedColumn.getColumnType() );
                     // @Do : ajouter action
                     return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.LMTT);        
                     
                 }else{
-                    System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +fkColumn.getColumnType() );
+                    //System.out.println("*****************Transformation [ref table] : " + referencedColumn.getColumnName() + " " + referencedColumn.getColumnType() + " to " +fkColumn.getColumnType() );
                     // @Do : ajouter action 
                     return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ReferencedTable, fkColumn.getColumnType(),TransformationType.LMTT); 
                 }
