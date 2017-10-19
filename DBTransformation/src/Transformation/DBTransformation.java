@@ -215,7 +215,13 @@ public class DBTransformation extends Transformation {
                     .get()
                     .getCharset();
             
-            this.encodageMatching = encodageRef.toUpperCase().equals(encodagefk.toUpperCase());         
+            if(encodageRef ==null && encodagefk==null){
+                this.encodageMatching=true;
+            }else if ((encodageRef !=null && encodagefk==null) || (encodageRef ==null && encodagefk!=null)){
+                this.encodageMatching=false;
+            } else{
+                this.encodageMatching = encodageRef.toUpperCase().equals(encodagefk.toUpperCase());
+            }
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
