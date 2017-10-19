@@ -188,6 +188,7 @@ public class Main {
                 this.argsMenu();
                 break;
             case 7 : 
+                this.fkArray=new ArrayList();
                 System.out.print("new fk file value : ");
                 this.fkfile = sc.nextLine();
                 this.fileFkFile=new File(this.fkfile);        
