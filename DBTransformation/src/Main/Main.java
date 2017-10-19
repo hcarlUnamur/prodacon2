@@ -121,6 +121,7 @@ public class Main {
             contextAnalyser = new ContextAnalyser(dbhost,dbName, dbport, dblogin, dbpw, fkArray);
             while(contextAnalyser.hasNext()){
                 Transformation transfo = contextAnalyser.next();
+                drawLine(25);
                 if (transfo instanceof DBTransformation){
                     DBTransformationMenu((DBTransformation)transfo);
                 }else if (transfo instanceof ImpossibleTransformation){
@@ -304,7 +305,7 @@ public class Main {
         
         System.out.println("Transformation type : " +dbtransfo.getTransforamtiontype().name());
         if(isMBT){
-            System.out.println("    Juste adding the foreignskey");
+            System.out.println("    Juste adding the foreignkey");
         }
         else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
             System.out.println("    Transformation of " + dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn() +" type to " + dbtransfo.getNewType());
