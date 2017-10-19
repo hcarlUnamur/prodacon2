@@ -16,7 +16,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
@@ -53,7 +55,11 @@ public class Main {
     }
     
     public static void main(String[] args) {
-        Logger.getGlobal().setLevel(Level.SEVERE);
+        Logger rootLogger = LogManager.getLogManager().getLogger("");
+        rootLogger.setLevel(Level.INFO);
+        for (Handler h : rootLogger.getHandlers()) {
+            h.setLevel(Level.INFO);
+        }
         args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
         Main main = new Main(args);
         main.mainMenu();
