@@ -197,7 +197,6 @@ public class Main {
                     System.out.println("Loading and parsing file [Success]");
                 } catch (Exception ex) {
                     System.err.println("Error impossible to load and/or parse [Fails] : " + this.fkfile);
-                    this.fkArray = new ArrayList();
                 }
                 this.argsMenu();
                 break;
