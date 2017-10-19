@@ -317,37 +317,41 @@ public class Main {
         System.out.println("");    
         System.out.println("Option :");
         System.out.println("1. Run the modification" +
-                ((ok)?"":"(Impossible to process check \"KO\" result") +
+                ((ok)?"":" (Impossible to process check \"KO\" result)") +
                 ((ok && needCascadeTransfo)?" (with cascad modification)":"")
         );
         System.out.println("2. Abort transformation");
         System.out.println("3. Add trigger to simulate foreign key");
         System.out.println("");
         
-        int option = optionSelection(1, 3);
-        Scanner sc = new Scanner(System.in);
-        
-        switch(option){
-            case 1:
-                if(ok){
-                    try {
-                        dbtransfo.transfrom();
-                    } catch (SQLException ex) {
-                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }else{
-                    System.err.println("Impossible to process check \"KO\" result");
-                }
-                break;
-            case 2:
-                System.out.println("Operation abort");
-                break;
+        boolean optionOk = false;
                 
-            case 3 :
-                System.out.println("Not implemented yet");
-                break;
+        while(!optionOk){
+            int option = optionSelection(1, 3);
+            Scanner sc = new Scanner(System.in);
+            switch(option){
+                case 1:
+                    if(ok){
+                        try {
+                            dbtransfo.transfrom();
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }else{
+                        System.err.println("Impossible to process check \"KO\" result");
+                    }
+                    break;
+                case 2:
+                    System.out.println("Operation abort");
+                    optionOk=true;
+                    break;
+
+                case 3 :
+                    System.out.println("Not implemented yet");
+                    optionOk=true;
+                    break;
+            }
         }
-        
         
     }
     
