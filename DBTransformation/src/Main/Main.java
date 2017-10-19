@@ -324,7 +324,7 @@ public class Main {
             dbtransfo.getUnmatchingValue().forEach(s->System.out.println("    " + s));
         }
                     
-        if(dbtransfo.getCascadeFk().size()==0 || isMBT){
+        if(dbtransfo.getCascadeFk().size()==0 ){
             System.out.println("[OK] No Cascade Transformation");
             needCascadeTransfo=false;
         }else{
