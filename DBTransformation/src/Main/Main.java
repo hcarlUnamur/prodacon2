@@ -136,7 +136,7 @@ public class Main {
                 scanner.nextLine();
             }
             System.out.println("");
-            System.out.println("All foreign key done :) ");
+            System.out.println("All foreign keys done :) ");
             this.mainMenu();
             
         }catch(EasySQL.Exception.DBConnexionErrorException e){
