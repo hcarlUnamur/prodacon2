@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class SQLCreateTableQuery extends SQLStructuresQuery{
@@ -53,7 +55,7 @@ public class SQLCreateTableQuery extends SQLStructuresQuery{
         Statement stmt = this.getCon().createStatement();
         String s = getTable()[0];
         String query = String.format(QUERYFORMAT,s,StringTool.ArrayToString(this.column));
-        System.out.println(query);
+        Logger.getLogger(SQLAlterTableQuery.class.getName()).log(Level.INFO, query);
         stmt.executeUpdate(query);
         try{
          if(stmt!=null)

@@ -39,7 +39,7 @@ public class SQLDeleteQuery extends SQLManipulationQuery{
         String s = getTable()[0];       
         String cond = whereValues;
         String query = String.format(QUERYFORMAT,s,cond);
-        System.out.println(query);
+        Logger.getLogger(SQLAlterTableQuery.class.getName()).log(Level.INFO, query);
         stmt.executeUpdate(query);
         try{
          if(stmt!=null)

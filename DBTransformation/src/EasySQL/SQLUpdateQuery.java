@@ -43,7 +43,7 @@ public class SQLUpdateQuery extends SQLManipulationQuery implements StringQueryG
         String setChange = StringTool.UpdateSetVal(setValues);
         String cond = condValues;
         String query = String.format(QUERYFORMAT,s,setChange, cond);
-        System.out.println(query);
+        Logger.getLogger(SQLAlterTableQuery.class.getName()).log(Level.INFO, query);
         stmt.executeUpdate(query);
         try{
          if(stmt!=null)

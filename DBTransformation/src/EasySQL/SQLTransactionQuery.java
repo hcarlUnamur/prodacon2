@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -58,7 +60,7 @@ public class SQLTransactionQuery extends SQLQuery {
             log.append(sq);
         }
         log.append(System.lineSeparator()+"}");
-        System.out.println(log.toString());
+        Logger.getLogger(SQLAlterTableQuery.class.getName()).log(Level.INFO, log.toString());
         stmt.executeBatch();
         getCon().commit();
         getCon().setAutoCommit(true);
@@ -73,12 +75,12 @@ public class SQLTransactionQuery extends SQLQuery {
         Statement stmt = getCon().createStatement();
         for(int i = (queries.size()-1);i>=0;i--){
             String sq = queries.get(i).getStringSQLQueryUndo();
-            System.out.println("xxxxxxxxxxxxx"+sq+" "+getCon().getAutoCommit());
+            //System.out.println("xxxxxxxxxxxxx"+sq+" "+getCon().getAutoCommit());
             stmt.addBatch(sq);
             log.append(sq);
         }
         log.append(System.lineSeparator()+"}");
-        System.out.println(log.toString());
+        Logger.getLogger(SQLAlterTableQuery.class.getName()).log(Level.INFO, log.toString());
         stmt.executeBatch();
         getCon().commit();
         getCon().setAutoCommit(true);

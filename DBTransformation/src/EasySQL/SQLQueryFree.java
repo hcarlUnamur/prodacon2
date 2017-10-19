@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -48,7 +50,7 @@ public class SQLQueryFree extends SQLQuery {
         if(type.equals(null)){throw new EasySQL.Exception.IncompleteClassRuntimeException("attribut SQLQueryType type missing for apperation sqlQueryDo");}
         Statement stmt = this.getCon().createStatement();
         if(type.equals(SQLQueryType.Updater)){            
-            System.out.println(query);
+            Logger.getLogger(SQLAlterTableQuery.class.getName()).log(Level.INFO, query);
             stmt.executeUpdate(query);
             try{
              if(stmt!=null)

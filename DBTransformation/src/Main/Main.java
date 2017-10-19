@@ -288,7 +288,7 @@ public class Main {
         boolean needCascadeTransfo=false;
         dbtransfo.analyse();
                     
-        System.out.println("Transforamtion type : " +dbtransfo.getTransforamtiontype().name());
+        System.out.println("Transformation type : " +dbtransfo.getTransforamtiontype().name());
         if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
             System.out.println("Transformation of " + dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn() +" type to " + dbtransfo.getNewType());
         }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
@@ -311,7 +311,7 @@ public class Main {
             needCascadeTransfo=false;
         }else{
             needCascadeTransfo=true;
-            System.out.println("[KO] Existing Cascade Transforamtion on : ");
+            System.out.println("[KO] Existing Cascade Transformation on : ");
             dbtransfo.getCascadeFk().forEach(s->System.out.println("    "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn()));
         }
         System.out.println("");    
@@ -343,7 +343,7 @@ public class Main {
                     }
                     break;
                 case 2:
-                    System.out.println("Operation abort");
+                    System.out.println("Operation aborted");
                     optionOk=true;
                     break;
 

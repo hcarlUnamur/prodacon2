@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SQLSelectQuery extends SQLQuery {
 
@@ -37,7 +39,7 @@ public class SQLSelectQuery extends SQLQuery {
                 StringTool.ArrayToString(this.getTable()),
                 where
         );
-        System.out.println(query);
+        Logger.getLogger(SQLAlterTableQuery.class.getName()).log(Level.INFO, query);
         ResultSet out = stmt.executeQuery(query);
         return out;
     }
