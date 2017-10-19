@@ -318,7 +318,7 @@ public class Main {
         System.out.println("Option :");
         System.out.println("1. Run the modification" +
                 ((ok)?"":" (Impossible to process check \"KO\" result)") +
-                ((ok && needCascadeTransfo)?" (with cascad modification)":"")
+                ((ok && needCascadeTransfo)?" (with cascade modification)":"")
         );
         System.out.println("2. Abort transformation");
         System.out.println("3. Add trigger to simulate foreign key");
