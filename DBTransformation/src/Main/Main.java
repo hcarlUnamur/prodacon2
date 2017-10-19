@@ -58,7 +58,7 @@ public class Main {
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         rootLogger.setLevel(Level.INFO);
         for (Handler h : rootLogger.getHandlers()) {
-            h.setLevel(Level.INFO);
+            h.setLevel(Level.SEVERE);
         }
         args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin carl -dbpw root -fkfile ./possible_matches.txt".split(" ");
         Main main = new Main(args);
