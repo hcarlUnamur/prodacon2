@@ -331,7 +331,7 @@ public class DBTransformation extends Transformation {
                 System.out.println("!cascadeFk.contains(clef) ->"+!cascadeFk.contains(clef));
                 cascadeFk.forEach(System.out::println);
                 if(!cascadeFk.contains(clef)){
-                    //System.out.println("add :" + clef);
+                    System.out.println("add :" + clef);
                     cascadeFk.add(clef);
                     loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"));
                 }  
