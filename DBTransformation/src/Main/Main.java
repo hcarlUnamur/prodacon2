@@ -1,6 +1,7 @@
 package Main;
 
 import ContextAnalyser.ContextAnalyser;
+import ContextAnalyser.TransformationType;
 import EasySQL.ForeignKey;
 import EasySQL.SQLQuery;
 import Transformation.DBTransformation;
@@ -300,10 +301,13 @@ public class Main {
         dbtransfo.analyse();
                     
         System.out.println("Transformation type : " +dbtransfo.getTransforamtiontype().name());
-        if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
-            System.out.println("Transformation of " + dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn() +" type to " + dbtransfo.getNewType());
+        if(dbtransfo.getTransforamtiontype().equals(TransformationType.MBT)){
+            System.out.println("    Juste adding the foreignskey");
+        }
+        else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
+            System.out.println("    Transformation of " + dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn() +" type to " + dbtransfo.getNewType());
         }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
-            System.out.println("Transformation of " + dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn()+" type to " + dbtransfo.getNewType());
+            System.out.println("    Transformation of " + dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn()+" type to " + dbtransfo.getNewType());
         }
                     
         ok = dbtransfo.isEncodageMatching(); 
