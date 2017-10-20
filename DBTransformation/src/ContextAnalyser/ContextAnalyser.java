@@ -132,9 +132,9 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.TTT);
             } 
         }else{
-            return new ImpossibleTransformation("Type mismatching and no transforamtion found");
+            return new ImpossibleTransformation("Type mismatching and no transformation found");
         }
-        return new ImpossibleTransformation("Type mismatching and no transforamtion found");
+        return new ImpossibleTransformation("Type mismatching and no transformation found");
     }
     
     private Transformation sameTypeButDifferentlength(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn){
@@ -159,7 +159,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 //System.out.println(fkColumn.getColumnType()+""+referencedColumn.getColumnType());
                 if(getTypelength2(fkColumn)!=getTypelength2(referencedColumn)){
                     //System.out.println("*****************Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
-                    return new ImpossibleTransformation("Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
+                    return new ImpossibleTransformation("Transformation impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
                 }else if(getTypelength1(fkColumn)!=getTypelength1(referencedColumn)){
                         if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
                         //System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn + " to " +getTypeName(referencedColumn)+"("+getTypelength1(referencedColumn)+","+getTypelength2(referencedColumn)+")" );
@@ -201,7 +201,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 }
             }
             // juste pour afoir un return de fin noralement ne tombe jamais dedans 
-            return new ImpossibleTransformation("Type mismatching and no transforamtion found");
+            return new ImpossibleTransformation("Type mismatching and no transformation found");
     }
     
     //look if it the column have the same type but can have differents length 
