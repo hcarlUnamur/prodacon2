@@ -35,6 +35,8 @@ public class Main {
     private File fileFkFile;
     private String dbName;
     private ArrayList<ForeignKey> fkArray;
+    private ArrayList<Transformation> transformations;
+    private HashMap<Transformation,Action> actionChoice;
     
     /**
      * @param args the command line arguments
@@ -85,10 +87,11 @@ public class Main {
         System.out.println("Option: ");
         System.out.println("1. Arguments Menu");
         System.out.println("2. Run context Analyser " + ((this.fkArray.size()==0)?"( Impossible action no foreign key found on file)":""));
-        System.out.println("3. exit");
+        System.out.println("3. Undo run" +((this.transformations.isEmpty())?"(Need to run first)":""));
+        System.out.println("4. exit");
         System.out.println();
         
-        int option = optionSelection(1,3);
+        int option = optionSelection(1,4);
         switch(option){
             case 1:
                 argsMenu();
@@ -101,6 +104,25 @@ public class Main {
                 this.contextAnalyserMenu();
                 break;
             case 3:
+                if(this.fkArray.isEmpty()){
+                    System.err.println("Need to run first : opperation aborted");
+                    this.mainMenu();
+                }else{
+                    for(int i=this.transformations.size()-1;i>=0;i--){
+                        Transformation t=transformations.get(i);
+                        drawLine(25);
+                        if (t instanceof DBTransformation && actionChoice.get(t).equals(Action.Transform)){
+                            try {
+                                System.out.println("undoing fk : "+((DBTransformation) t).getFk());
+                                ((DBTransformation) t).unDoTransformation();
+                            } catch (SQLException ex) {
+                                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                }
+                break;
+            case 4:
                 System.out.println("Bye Bye :) ");
                 System.exit(0);
                 break;
@@ -121,6 +143,7 @@ public class Main {
             contextAnalyser = new ContextAnalyser(dbhost,dbName, dbport, dblogin, dbpw, fkArray);
             while(contextAnalyser.hasNext()){
                 Transformation transfo = contextAnalyser.next();
+                transformations.add(transfo);
                 drawLine(25);
                 if (transfo instanceof DBTransformation){
                     DBTransformationMenu((DBTransformation)transfo);
@@ -353,6 +376,7 @@ public class Main {
                         try {
                             optionOk=true;
                             dbtransfo.transfrom();
+                            actionChoice.put(dbtransfo, Action.Transform);
                             System.out.println("[OK] Transformation done ");
                         } catch (SQLException ex) {
                             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -362,11 +386,13 @@ public class Main {
                     }
                     break;
                 case 2:
+                    actionChoice.put(dbtransfo, Action.Abort);
                     System.out.println("Operation aborted");
                     optionOk=true;
                     break;
 
                 case 3 :
+                    actionChoice.put(dbtransfo, Action.AddFK);
                     System.out.println("Not implemented yet");
                     optionOk=true;
                     break;
