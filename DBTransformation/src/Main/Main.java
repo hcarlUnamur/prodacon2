@@ -277,7 +277,7 @@ public class Main {
             int i=0;
             while ((text = reader.readLine()) != null) {               
                 String[] tab = text.split(":|,");
-                this.fkArray.add(new ForeignKey(tab[2], tab[3], tab[1], tab[0],"fk__Constraint__"+tab[2]+"."+tab[3]+"__"+tab[0]+"."+tab[1]+"__"+i));
+                this.fkArray.add(new ForeignKey(tab[2], tab[3], tab[1], tab[0],"fk__Constraint__"+tab[2]+"-"+tab[3]+"__"+tab[0]+"-"+tab[1]+"__"+i));
                 i++;
             }
             try {
