@@ -114,11 +114,14 @@ public class Main {
                 }else{
                     for(int i=this.transformations.size()-1;i>=0;i--){
                         Transformation t=transformations.get(i);
-                        drawLine(25);
                         if (t instanceof DBTransformation && actionChoice.get(t).equals(Action.Transform)){
                             try {
+                                drawLine(25);
+                                System.out.println("");
                                 System.out.println("undoing fk : "+((DBTransformation) t).getFk());
                                 ((DBTransformation) t).unDoTransformation();
+                                System.out.println("[OK] transformation undo");
+                                System.out.println("");
                             } catch (SQLException ex) {
                                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                             }
