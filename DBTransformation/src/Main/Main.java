@@ -43,11 +43,15 @@ public class Main {
      */
     public Main(){
         fkArray = new ArrayList();
+        transformations = new ArrayList<Transformation>();
+        actionChoice = new HashMap<Transformation, Action>();
     }
     
     public Main(String[] userParameter){
         this.argsParseur(userParameter);
         fkArray = new ArrayList();
+        transformations = new ArrayList<Transformation>();
+        actionChoice = new HashMap<Transformation, Action>();
         if (this.fileFkFile!=null){
             try {
                 parseFKFile();
