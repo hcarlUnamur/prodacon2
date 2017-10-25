@@ -41,7 +41,8 @@ public abstract class AbstractSQLQueryFactory {
             Properties props = new Properties();
             props.setProperty("user",dataBaseLogin);
             props.setProperty("password",dataBasePassword);
-            props.setProperty("ssl","true");
+            props.setProperty("ssl","false");
+            props.setProperty("useSSL","false");
             
             
             conn = DriverManager.getConnection(String.format(DB_URL,dataBaseHostName),props);
