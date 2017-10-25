@@ -97,10 +97,11 @@ public class Main {
         System.out.println("1. Arguments Menu");
         System.out.println("2. Run context Analyser " + ((this.fkArray.size()==0)?"( Impossible action no foreign key found on file)":""));
         System.out.println("3. Undo run" +((this.transformations.isEmpty())?"(Need to run first)":""));
-        System.out.println("4. exit");
+        System.out.println("4. Make Analyse ");
+        System.out.println("5. exit");
         System.out.println();
         
-        int option = optionSelection(1,4);
+        int option = optionSelection(1,5);
         switch(option){
             case 1:
                 argsMenu();
@@ -135,6 +136,9 @@ public class Main {
                 }
                 break;
             case 4:
+                printAnalyse();
+                break;
+            case 5:
                 System.out.println("Bye Bye :) ");
                 System.exit(0);
                 break;
@@ -142,6 +146,41 @@ public class Main {
         }
         
 
+    }
+    
+    public void printAnalyse(){
+        drawLine(100);
+        System.out.println("Print Analyse");
+        System.out.println();
+        
+        ContextAnalyser contextAnalyser = null;
+        try{
+            contextAnalyser = new ContextAnalyser(dbhost,dbName, dbport, dblogin, dbpw, fkArray);
+            while(contextAnalyser.hasNext()){
+                drawLine(25);
+                Transformation transfo = contextAnalyser.next();
+                transformations.add(transfo);
+                if (transfo instanceof DBTransformation){
+                    System.out.println("dbtransfo");
+                    PrintDBTransformationMenu((DBTransformation)transfo);
+                }else if (transfo instanceof ImpossibleTransformation){
+                    System.out.println(((ImpossibleTransformation) transfo).getMessage());
+                    
+                }else if (transfo instanceof EmptyTransformation){
+                    System.out.println(((EmptyTransformation) transfo).getMessage());    
+                }
+            }
+            drawLine(25);
+            System.out.println("");
+            System.out.println("All foreign keys done :) ");
+            this.mainMenu();
+            
+        }catch(EasySQL.Exception.DBConnexionErrorException e){
+            System.err.println("DB connexion error some parameter can be wrong");
+            this.mainMenu();
+        }
+        
+        
     }
     
     public void contextAnalyserMenu(){
@@ -330,7 +369,44 @@ public class Main {
             }
         }
     }
-
+    
+    private void PrintDBTransformationMenu(DBTransformation dbtransfo) {
+        boolean ok = true;
+        boolean needCascadeTransfo=false;
+        dbtransfo.analyse();     
+        boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT);            
+        
+        System.out.println("Transformation type : " +dbtransfo.getTransforamtiontype().name());
+        if(isMBT){
+            System.out.println("    Juste adding the foreignkey");
+        }
+        else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
+            System.out.println("    Transformation of " + dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn() +" type to " + dbtransfo.getNewType());
+        }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
+            System.out.println("    Transformation of " + dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn()+" type to " + dbtransfo.getNewType());
+        }
+                    
+        ok = dbtransfo.isEncodageMatching(); 
+        System.out.println((dbtransfo.isEncodageMatching()?"[OK] Encodage matching":"[KO] Encodage mismatching"));
+                    
+        if(dbtransfo.getUnmatchingValue().size()==0){
+            System.out.println("[OK] ALL table values matching");
+        }else{
+            System.out.println("[KO] Some table values unmatching :");
+            ok=false;
+            dbtransfo.getUnmatchingValue().forEach(s->System.out.println("    " + s));
+        }
+                    
+        if(dbtransfo.getCascadeFk().size()==0 ){
+            System.out.println("[OK] No Cascade Transformation");
+            needCascadeTransfo=false;
+        }else{
+            needCascadeTransfo=true;
+            System.out.println("[Warning] Existing Cascade Transformation on : ");
+            dbtransfo.getCascadeFk().forEach(s->System.out.println("    "+s.getConstraintName()+" : "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn() +" -> "+s.getReferencedTableName()+"."+s.getReferencedColumn()) );
+        }
+    }
+    
     private void DBTransformationMenu(DBTransformation dbtransfo) {
         boolean ok = true;
         boolean needCascadeTransfo=false;
