@@ -53,17 +53,27 @@ public class ContextAnalyser implements Iterator<Transformation> {
         }catch(SQLException e){
                throw new LoadUnexistentTableException("It's impossible to loade the foreign key table. they can don't exist");
         }
-        
-        
-                Column fkColumn = usedTable.getTablecolumn().stream()
+                Column fkColumn =null;
+                Column referencedColumn=null;
+                
+                try{
+                int i =0;
+                fkColumn = usedTable.getTablecolumn().stream()
                                             .filter(c-> c.getColumnName().equals(fk.getForeingKeyColumn()))
                                             .findFirst()
                                             .get();
-                
-                Column referencedColumn = referencedTable.getTablecolumn().stream()
+                i++;
+                referencedColumn = referencedTable.getTablecolumn().stream()
                                             .filter(c-> c.getColumnName().equals(fk.getReferencedColumn()))
                                             .findFirst()
                                             .get();
+                
+                }catch(java.util.NoSuchElementException e){
+                    if (1==0)
+                        throw new LoadUnexistentTableException("Impossible to find : "+fk.getForeingKeyTable()+"."+fk.getForeingKeyColumn());
+                    else 
+                        throw new LoadUnexistentTableException("Impossible to find : "+fk.getReferencedTableName()+"."+fk.getReferencedColumn());
+                }
                 //System.out.println("--------------------------------"+fkAlreadyExist(usedTable, fk));
                 if(fkAlreadyExist(usedTable, fk)){
                     return new EmptyTransformation("the Foreign key already exist");
@@ -87,7 +97,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
         //signed and unsigned type
         if(isUnsigned(fkColumn)!=isUnsigned(referencedColumn)){
             //System.out.println("***************** signed and unsigned type");
-            return new ImpossibleTransformation("Type mismatching : signed and unsigned type");
+            return new ImpossibleTransformation("Type mismatching : signed and unsigned type [between :" + fkColumn.getColumnType() +" -> "+ referencedColumn.getColumnType()+"]" );
             
         }
         //same Type But Different lengths
@@ -132,9 +142,9 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 return new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.TTT);
             } 
         }else{
-            return new ImpossibleTransformation("Type mismatching and no transformation found");
+            return new ImpossibleTransformation("Type mismatching and no transformation found [between :" + fkColumn.getColumnType() +" -> "+ referencedColumn.getColumnType()+"]");
         }
-        return new ImpossibleTransformation("Type mismatching and no transformation found");
+        return new ImpossibleTransformation("Type mismatching and no transformation found [between :" + fkColumn.getColumnType() +" -> "+ referencedColumn.getColumnType()+"]");
     }
     
     private Transformation sameTypeButDifferentlength(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn){
@@ -201,7 +211,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 }
             }
             // juste pour afoir un return de fin noralement ne tombe jamais dedans 
-            return new ImpossibleTransformation("Type mismatching and no transformation found");
+            return new ImpossibleTransformation("Type mismatching and no transformation found [between :" + fkColumn.getColumnType() +" -> "+ referencedColumn.getColumnType()+"]");
     }
     
     //look if it the column have the same type but can have differents length 

@@ -76,7 +76,8 @@ public class Main {
         System.out.println("");
         
         desableInfoLog();
-        args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin root -dbpw root -fkfile ./possible_matchesTest.txt".split(" ");
+        //args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin root -dbpw root -fkfile ./possible_matchesTest.txt".split(" ");
+        args = "-dbhost localhost -dbname oscar -dbport 3306 -dblogin root -dbpw Ginette -fkfile /home/vagrant/Downloads/dist/possible_matches.txt".split(" ");
         Main main = new Main(args);
         main.mainMenu();
     }
@@ -97,7 +98,7 @@ public class Main {
         System.out.println("1. Arguments Menu");
         System.out.println("2. Run context Analyser " + ((this.fkArray.size()==0)?"( Impossible action no foreign key found on file)":""));
         System.out.println("3. Undo run" +((this.transformations.isEmpty())?"(Need to run first)":""));
-        System.out.println("4. Make Analyse ");
+        System.out.println("4. Print Analyse ");
         System.out.println("5. exit");
         System.out.println();
         
@@ -156,12 +157,13 @@ public class Main {
         ContextAnalyser contextAnalyser = null;
         try{
             contextAnalyser = new ContextAnalyser(dbhost,dbName, dbport, dblogin, dbpw, fkArray);
+            int i = 0;
             while(contextAnalyser.hasNext()){
                 drawLine(25);
+                System.out.println(this.fkArray.get(i));
                 Transformation transfo = contextAnalyser.next();
                 transformations.add(transfo);
                 if (transfo instanceof DBTransformation){
-                    System.out.println("dbtransfo");
                     PrintDBTransformationMenu((DBTransformation)transfo);
                 }else if (transfo instanceof ImpossibleTransformation){
                     System.out.println(((ImpossibleTransformation) transfo).getMessage());
@@ -169,6 +171,7 @@ public class Main {
                 }else if (transfo instanceof EmptyTransformation){
                     System.out.println(((EmptyTransformation) transfo).getMessage());    
                 }
+                i++;
             }
             drawLine(25);
             System.out.println("");
@@ -378,7 +381,7 @@ public class Main {
         
         System.out.println("Transformation type : " +dbtransfo.getTransforamtiontype().name());
         if(isMBT){
-            System.out.println("    Juste adding the foreignkey");
+            System.out.println("    Just adding the foreignkey");
         }
         else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
             System.out.println("    Transformation of " + dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn() +" type to " + dbtransfo.getNewType());
