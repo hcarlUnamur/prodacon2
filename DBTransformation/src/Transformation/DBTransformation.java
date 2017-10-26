@@ -280,6 +280,7 @@ public class DBTransformation extends Transformation {
     }
     
     public void analyseValues(){
+        /*
         String s = String.format(
                 "SELECT %s FROM %s WHERE CONVERT(%s,char) NOT IN (SELECT CONVERT(%s,char) FROM %s);",
                 fk.getForeingKeyColumn(),
@@ -288,7 +289,14 @@ public class DBTransformation extends Transformation {
                 fk.getReferencedColumn(),
                 fk.getReferencedTableName()
                 );
-        
+        */
+         String s = String.format(
+                "SELECT %s as arg1 FROM %s WHERE arg1 IS NOT NULL AND CONVERT(arg1,char) NOT IN (SELECT CONVERT(%s,char) FROM %s);",
+                fk.getForeingKeyColumn(),
+                fk.getForeingKeyTable(),
+                fk.getReferencedColumn(),
+                fk.getReferencedTableName()
+                );
         try {
             ResultSet queryResult =sqlFactory.createSQLCreateFreeQuery(SQLQueryType.Getter,s).sqlQueryDo();
             while(queryResult.next()){
