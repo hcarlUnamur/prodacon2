@@ -103,8 +103,7 @@ public class MainController implements Initializable {
         colRC.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getReferencedColumn()));
         colRT.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getReferencedTableName()));
         
-        ResetDefaultButtonOnClick();
-        //Run Transformation        
+    //Run Transformation        
         analyseButtonBox.getChildren().clear();
         
         startButton.setMinWidth(100);
@@ -207,6 +206,7 @@ public class MainController implements Initializable {
     
     @FXML
     private void SaveDefaultButtonOnClick(){
+        System.out.println("SDBOC begin");
         Properties prop = new Properties();
 	OutputStream output = null;
 	try {
@@ -233,6 +233,7 @@ public class MainController implements Initializable {
 		}
             }
 	}
+        System.out.println("SDBOC end");
     }
     
     private void Alert(String message){
@@ -282,10 +283,13 @@ public class MainController implements Initializable {
                     this.dbPassWord.getText(),
                     new ArrayList(this.fkList)
             );
-        tryNextTransformation();
         }catch(EasySQL.Exception.DBConnexionErrorException e){
             Alert("DB connexion error","Some properties parameter can be wrong");
         }
+        
+        showAnalysebutton();
+        tryNextTransformation();
+        
     }
 
     private void showNextbutton(){
@@ -307,7 +311,7 @@ public class MainController implements Initializable {
             dbtransfo.analyse();
 
             boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT) ;            
-            this.transfomrmationType.setText("Transformation");
+            this.transfomrmationType.setText("Transforamtion");
             this.transfomationSubtype.setText(dbtransfo.getTransforamtiontype().name());
             if(isMBT){
                 System.out.println("    Juste adding the foreignkey");
