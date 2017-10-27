@@ -54,9 +54,9 @@ public class Test {
             SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"12"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"24"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"36"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"12.32"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"24.15"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"36.2"}).sqlQueryDo();
 
             ArrayList<Column> listCol4 = new ArrayList<>();
             listCol4.add(new Column("4id", "int"));
@@ -129,7 +129,7 @@ public class Test {
             sqlF.createSQLInsertQuery("testTable10", new String[]{"3"}).sqlQueryDo();
             
             ArrayList<Column> listCol11 = new ArrayList<>();
-            listCol11.add(new Column("11id", "double(3,1)"));
+            listCol11.add(new Column("11id", "tinyInt"));
             Table t11 = new Table("testTable11", listCol11, new ArrayList<ForeignKey>(), "11id");
             SQLCreateTableQuery add11 = sqlF.createSQLCreateTableQuery(t11);
             add11.sqlQueryDo();
@@ -139,7 +139,7 @@ public class Test {
             sqlF.createSQLInsertQuery("testTable11", new String[]{"3"}).sqlQueryDo();
             
             ArrayList<Column> listCol12 = new ArrayList<>();
-            listCol12.add(new Column("12id", "decimal(3,1)"));
+            listCol12.add(new Column("12id", "tinyInt"));
             Table t12 = new Table("testTable12", listCol12, new ArrayList<ForeignKey>(), "12id");
             SQLCreateTableQuery add12 = sqlF.createSQLCreateTableQuery(t12);
             add12.sqlQueryDo();
