@@ -305,7 +305,6 @@ public class MainController implements Initializable {
     }
     
     private void DBTransformationAction(DBTransformation dbtransfo) {
-        try{
             this.currentDbTransformation = dbtransfo;
             boolean ok = true;
             boolean needCascadeTransfo=false;
@@ -348,28 +347,28 @@ public class MainController implements Initializable {
 
             if(!ok){this.ExeButton.setDisable(true);}
             else{this.ExeButton.setDisable(false);}
-
-        }catch(RuntimeException e){
-            Alert("Error Load Unexistent Table Exception");
-            tryNextTransformation();
-        }
     }
     
     private void tryNextTransformation(){
             cleanAnalyseView();
             if(contextAnalyser.hasNext()){
-            Transformation transfo = contextAnalyser.next();
-            transformations.add(transfo);
-            if (transfo instanceof DBTransformation){
-                showAnalysebutton();
-                DBTransformationAction((DBTransformation)transfo);
-            }else if (transfo instanceof ImpossibleTransformation){
-                this.transfomrmationType.setText("[ImpossibleTransformation] " +((ImpossibleTransformation) transfo).getMessage());
-                showNextbutton();
-            }else if (transfo instanceof EmptyTransformation){
-                this.transfomrmationType.setText("[EmptyTransformation] " +((EmptyTransformation) transfo).getMessage());
-                showNextbutton();
-            }
+            try{    
+                Transformation transfo = contextAnalyser.next();
+                transformations.add(transfo);
+                if (transfo instanceof DBTransformation){
+                    showAnalysebutton();
+                    DBTransformationAction((DBTransformation)transfo);
+                }else if (transfo instanceof ImpossibleTransformation){
+                    this.transfomrmationType.setText("[ImpossibleTransformation] " +((ImpossibleTransformation) transfo).getMessage());
+                    showNextbutton();
+                }else if (transfo instanceof EmptyTransformation){
+                    this.transfomrmationType.setText("[EmptyTransformation] " +((EmptyTransformation) transfo).getMessage());
+                    showNextbutton();
+                }
+            }catch(RuntimeException e){
+            Alert("Error Load Unexistent Table Exception");
+            tryNextTransformation();
+        }
         }
     }
 

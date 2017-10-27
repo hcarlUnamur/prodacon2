@@ -263,7 +263,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
         try {
             out = analyse(fks.get(iteratorIndex-1));
         } catch (LoadUnexistentTableException ex) {
-            Logger.getLogger(ContextAnalyser.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Load Unexistent Table Exception");
         }
         return out;
     }
