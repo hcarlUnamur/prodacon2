@@ -8,20 +8,14 @@ package prodacon2gui;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import EasySQL.ForeignKey;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -34,14 +28,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 /**
  *
  * @author carl_
  */
 public class MainController implements Initializable {
 //Global Data
-    private ObservableList<ForeignKey> fkList = FXCollections.observableArrayList();
-//Menu Properties   
+
+//Menu Properties 
     @FXML private TextField dbhostName;   
     @FXML private TextField dbName; 
     @FXML private TextField dbPort;   
@@ -49,7 +49,8 @@ public class MainController implements Initializable {
     @FXML private TextField dbPassWord;
 
 //Menu Foreign keys
-    
+    private ObservableList<ForeignKey> fkList = FXCollections.observableArrayList();
+    @FXML private BorderPane fkTabMenu;
     @FXML private TableView fkTable;
     @FXML private TableColumn<ForeignKey, String> colRT;
     @FXML private TableColumn<ForeignKey, String> colRC;
@@ -59,9 +60,31 @@ public class MainController implements Initializable {
     @FXML private Button buttonLoad;
     @FXML private TextField filePath; 
     
+//Run Transformation Menu
+    private ObservableList<String> unmatchingValueObservableList = FXCollections.observableArrayList();
+    private ObservableList<ForeignKey> cascadeTransformationObservableList = FXCollections.observableArrayList();
+    @FXML private Label transfomrmationType;
+    @FXML private Label transfomationSubtype;
+    @FXML private Label mainTarget;
+    @FXML private Label newType;
+    @FXML private Label encodageMatching;
+    @FXML private TableView unmatchingValue;
+    @FXML private TableColumn<String,String> unmatchingValueColumn;
+    @FXML private TableView cascadeTable;
+    @FXML private TableColumn<ForeignKey,String> cascadeTableColumn;
+    @FXML private TableColumn<ForeignKey,String> cascadeColumnColumn;
+    @FXML private HBox analyseButtonBox;
+    @FXML private Button addTriggerButton;
+    @FXML private Button abordeButton;
+    @FXML private Button ExeButton;
+     private Button startButton = new Button("Start");
+            
+    
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //
         fkTable.setItems(fkList);
         colCN.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getConstraintName()));
         colFKC.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getForeingKeyColumn()));
@@ -69,6 +92,20 @@ public class MainController implements Initializable {
         colRC.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getReferencedColumn()));
         colRT.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getReferencedTableName()));
         
+    //Run Transformation        
+        analyseButtonBox.getChildren().clear();
+        startButton.setMinWidth(100);
+        analyseButtonBox.getChildren().add(startButton);
+        /*
+        addTriggerButton.setVisible(false);
+        abordeButton.setVisible(false);
+        ExeButton.setVisible(false);
+        */
+        cascadeTable.setItems(cascadeTransformationObservableList);
+        unmatchingValue.setItems(unmatchingValueObservableList);
+        cascadeTableColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getForeingKeyTable()));
+        cascadeColumnColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getForeingKeyColumn()));
+        unmatchingValueColumn.setCellValueFactory(s->new SimpleStringProperty(s.getValue().toString()));
     }    
     
     @FXML
@@ -193,4 +230,19 @@ public class MainController implements Initializable {
         alert.showAndWait();
     }
     
+    
+    @FXML
+    private void addTriggerButtonOnClick(){
+    
+    }
+    
+    @FXML
+    private void abordButtonOnClick(){
+    
+    }
+    
+    @FXML
+    private void executeTransformationButtonOnClick(){
+    
+    }
 }

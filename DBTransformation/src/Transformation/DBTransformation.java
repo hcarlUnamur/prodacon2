@@ -15,7 +15,10 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import EasySQL.SQLTransactionQuery;
+import java.io.File;
 import java.sql.SQLException;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 /**
  *
  * @author carl_
@@ -359,5 +362,6 @@ public class DBTransformation extends Transformation {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     
 }

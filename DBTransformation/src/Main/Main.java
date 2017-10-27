@@ -111,8 +111,9 @@ public class Main {
                 if(this.fkArray.size()==0){
                     System.err.println("Impossible to proceed no foreign key found on file");
                     this.mainMenu();
+                }else{
+                    this.contextAnalyserMenu();
                 }
-                this.contextAnalyserMenu();
                 break;
             case 3:
                 if(this.fkArray.isEmpty()){
@@ -137,7 +138,12 @@ public class Main {
                 }
                 break;
             case 4:
-                printAnalyse();
+                if(this.fkArray.size()==0){
+                    System.err.println("Impossible to proceed no foreign key found on file");
+                    this.mainMenu();
+                }else{
+                    printAnalyse();
+                }
                 break;
             case 5:
                 System.out.println("Bye Bye :) ");
@@ -415,7 +421,7 @@ public class Main {
         boolean needCascadeTransfo=false;
         dbtransfo.analyse();
         
-        boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT);            
+        boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT) ;            
         
         System.out.println("Transformation type : " +dbtransfo.getTransforamtiontype().name());
         if(isMBT){
