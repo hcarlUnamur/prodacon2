@@ -283,12 +283,12 @@ public class MainController implements Initializable {
                     this.dbPassWord.getText(),
                     new ArrayList(this.fkList)
             );
+            showAnalysebutton();
+            tryNextTransformation();
         }catch(EasySQL.Exception.DBConnexionErrorException e){
             Alert("DB connexion error","Some properties parameter can be wrong");
         }
         
-        showAnalysebutton();
-        tryNextTransformation();
         
     }
 
