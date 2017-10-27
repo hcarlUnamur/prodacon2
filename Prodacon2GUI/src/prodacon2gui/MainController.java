@@ -50,8 +50,8 @@ import java.util.logging.Logger;
 public class MainController implements Initializable {
 //Global Data
     private ContextAnalyser contextAnalyser;
-    private ArrayList<Transformation> transformations;
-    private HashMap<Transformation,Action> actionChoice;
+    private ArrayList<Transformation> transformations = new ArrayList();
+    private HashMap<Transformation,Action> actionChoice = new HashMap();
     private DBTransformation currentDbTransformation;
 //Menu Properties 
     @FXML private TextField dbhostName;   
