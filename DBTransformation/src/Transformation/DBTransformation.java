@@ -291,9 +291,11 @@ public class DBTransformation extends Transformation {
                 );
         */
          String s = String.format(
-                "SELECT %s as arg1 FROM %s WHERE arg1 IS NOT NULL AND CONVERT(arg1,char) NOT IN (SELECT CONVERT(%s,char) FROM %s);",
+                "SELECT %s FROM %s WHERE %s IS NOT NULL AND CONVERT(%s,char) NOT IN (SELECT CONVERT(%s,char) FROM %s);",
                 fk.getForeingKeyColumn(),
                 fk.getForeingKeyTable(),
+                fk.getForeingKeyColumn(),
+                fk.getForeingKeyColumn(),
                 fk.getReferencedColumn(),
                 fk.getReferencedTableName()
                 );
