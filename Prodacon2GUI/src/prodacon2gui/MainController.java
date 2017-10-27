@@ -5,12 +5,16 @@
  */
 package prodacon2gui;
 
+import ContextAnalyser.ContextAnalyser;
+import ContextAnalyser.TransformationType;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import EasySQL.ForeignKey;
+import Main.Action;
+import Main.Main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -27,20 +31,28 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Properties;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import Transformation.*;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author carl_
  */
 public class MainController implements Initializable {
 //Global Data
-
+    private ContextAnalyser contextAnalyser;
+    private ArrayList<Transformation> transformations;
+    private HashMap<Transformation,Action> actionChoice;
+    private DBTransformation currentDbTransformation;
 //Menu Properties 
     @FXML private TextField dbhostName;   
     @FXML private TextField dbName; 
@@ -78,6 +90,7 @@ public class MainController implements Initializable {
     @FXML private Button abordeButton;
     @FXML private Button ExeButton;
      private Button startButton = new Button("Start");
+     private Button nextbutton = new Button("Next");
             
     
     
@@ -94,13 +107,23 @@ public class MainController implements Initializable {
         
     //Run Transformation        
         analyseButtonBox.getChildren().clear();
+        
         startButton.setMinWidth(100);
         analyseButtonBox.getChildren().add(startButton);
-        /*
-        addTriggerButton.setVisible(false);
-        abordeButton.setVisible(false);
-        ExeButton.setVisible(false);
-        */
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                startButtonOnclickAction();
+            }
+        });
+        
+        nextbutton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                nextButtonOnclickAction();
+            }
+        });
+        
         cascadeTable.setItems(cascadeTransformationObservableList);
         unmatchingValue.setItems(unmatchingValueObservableList);
         cascadeTableColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getForeingKeyTable()));
@@ -233,16 +256,134 @@ public class MainController implements Initializable {
     
     @FXML
     private void addTriggerButtonOnClick(){
+        Alert("Sorry","Net yet implemented");
+        tryNextTransformation();
     
     }
     
     @FXML
     private void abordButtonOnClick(){
-    
+        tryNextTransformation();
     }
     
     @FXML
     private void executeTransformationButtonOnClick(){
+        try {
+            this.currentDbTransformation.transfrom();
+            actionChoice.put(this.currentDbTransformation, Action.Transform);
+        } catch (SQLException ex) {
+            Alert("Error during transformation",ex.getMessage());
+        }
+        tryNextTransformation();
+    }
     
+    private void startButtonOnclickAction() {
+        try{
+            contextAnalyser = new ContextAnalyser(
+                    this.dbhostName.getText(),
+                    this.dbName.getText(),
+                    this.dbPort.getText(),
+                    this.dbLogin.getText(),
+                    this.dbPassWord.getText(),
+                    new ArrayList(this.fkList)
+            );
+        }catch(EasySQL.Exception.DBConnexionErrorException e){
+            Alert("DB connexion error","Some properties parameter can be wrong");
+        }
+        
+        showAnalysebutton();
+        tryNextTransformation();
+        
+    }
+
+    private void showNextbutton(){
+        this.analyseButtonBox.getChildren().clear();
+        this.analyseButtonBox.getChildren().add(this.nextbutton);   
+    }
+    
+    private void showAnalysebutton(){
+        this.analyseButtonBox.getChildren().clear();
+        this.analyseButtonBox.getChildren().add(this.addTriggerButton);
+        this.analyseButtonBox.getChildren().add(this.abordeButton);
+        this.analyseButtonBox.getChildren().add(this.ExeButton);    
+    }
+    
+    private void DBTransformationAction(DBTransformation dbtransfo) {
+        this.currentDbTransformation = dbtransfo;
+        boolean ok = true;
+        boolean needCascadeTransfo=false;
+        dbtransfo.analyse();
+        
+        boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT) ;            
+        this.transfomrmationType.setText("Transforamtion");
+        this.transfomationSubtype.setText(dbtransfo.getTransforamtiontype().name());
+        if(isMBT){
+            System.out.println("    Juste adding the foreignkey");
+            this.mainTarget.setText("No main target we juste have to add the foreignkey constraint");
+        }
+        else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
+            this.mainTarget.setText(dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn());
+            this.newType.setText(dbtransfo.getNewType());
+        }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
+            this.mainTarget.setText(dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn());
+            this.newType.setText(dbtransfo.getNewType());
+        }
+                    
+        ok = dbtransfo.isEncodageMatching(); 
+        this.encodageMatching.setText((dbtransfo.isEncodageMatching()?"[OK] Encodage matching":"[KO] Encodage mismatching"));
+                    
+        if(dbtransfo.getUnmatchingValue().size()==0){
+            //System.out.println("[OK] ALL table values matching");
+        }else{
+            System.out.println("[KO] Some table values unmatching :");
+            ok=false;
+            dbtransfo.getUnmatchingValue().forEach(s->this.unmatchingValueObservableList.add(s));
+        }
+                    
+        if(dbtransfo.getCascadeFk().size()==0 ){
+            //System.out.println("[OK] No Cascade Transformation");
+            needCascadeTransfo=false;
+        }else{
+            needCascadeTransfo=true;
+            //System.out.println("[Warning] Existing Cascade Transformation on : ");
+            dbtransfo.getCascadeFk().forEach(s->this.cascadeTransformationObservableList.add(s));
+        }
+        
+        if(!ok){this.ExeButton.setDisable(true);}
+        else{this.ExeButton.setDisable(false);}
+        
+        
+    }
+    
+    private void tryNextTransformation(){
+            cleanAnalyseView();
+            if(contextAnalyser.hasNext()){
+            Transformation transfo = contextAnalyser.next();
+            transformations.add(transfo);
+            if (transfo instanceof DBTransformation){
+                showAnalysebutton();
+                DBTransformationAction((DBTransformation)transfo);
+            }else if (transfo instanceof ImpossibleTransformation){
+                this.transfomrmationType.setText("[ImpossibleTransformation] " +((ImpossibleTransformation) transfo).getMessage());
+                showNextbutton();
+            }else if (transfo instanceof EmptyTransformation){
+                this.transfomrmationType.setText("[EmptyTransformation] " +((EmptyTransformation) transfo).getMessage());
+                showNextbutton();
+            }
+        }
+    }
+
+    private void cleanAnalyseView(){
+        this.transfomrmationType.setText("");
+        this.transfomationSubtype.setText("");
+        this.mainTarget.setText("");
+        this.newType.setText("");
+        this.encodageMatching.setText("");
+        this.unmatchingValueObservableList.clear();
+        this.cascadeTransformationObservableList.clear();
+    }
+    
+    private void nextButtonOnclickAction(){
+        tryNextTransformation();
     }
 }
