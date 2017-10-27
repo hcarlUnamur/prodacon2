@@ -351,6 +351,7 @@ public class MainController implements Initializable {
 
         }catch(RuntimeException e){
             Alert("Error Load Unexistent Table Exception");
+            tryNextTransformation();
         }
     }
     
