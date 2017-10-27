@@ -60,12 +60,12 @@
                   </PasswordField>
                   <HBox alignment="BOTTOM_RIGHT" prefHeight="70.0" prefWidth="336.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#ResetDefaultButtonOnClick" text="Reset default">
+                        <Button mnemonicParsing="false" onAction="#SaveDefaultButtonOnClick" text="Save on default">
                            <HBox.margin>
                               <Insets left="10.0" right="10.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#SaveDefaultButtonOnClick" text="Save on default">
+                        <Button mnemonicParsing="false" onAction="#ResetDefaultButtonOnClick" text="Reset default">
                            <HBox.margin>
                               <Insets left="10.0" right="10.0" />
                            </HBox.margin>

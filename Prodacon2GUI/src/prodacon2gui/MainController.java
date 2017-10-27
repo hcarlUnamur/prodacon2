@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import EasySQL.ForeignKey;
 import Main.Action;
-import Main.Main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -41,8 +40,7 @@ import javafx.scene.layout.HBox;
 import Transformation.*;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import EasySQL.Exception.LoadUnexistentTableException;
 /**
  *
  * @author carl_
@@ -257,8 +255,6 @@ public class MainController implements Initializable {
     @FXML
     private void addTriggerButtonOnClick(){
         Alert("Sorry","Net yet implemented");
-        tryNextTransformation();
-    
     }
     
     @FXML
@@ -309,50 +305,53 @@ public class MainController implements Initializable {
     }
     
     private void DBTransformationAction(DBTransformation dbtransfo) {
-        this.currentDbTransformation = dbtransfo;
-        boolean ok = true;
-        boolean needCascadeTransfo=false;
-        dbtransfo.analyse();
-        
-        boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT) ;            
-        this.transfomrmationType.setText("Transforamtion");
-        this.transfomationSubtype.setText(dbtransfo.getTransforamtiontype().name());
-        if(isMBT){
-            System.out.println("    Juste adding the foreignkey");
-            this.mainTarget.setText("No main target we juste have to add the foreignkey constraint");
+        try{
+            this.currentDbTransformation = dbtransfo;
+            boolean ok = true;
+            boolean needCascadeTransfo=false;
+            dbtransfo.analyse();
+
+            boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT) ;            
+            this.transfomrmationType.setText("Transforamtion");
+            this.transfomationSubtype.setText(dbtransfo.getTransforamtiontype().name());
+            if(isMBT){
+                System.out.println("    Juste adding the foreignkey");
+                this.mainTarget.setText("No main target we juste have to add the foreignkey constraint");
+            }
+            else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
+                this.mainTarget.setText(dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn());
+                this.newType.setText(dbtransfo.getNewType());
+            }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
+                this.mainTarget.setText(dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn());
+                this.newType.setText(dbtransfo.getNewType());
+            }
+
+            ok = dbtransfo.isEncodageMatching(); 
+            this.encodageMatching.setText((dbtransfo.isEncodageMatching()?"[OK] Encodage matching":"[KO] Encodage mismatching"));
+
+            if(dbtransfo.getUnmatchingValue().size()==0){
+                //System.out.println("[OK] ALL table values matching");
+            }else{
+                System.out.println("[KO] Some table values unmatching :");
+                ok=false;
+                dbtransfo.getUnmatchingValue().forEach(s->this.unmatchingValueObservableList.add(s));
+            }
+
+            if(dbtransfo.getCascadeFk().size()==0 ){
+                //System.out.println("[OK] No Cascade Transformation");
+                needCascadeTransfo=false;
+            }else{
+                needCascadeTransfo=true;
+                //System.out.println("[Warning] Existing Cascade Transformation on : ");
+                dbtransfo.getCascadeFk().forEach(s->this.cascadeTransformationObservableList.add(s));
+            }
+
+            if(!ok){this.ExeButton.setDisable(true);}
+            else{this.ExeButton.setDisable(false);}
+
+        }catch(RuntimeException e){
+            Alert("Error Load Unexistent Table Exception");
         }
-        else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
-            this.mainTarget.setText(dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn());
-            this.newType.setText(dbtransfo.getNewType());
-        }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
-            this.mainTarget.setText(dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn());
-            this.newType.setText(dbtransfo.getNewType());
-        }
-                    
-        ok = dbtransfo.isEncodageMatching(); 
-        this.encodageMatching.setText((dbtransfo.isEncodageMatching()?"[OK] Encodage matching":"[KO] Encodage mismatching"));
-                    
-        if(dbtransfo.getUnmatchingValue().size()==0){
-            //System.out.println("[OK] ALL table values matching");
-        }else{
-            System.out.println("[KO] Some table values unmatching :");
-            ok=false;
-            dbtransfo.getUnmatchingValue().forEach(s->this.unmatchingValueObservableList.add(s));
-        }
-                    
-        if(dbtransfo.getCascadeFk().size()==0 ){
-            //System.out.println("[OK] No Cascade Transformation");
-            needCascadeTransfo=false;
-        }else{
-            needCascadeTransfo=true;
-            //System.out.println("[Warning] Existing Cascade Transformation on : ");
-            dbtransfo.getCascadeFk().forEach(s->this.cascadeTransformationObservableList.add(s));
-        }
-        
-        if(!ok){this.ExeButton.setDisable(true);}
-        else{this.ExeButton.setDisable(false);}
-        
-        
     }
     
     private void tryNextTransformation(){
