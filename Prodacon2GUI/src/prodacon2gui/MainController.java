@@ -276,8 +276,8 @@ public class MainController implements Initializable {
     
     private void Alert(AlertType type,String message,String message2){
         Alert alert = new Alert(type);
-        alert.setTitle("ERROR");      
-        alert.setHeaderText("Error : " +message);
+        alert.setTitle(type.name());      
+        alert.setHeaderText(message);
         alert.setContentText(message2);
         alert.showAndWait();
     }
@@ -458,7 +458,7 @@ public class MainController implements Initializable {
                         try {
                            ((DBTransformation) t).unDoTransformation();
                           } catch (SQLException ex) {
-                              Alert(AlertType.CONFIRMATION,"Error during undo",ex.getMessage());
+                              Alert(AlertType.INFORMATION,"Error during undo",ex.getMessage());
                            }
                         }
                     }
