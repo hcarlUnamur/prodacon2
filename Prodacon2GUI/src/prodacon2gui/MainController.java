@@ -346,7 +346,7 @@ public class MainController implements Initializable {
             dbtransfo.analyse();
 
             boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT) ;            
-            this.transfomrmationType.setText("Transforamtion");
+            this.transfomrmationType.setText("Transformation");
             this.transfomationSubtype.setText(dbtransfo.getTransforamtiontype().name());
             if(isMBT){
                 System.out.println("    Juste adding the foreignkey");
