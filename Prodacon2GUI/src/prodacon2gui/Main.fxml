@@ -130,7 +130,7 @@
                      <center>
                         <GridPane alignment="CENTER" minWidth="0.0" prefHeight="321.0" prefWidth="645.0" BorderPane.alignment="CENTER">
                           <columnConstraints>
-                            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" prefWidth="143.0" />
+                            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="143.0" />
                             <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="456.0" />
                           </columnConstraints>
                           <rowConstraints>
@@ -145,7 +145,7 @@
                            <children>
                               <Label text="Transformation Type : " />
                               <Label text="Transformation SubType : " GridPane.rowIndex="1" />
-                              <Label prefHeight="17.0" prefWidth="72.0" text="Main Target : " GridPane.rowIndex="2" />
+                              <Label prefHeight="17.0" prefWidth="77.0" text="Main Target : " GridPane.rowIndex="2" />
                               <Label text="New Type : " GridPane.rowIndex="3" />
                               <Label text="Encodage Matching : " GridPane.rowIndex="4" />
                               <Label text="Umatching Values : " GridPane.rowIndex="5" />

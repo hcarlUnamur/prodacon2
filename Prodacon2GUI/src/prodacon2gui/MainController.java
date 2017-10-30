@@ -301,6 +301,14 @@ public class MainController implements Initializable {
                     this.dbPassWord.getText(),
                     new ArrayList(this.fkList)
             );
+
+            //clear
+            transformations.clear();
+            actionChoice.clear();
+            currentDbTransformation=null;
+            transInfoObservableList.clear();
+            //end clear
+            
             showAnalysebutton();
             fkList.forEach(fk -> fkInfoObservableList.add(fk));
             tryNextTransformation();
@@ -391,6 +399,12 @@ public class MainController implements Initializable {
                 Alert("Error Load Unexistent Table Exception");
                 tryNextTransformation();
             }
+        }else{
+            cleanAnalyseView();
+            analyseButtonBox.getChildren().clear();
+            startButton.setText("Restart");
+            analyseButtonBox.getChildren().add(startButton);
+                    
         }
     }
 
@@ -405,6 +419,7 @@ public class MainController implements Initializable {
     }
     
     private void nextButtonOnclickAction(){
+        fkInfoObservableList.remove(0);
         tryNextTransformation();
     }
 }
