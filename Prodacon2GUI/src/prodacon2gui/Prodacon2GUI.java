@@ -5,6 +5,10 @@
  */
 package prodacon2gui;
 
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,6 +23,8 @@ public class Prodacon2GUI extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+        desableInfoLog();
+        
         Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         
         Scene scene = new Scene(root);
@@ -35,4 +41,11 @@ public class Prodacon2GUI extends Application {
         launch(args);
     }
     
+    private static void desableInfoLog(){
+        Logger rootLogger = LogManager.getLogManager().getLogger("");
+        rootLogger.setLevel(Level.INFO);
+        for (Handler h : rootLogger.getHandlers()) {
+            h.setLevel(Level.SEVERE);
+        }
+    }
 }
