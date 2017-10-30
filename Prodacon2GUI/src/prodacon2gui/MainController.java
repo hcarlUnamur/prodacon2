@@ -366,7 +366,7 @@ public class MainController implements Initializable {
             if(dbtransfo.getUnmatchingValue().size()==0){
                 //System.out.println("[OK] ALL table values matching");
             }else{
-                System.out.println("[KO] Some table values unmatching :");
+                //System.out.println("[KO] Some table values unmatching :");
                 ok=false;
                 dbtransfo.getUnmatchingValue().forEach(s->this.unmatchingValueObservableList.add(s));
             }
@@ -374,7 +374,7 @@ public class MainController implements Initializable {
             if(dbtransfo.getCascadeFk().size()==0 ){
                 //System.out.println("[OK] No Cascade Transformation");
                 needCascadeTransfo=false;
-            }else{
+            }else if (!(dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT))) {
                 needCascadeTransfo=true;
                 //System.out.println("[Warning] Existing Cascade Transformation on : ");
                 dbtransfo.getCascadeFk().forEach(s->this.cascadeTransformationObservableList.add(s));
