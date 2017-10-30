@@ -437,8 +437,10 @@ public class MainController implements Initializable {
         for(int i=this.transformations.size()-1;i>=0;i--){
                     //System.out.println("");
                     Transformation t=transformations.get(i);
-                    System.out.println(((DBTransformation) t).getFk().getConstraintName());
-                    System.out.println(actionChoice.get(t));
+                    if(t instanceof DBTransformation ){
+                        System.out.println(((DBTransformation) t).getFk().getConstraintName());
+                        System.out.println(actionChoice.get(t));
+                    }
                     if (t != null && t instanceof DBTransformation && actionChoice.get(t).equals(Action.Transform)){
                         try {
                            ((DBTransformation) t).unDoTransformation();
