@@ -349,7 +349,7 @@ public class MainController implements Initializable {
             this.transfomrmationType.setText("Transformation");
             this.transfomationSubtype.setText(dbtransfo.getTransforamtiontype().name());
             if(isMBT){
-                System.out.println("    Juste adding the foreignkey");
+                //System.out.println("    Juste adding the foreignkey");
                 this.mainTarget.setText("No main target we juste have to add the foreignkey constraint");
             }
             else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
@@ -438,6 +438,7 @@ public class MainController implements Initializable {
                     //System.out.println("");
                     Transformation t=transformations.get(i);
                     System.out.println(t);
+                    System.out.println(actionChoice.get(t).name());
                     if (t != null && t instanceof DBTransformation && actionChoice.get(t).equals(Action.Transform)){
                         try {
                            ((DBTransformation) t).unDoTransformation();
