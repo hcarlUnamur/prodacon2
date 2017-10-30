@@ -89,6 +89,14 @@ public class MainController implements Initializable {
     @FXML private Button ExeButton;
      private Button startButton = new Button("Start");
      private Button nextbutton = new Button("Next");
+    @FXML private TableView fkInfo;
+    @FXML private TableColumn<ForeignKey,String> fkInfoCol1;
+    @FXML private TableView transInfo;
+    @FXML private TableColumn<DBTransformation,String> transCol1;
+    @FXML private TableColumn<DBTransformation,String> transCol2;
+    private ObservableList<ForeignKey> fkInfoObservableList = FXCollections.observableArrayList();
+    private ObservableList<Transformation> transInfoObservableList = FXCollections.observableArrayList();
+     
             
     
     
@@ -105,6 +113,11 @@ public class MainController implements Initializable {
         colRT.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getReferencedTableName()));
         
     //Run Transformation        
+        fkInfo.setItems(fkInfoObservableList);
+        transInfo.setItems(transInfoObservableList);
+        fkInfoCol1.setCellValueFactory(fk-> new SimpleStringProperty(fk.getValue().getConstraintName()) );
+        transCol1.setCellValueFactory(trans ->new SimpleStringProperty(trans.getValue().getTransforamtiontype().name()));
+        transCol2.setCellValueFactory(trans ->  new SimpleStringProperty(this.actionChoice.get(trans.getValue()).name()));
         analyseButtonBox.getChildren().clear();
         
         startButton.setMinWidth(100);
@@ -255,11 +268,13 @@ public class MainController implements Initializable {
     
     @FXML
     private void addTriggerButtonOnClick(){
+        fkInfoObservableList.remove(0);
         Alert("Sorry","Net yet implemented");
     }
     
     @FXML
     private void abordButtonOnClick(){
+        fkInfoObservableList.remove(0);
         tryNextTransformation();
     }
     
@@ -268,6 +283,8 @@ public class MainController implements Initializable {
         try {
             this.currentDbTransformation.transfrom();
             actionChoice.put(this.currentDbTransformation, Action.Transform);
+            this.transInfoObservableList.add(0,this.currentDbTransformation);
+            fkInfoObservableList.remove(0);
         } catch (SQLException ex) {
             Alert("Error during transformation",ex.getMessage());
         }
@@ -285,6 +302,7 @@ public class MainController implements Initializable {
                     new ArrayList(this.fkList)
             );
             showAnalysebutton();
+            fkList.forEach(fk -> fkInfoObservableList.add(fk));
             tryNextTransformation();
         }catch(EasySQL.Exception.DBConnexionErrorException e){
             Alert("DB connexion error","Some properties parameter can be wrong");
@@ -295,7 +313,7 @@ public class MainController implements Initializable {
 
     private void showNextbutton(){
         this.analyseButtonBox.getChildren().clear();
-        this.analyseButtonBox.getChildren().add(this.nextbutton);   
+        this.analyseButtonBox.getChildren().add(this.nextbutton);
     }
     
     private void showAnalysebutton(){
@@ -352,24 +370,27 @@ public class MainController implements Initializable {
     
     private void tryNextTransformation(){
             cleanAnalyseView();
+            Transformation transfo = null;
             if(contextAnalyser.hasNext()){
             try{    
-                Transformation transfo = contextAnalyser.next();
+                transfo = contextAnalyser.next();
                 transformations.add(transfo);
                 if (transfo instanceof DBTransformation){
                     showAnalysebutton();
                     DBTransformationAction((DBTransformation)transfo);
                 }else if (transfo instanceof ImpossibleTransformation){
                     this.transfomrmationType.setText("[ImpossibleTransformation] " +((ImpossibleTransformation) transfo).getMessage());
+                    actionChoice.put(transfo, Action.Abort);
                     showNextbutton();
                 }else if (transfo instanceof EmptyTransformation){
                     this.transfomrmationType.setText("[EmptyTransformation] " +((EmptyTransformation) transfo).getMessage());
+                    actionChoice.put(transfo, Action.Abort);
                     showNextbutton();
                 }
             }catch(RuntimeException e){
-            Alert("Error Load Unexistent Table Exception");
-            tryNextTransformation();
-        }
+                Alert("Error Load Unexistent Table Exception");
+                tryNextTransformation();
+            }
         }
     }
 
