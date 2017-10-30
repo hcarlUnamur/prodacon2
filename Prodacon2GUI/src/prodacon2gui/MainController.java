@@ -138,8 +138,8 @@ public class MainController implements Initializable {
         
         cascadeTable.setItems(cascadeTransformationObservableList);
         unmatchingValue.setItems(unmatchingValueObservableList);
-        cascadeTableColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getForeingKeyTable()));
-        cascadeColumnColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getForeingKeyColumn()));
+        cascadeTableColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getReferencedTableName()));
+        cascadeColumnColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getReferencedColumn()));
         unmatchingValueColumn.setCellValueFactory(s->new SimpleStringProperty(s.getValue().toString()));
     }    
     
