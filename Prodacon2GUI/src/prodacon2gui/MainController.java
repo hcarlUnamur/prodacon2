@@ -87,8 +87,9 @@ public class MainController implements Initializable {
     @FXML private Button addTriggerButton;
     @FXML private Button abordeButton;
     @FXML private Button ExeButton;
-     private Button startButton = new Button("Start");
-     private Button nextbutton = new Button("Next");
+    private Button startButton = new Button("Start");
+    private Button nextbutton = new Button("Next");
+    private Button undoButton = new Button("undo All");
     @FXML private TableView fkInfo;
     @FXML private TableColumn<ForeignKey,String> fkInfoCol1;
     @FXML private TableView transInfo;
@@ -119,7 +120,6 @@ public class MainController implements Initializable {
         transCol1.setCellValueFactory(trans ->new SimpleStringProperty(trans.getValue().getTransforamtiontype().name()));
         transCol2.setCellValueFactory(trans ->  new SimpleStringProperty(this.actionChoice.get(trans.getValue()).name()));
         analyseButtonBox.getChildren().clear();
-        
         startButton.setMinWidth(100);
         analyseButtonBox.getChildren().add(startButton);
         startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -133,6 +133,14 @@ public class MainController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 nextButtonOnclickAction();
+            }
+        });
+        
+        undoButton.setMinWidth(100);
+        undoButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UndoButtonOnclickAction();
             }
         });
         
@@ -402,8 +410,9 @@ public class MainController implements Initializable {
         }else{
             cleanAnalyseView();
             analyseButtonBox.getChildren().clear();
-            startButton.setText("Restart");
+            startButton.setText("Restart");           
             analyseButtonBox.getChildren().add(startButton);
+            analyseButtonBox.getChildren().add(undoButton);
                     
         }
     }
@@ -421,5 +430,20 @@ public class MainController implements Initializable {
     private void nextButtonOnclickAction(){
         fkInfoObservableList.remove(0);
         tryNextTransformation();
+    }
+    
+    
+    private void UndoButtonOnclickAction() {
+        for(int i=this.transformations.size()-1;i>=0;i--){
+                    Transformation t=transformations.get(i);
+                    if (t instanceof DBTransformation && actionChoice.get(t).equals(Action.Transform)){
+                        try {
+                           ((DBTransformation) t).unDoTransformation();
+                          } catch (SQLException ex) {
+                              Alert("Error during undo",ex.getMessage());
+                           }
+                        }
+                    }
+        Alert("Undo done");
     }
 }
