@@ -313,7 +313,7 @@ public class MainController implements Initializable {
             //clear
             transformations.clear();
             actionChoice.clear();
-            currentDbTransformation=null;
+            //currentDbTransformation=null;
             transInfoObservableList.clear();
             //end clear
             
