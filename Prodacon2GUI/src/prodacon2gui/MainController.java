@@ -276,12 +276,14 @@ public class MainController implements Initializable {
     
     @FXML
     private void addTriggerButtonOnClick(){
+        actionChoice.put(currentDbTransformation, Action.AddFK);
         fkInfoObservableList.remove(0);
         Alert("Sorry","Net yet implemented");
     }
     
     @FXML
     private void abordButtonOnClick(){
+        actionChoice.put(currentDbTransformation, Action.Abort);
         fkInfoObservableList.remove(0);
         tryNextTransformation();
     }
