@@ -393,6 +393,7 @@ public class MainController implements Initializable {
                 transformations.add(transfo);
                 if (transfo instanceof DBTransformation){
                     showAnalysebutton();
+                    currentDbTransformation=(DBTransformation)transfo;
                     DBTransformationAction((DBTransformation)transfo);
                 }else if (transfo instanceof ImpossibleTransformation){
                     this.transfomrmationType.setText("[ImpossibleTransformation] " +((ImpossibleTransformation) transfo).getMessage());
