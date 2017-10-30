@@ -436,7 +436,7 @@ public class MainController implements Initializable {
     private void UndoButtonOnclickAction() {
         for(int i=this.transformations.size()-1;i>=0;i--){
                     Transformation t=transformations.get(i);
-                    if (t instanceof DBTransformation && actionChoice.get(t).equals(Action.Transform)){
+                    if (t != null && t instanceof DBTransformation && actionChoice.get(t).equals(Action.Transform)){
                         try {
                            ((DBTransformation) t).unDoTransformation();
                           } catch (SQLException ex) {
