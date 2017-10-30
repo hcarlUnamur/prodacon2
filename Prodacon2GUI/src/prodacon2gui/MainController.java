@@ -291,6 +291,7 @@ public class MainController implements Initializable {
         try {
             this.currentDbTransformation.transfrom();
             actionChoice.put(this.currentDbTransformation, Action.Transform);
+            System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
             this.transInfoObservableList.add(0,this.currentDbTransformation);
             fkInfoObservableList.remove(0);
         } catch (SQLException ex) {
