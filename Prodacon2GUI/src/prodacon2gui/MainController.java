@@ -458,6 +458,6 @@ public class MainController implements Initializable {
                            }
                         }
                     }
-        Alert(AlertType.CONFIRMATION,"Undo done","");
+        Alert(AlertType.INFORMATION,"Undo done","");
     }
 }
