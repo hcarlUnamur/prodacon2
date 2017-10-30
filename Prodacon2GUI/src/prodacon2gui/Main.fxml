@@ -165,8 +165,8 @@
                               </TableView>
                               <TableView fx:id="cascadeTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                 <columns>
-                                  <TableColumn fx:id="cascadeTableColumn" prefWidth="75.0" text="Table" />
-                                  <TableColumn fx:id="cascadeColumnColumn" prefWidth="75.0" text="Column" />
+                                  <TableColumn fx:id="cascadeTableColumn" prefWidth="75.0" text="Foreign key" />
+                                  <TableColumn fx:id="cascadeColumnColumn" prefWidth="75.0" text="Reference" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
