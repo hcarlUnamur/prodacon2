@@ -41,6 +41,7 @@ import Transformation.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import EasySQL.Exception.LoadUnexistentTableException;
+import javafx.scene.control.TextArea;
 /**
  *
  * @author carl_
@@ -97,8 +98,9 @@ public class MainController implements Initializable {
     @FXML private TableColumn<DBTransformation,String> transCol2;
     private ObservableList<ForeignKey> fkInfoObservableList = FXCollections.observableArrayList();
     private ObservableList<Transformation> transInfoObservableList = FXCollections.observableArrayList();
-     
-            
+//men fast Analyse
+    @FXML private TextArea fastAnalyseTextArea;
+    @FXML private Button fastAnalyseButton;        
     
     
     
@@ -459,5 +461,94 @@ public class MainController implements Initializable {
                         }
                     }
         Alert(AlertType.INFORMATION,"Undo done","");
+    }
+    
+    private void drawLine(int length, TextArea textArea){
+        StringBuilder s = new StringBuilder();
+        for(int i=0;i<length;i++){s.append("_");}
+        addLine(textArea, s.toString());
+    }
+    
+    private static void addLine(TextArea area,String line){
+        area.setText(area.getText()+System.lineSeparator()+line);
+    }
+    
+    @FXML
+    private void fastAnalyseButtonOnClick(){
+        drawLine(100,this.fastAnalyseTextArea);
+        addLine(fastAnalyseTextArea,"Fast Analyse");
+        addLine(fastAnalyseTextArea,"");
+        
+        ContextAnalyser contextAnalyser = null;
+        try{
+            contextAnalyser = new ContextAnalyser(
+                    this.dbhostName.getText(),
+                    this.dbName.getText(),
+                    this.dbPort.getText(),
+                    this.dbLogin.getText(),
+                    this.dbPassWord.getText(),
+                    new ArrayList(this.fkList)
+            );
+            int i = 0;
+            while(contextAnalyser.hasNext()){
+                drawLine(25,fastAnalyseTextArea);
+                addLine(fastAnalyseTextArea,this.fkList.get(i).toString());
+                Transformation transfo = contextAnalyser.next();
+                transformations.add(transfo);
+                if (transfo instanceof DBTransformation){
+                    PrintDBTransformationMenu((DBTransformation)transfo);
+                }else if (transfo instanceof ImpossibleTransformation){
+                    addLine(fastAnalyseTextArea,((ImpossibleTransformation) transfo).getMessage());
+                    
+                }else if (transfo instanceof EmptyTransformation){
+                    addLine(fastAnalyseTextArea,((EmptyTransformation) transfo).getMessage());    
+                }
+                i++;
+            }
+            drawLine(25,fastAnalyseTextArea);
+            addLine(fastAnalyseTextArea,"");
+            addLine(fastAnalyseTextArea,"All foreign keys done :) ");
+            
+        }catch(EasySQL.Exception.DBConnexionErrorException e){
+            Alert("DB connexion error","Some properties parameter can be wrong");
+        }
+        
+    }
+    
+    private void PrintDBTransformationMenu(DBTransformation dbtransfo) {
+        boolean ok = true;
+        boolean needCascadeTransfo=false;
+        dbtransfo.analyse();     
+        boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT);            
+        
+        addLine(fastAnalyseTextArea,"Transformation type : " +dbtransfo.getTransforamtiontype().name());
+        if(isMBT){
+            addLine(fastAnalyseTextArea,"    Just adding the foreignkey");
+        }
+        else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
+            addLine(fastAnalyseTextArea,"    Transformation of " + dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn() +" type to " + dbtransfo.getNewType());
+        }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
+            addLine(fastAnalyseTextArea,"    Transformation of " + dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn()+" type to " + dbtransfo.getNewType());
+        }
+                    
+        ok = dbtransfo.isEncodageMatching(); 
+        addLine(fastAnalyseTextArea,(dbtransfo.isEncodageMatching()?"[OK] Encodage matching":"[KO] Encodage mismatching"));
+                    
+        if(dbtransfo.getUnmatchingValue().size()==0){
+            addLine(fastAnalyseTextArea,"[OK] ALL table values matching");
+        }else{
+            addLine(fastAnalyseTextArea,"[KO] Some table values unmatching :");
+            ok=false;
+            dbtransfo.getUnmatchingValue().forEach(s->addLine(fastAnalyseTextArea,"    " + s));
+        }
+                    
+        if(dbtransfo.getCascadeFk().size()==0 ){
+            addLine(fastAnalyseTextArea,"[OK] No Cascade Transformation");
+            needCascadeTransfo=false;
+        }else{
+            needCascadeTransfo=true;
+            addLine(fastAnalyseTextArea,"[Warning] Existing Cascade Transformation on : ");
+            dbtransfo.getCascadeFk().forEach(s->addLine(fastAnalyseTextArea,"    "+s.getConstraintName()+" : "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn() +" -> "+s.getReferencedTableName()+"."+s.getReferencedColumn()) );
+        }
     }
 }

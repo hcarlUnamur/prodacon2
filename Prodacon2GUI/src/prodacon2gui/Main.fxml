@@ -122,7 +122,7 @@
             </BorderPane>
          </content>
       </Tab>
-    <Tab text="Analyse">
+    <Tab text="Transformation">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -130,8 +130,8 @@
                      <center>
                         <GridPane alignment="CENTER" minWidth="0.0" prefHeight="321.0" prefWidth="732.0" BorderPane.alignment="CENTER">
                           <columnConstraints>
-                            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="200.0" minWidth="145.0" prefWidth="200.0" />
-                            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="502.0" prefWidth="502.0" />
+                            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" />
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="502.0" prefWidth="555.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="SOMETIMES" />
@@ -145,7 +145,7 @@
                            <children>
                               <Label text="Transformation Type : " />
                               <Label text="Transformation SubType : " GridPane.rowIndex="1" />
-                              <Label prefHeight="17.0" prefWidth="73.0" text="Main Target : " GridPane.rowIndex="2" />
+                              <Label prefHeight="17.0" prefWidth="76.0" text="Main Target : " GridPane.rowIndex="2" />
                               <Label text="New Type : " GridPane.rowIndex="3" />
                               <Label text="Encodage Matching : " GridPane.rowIndex="4" />
                               <Label text="Umatching Values : " GridPane.rowIndex="5" />
@@ -155,15 +155,15 @@
                               <Label fx:id="mainTarget" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label fx:id="newType" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <Label fx:id="encodageMatching" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <TableView fx:id="unmatchingValue" maxWidth="1.7976931348623157E308" prefHeight="111.0" prefWidth="251.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <TableView fx:id="unmatchingValue" maxWidth="1.7976931348623157E308" prefHeight="111.0" prefWidth="251.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5">
                                 <columns>
-                                  <TableColumn fx:id="unmatchingValueColumn" prefWidth="454.0" text="Value" />
+                                  <TableColumn fx:id="unmatchingValueColumn" maxWidth="1.7976931348623157E308" prefWidth="454.0" text="Value" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                               </TableView>
-                              <TableView fx:id="cascadeTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                              <TableView fx:id="cascadeTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6">
                                 <columns>
                                   <TableColumn fx:id="cascadeTableColumn" prefWidth="75.0" text="Foreign key" />
                                   <TableColumn fx:id="cascadeColumnColumn" prefWidth="75.0" text="Reference" />
@@ -202,7 +202,7 @@
                      <left>
                         <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="321.0" prefWidth="269.0" BorderPane.alignment="CENTER">
                           <columnConstraints>
-                            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="118.0" />
+                            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="149.0" minHeight="10.0" prefHeight="31.0" vgrow="NEVER" />
@@ -212,13 +212,13 @@
                               <Label text="Foreign Keys" GridPane.valignment="CENTER" />
                               <TableView fx:id="fkInfo" maxWidth="1.7976931348623157E308" prefHeight="290.0" prefWidth="370.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                                 <columns>
-                                  <TableColumn fx:id="fkInfoCol1" prefWidth="75.0" text="Constant Name" />
+                                  <TableColumn fx:id="fkInfoCol1" prefWidth="258.0" text="Constant Name" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                                  <GridPane.margin>
-                                    <Insets left="5.0" />
+                                    <Insets left="5.0" right="5.0" />
                                  </GridPane.margin>
                               </TableView>
                            </children>
@@ -246,7 +246,7 @@
                                     <Insets left="5.0" right="5.0" />
                                  </GridPane.margin>
                               </TableView>
-                              <Label prefHeight="26.0" prefWidth="122.0" text="Old transformation" />
+                              <Label prefHeight="26.0" prefWidth="105.0" text="Old transformation" />
                            </children>
                         </GridPane>
                      </right>
@@ -254,5 +254,21 @@
                </children></AnchorPane>
       </content>
     </Tab>
+      <Tab text="Fast Analyse">
+         <content>
+            <BorderPane prefHeight="200.0" prefWidth="200.0">
+               <center>
+                  <TextArea fx:id="fastAnalyseTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" BorderPane.alignment="CENTER" />
+               </center>
+               <bottom>
+                  <HBox alignment="CENTER" prefHeight="49.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="fastAnalyseButton" mnemonicParsing="false" onAction="#fastAnalyseButtonOnClick" text="Start Fast Analyse " />
+                     </children>
+                  </HBox>
+               </bottom>
+            </BorderPane>
+         </content>
+      </Tab>
   </tabs>
 </TabPane>
