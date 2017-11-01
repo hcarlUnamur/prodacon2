@@ -117,7 +117,7 @@ public class DBTransformation extends Transformation {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public Column getFkColumnBeforeTransformation() {
         return fkColumnBeforeTransformation;
     }
@@ -355,7 +355,8 @@ public class DBTransformation extends Transformation {
         for(SQLQuery query : remvfv){
                 query.sqlQueryUndo();
         }
-    
+        
+        
     }
     
     private void analyseValues(){
