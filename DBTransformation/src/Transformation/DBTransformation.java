@@ -17,12 +17,13 @@ import java.util.logging.Logger;
 import EasySQL.SQLTransactionQuery;
 import EasySQL.StringQueryGetter;
 import java.sql.SQLException;
+import java.util.concurrent.locks.ReentrantLock;
 /**
  *
  * @author carl_
  */
 public class DBTransformation extends Transformation {
-    
+    private ReentrantLock lock = new ReentrantLock();
     private String dataBaseHostName;
     private String dataBasePortNumber;
     private String dataBaseLogin;
@@ -394,37 +395,62 @@ public class DBTransformation extends Transformation {
     
     //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
     private void loadCascadFk(String tablename, String columnName,TransformationTarget target){
-        try {
+            /*
+            try {
+            
             if(!tableDico.containsKey(tablename)){tableDico.put(tablename, loadTable(tablename));}
             SQLSelectQuery select2 = new SQLSelectQuery(
-                    new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
-                    sqlFactory.getConn(),
-                    new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-                    "(REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_TABLE_NAME = '"+tablename+"' AND REFERENCED_COLUMN_NAME = '"+columnName+"') OR ( REFERENCED_TABLE_NAME IS NOT NULL AND TABLE_NAME='"+tablename+"' AND COLUMN_NAME='"+columnName+"' )"
+            new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+            sqlFactory.getConn(),
+            new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+            "(REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_TABLE_NAME = '"+tablename+"' AND REFERENCED_COLUMN_NAME = '"+columnName+"') OR ( REFERENCED_TABLE_NAME IS NOT NULL AND TABLE_NAME='"+tablename+"' AND COLUMN_NAME='"+columnName+"' )"
             );
             ResultSet result =select2.sqlQueryDo();
             while(result.next()){
-
-                ForeignKey clef =   new ForeignKey( result.getString("REFERENCED_TABLE_NAME"),
-                                                    result.getString("REFERENCED_COLUMN_NAME"),
-                                                    result.getString("COLUMN_NAME"),
-                                                    result.getString("TABLE_NAME"),
-                                                    result.getString("CONSTRAINT_NAME")
-                                                  );
-                //test pour éviter les cycles
-                //System.out.println("clef = "+clef);
-                //System.out.println("!cascadeFk.contains(clef) ->"+!cascadeFk.contains(clef));
-                //cascadeFk.forEach(System.out::println);
-                if(!cascadeFkMap.get(target).contains(clef)){
-                    //System.out.println("add :" + clef);
-                    cascadeFkMap.get(target).add(clef);
-                    loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"),target);
-                    loadCascadFk(result.getString("REFERENCED_TABLE_NAME"),result.getString("REFERENCED_COLUMN_NAME"),target);
-                }  
+            
+            ForeignKey clef =   new ForeignKey( result.getString("REFERENCED_TABLE_NAME"),
+            result.getString("REFERENCED_COLUMN_NAME"),
+            result.getString("COLUMN_NAME"),
+            result.getString("TABLE_NAME"),
+            result.getString("CONSTRAINT_NAME")
+            );
+            //test pour éviter les cycles
+            //System.out.println("clef = "+clef);
+            //System.out.println("!cascadeFk.contains(clef) ->"+!cascadeFk.contains(clef));
+            //cascadeFk.forEach(System.out::println);
+            if(!cascadeFkMap.get(target).contains(clef)){
+            //System.out.println("add :" + clef);
+            cascadeFkMap.get(target).add(clef);
+            loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"),target);
+            loadCascadFk(result.getString("REFERENCED_TABLE_NAME"),result.getString("REFERENCED_COLUMN_NAME"),target);  
+            }
+            }
+            } catch (SQLException ex) {
+            Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            */
+            //memo mixer les 2 methode u fiare l'ancienne méthode puis faire la même recherche mais dans la rep interne
+        try {
+            SQLSelectQuery select2 = new SQLSelectQuery(
+            new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+            sqlFactory.getConn(),
+            new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+            "(REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_TABLE_NAME = '"+tablename+"' AND REFERENCED_COLUMN_NAME = '"+columnName+"') OR ( REFERENCED_TABLE_NAME IS NOT NULL AND TABLE_NAME='"+tablename+"' AND COLUMN_NAME='"+columnName+"' )"
+            );
+            ResultSet result =select2.sqlQueryDo();
+            while(result.next()){
+                for(ForeignKey clef : loadTable(result.getString("REFERENCED_TABLE_NAME")).getForeignKeys()){
+                    if(!cascadeFkMap.get(target).contains(clef)){
+                        cascadeFkMap.get(target).add(clef);
+                        loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"),target);
+                        loadCascadFk(result.getString("REFERENCED_TABLE_NAME"),result.getString("REFERENCED_COLUMN_NAME"),target);  
+                    }
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
     
     public String getTransformationScript()throws SQLException{
@@ -487,8 +513,10 @@ public class DBTransformation extends Transformation {
     private Table loadTable(String tableName) throws SQLException{
         Table out = null;
         if (tableDico.containsKey(tableName)){
+            System.out.println("not reload :" + tableName);
             out = tableDico.get(tableName);
         }else{
+                System.out.println("reload :" + tableName);
                 out = sqlFactory.loadTable(tableName);
                 tableDico.put(tableName,out);
         }

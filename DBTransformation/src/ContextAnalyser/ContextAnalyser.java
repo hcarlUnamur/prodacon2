@@ -50,8 +50,8 @@ public class ContextAnalyser implements Iterator<Transformation> {
         Table usedTable = null;
         Table referencedTable = null;
         try{
-                usedTable = factory.loadTable(fk.getForeingKeyTable());
-                referencedTable = factory.loadTable(fk.getReferencedTableName());
+                usedTable = loadTable(fk.getForeingKeyTable());
+                referencedTable = loadTable(fk.getReferencedTableName());
         }catch(SQLException e){
                throw new LoadUnexistentTableException("It's impossible to loade the foreign key table. they can don't exist");
         }
@@ -303,4 +303,14 @@ public class ContextAnalyser implements Iterator<Transformation> {
         return out;
     }
 
+    private Table loadTable(String tableName) throws SQLException{
+        Table out = null;
+        if (dicoTable.containsKey(tableName)){
+            out = dicoTable.get(tableName);
+        }else{
+                out = factory.loadTable(tableName);
+                dicoTable.put(tableName,out);
+        }
+        return out;
+    }
 }

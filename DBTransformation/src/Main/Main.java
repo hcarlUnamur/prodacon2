@@ -418,6 +418,7 @@ public class Main {
         if(ok){
             try {
                 dbtransfo.getTransformationScript();
+                System.out.println(System.lineSeparator()+"Transformation simulation done");
             } catch (SQLException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
