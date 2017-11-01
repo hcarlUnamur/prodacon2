@@ -77,7 +77,7 @@ public class Main {
         
         desableInfoLog();
         //args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin root -dbpw root -fkfile ./possible_matchesTest.txt".split(" ");
-        args = "-dbhost localhost -dbname oscar -dbport 3306 -dblogin root -dbpw Ginette -fkfile /home/vagrant/Downloads/dist/possible_matches.txt".split(" ");
+        args = "-dbhost localhost -dbname mydb -dbport 3306 -dblogin root -dbpw root -fkfile ./possible_matchesTest.txt".split(" ");
         Main main = new Main(args);
         main.mainMenu();
     }
@@ -413,6 +413,14 @@ public class Main {
             needCascadeTransfo=true;
             System.out.println("[Warning] Existing Cascade Transformation on : ");
             dbtransfo.getCascadeFk().forEach(s->System.out.println("    "+s.getConstraintName()+" : "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn() +" -> "+s.getReferencedTableName()+"."+s.getReferencedColumn()) );
+        }
+        
+        if(ok){
+            try {
+                dbtransfo.getTransformationScript();
+            } catch (SQLException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
