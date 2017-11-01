@@ -64,13 +64,13 @@ public class DBTransformation extends Transformation {
         this.cascadeFkMap.put(TransformationTarget.ReferencedTable, new ArrayList());
         
         try {
-            fkColumnBeforeTransformation = sqlFactory.loadTable(fk.getForeingKeyTable()).getTablecolumn()
+            fkColumnBeforeTransformation = loadTable(fk.getForeingKeyTable()).getTablecolumn()
                     .stream()
                     .filter(c->c.getColumnName().equals(fk.getForeingKeyColumn()))
                     .findFirst()
                     .get();
             
-            refColumnBeforeTransformation = sqlFactory.loadTable(fk.getReferencedTableName()).getTablecolumn()
+            refColumnBeforeTransformation = loadTable(fk.getReferencedTableName()).getTablecolumn()
                     .stream()
                     .filter(c->c.getColumnName().equals(fk.getReferencedColumn()))
                     .findFirst()
@@ -101,13 +101,13 @@ public class DBTransformation extends Transformation {
         this.cascadeFkMap.put(TransformationTarget.ReferencedTable, new ArrayList());
         
         try {
-            fkColumnBeforeTransformation = sqlFactory.loadTable(fk.getForeingKeyTable()).getTablecolumn()
+            fkColumnBeforeTransformation = loadTable(fk.getForeingKeyTable()).getTablecolumn()
                     .stream()
                     .filter(c->c.getColumnName().equals(fk.getForeingKeyColumn()))
                     .findFirst()
                     .get();
             
-            refColumnBeforeTransformation = sqlFactory.loadTable(fk.getReferencedTableName()).getTablecolumn()
+            refColumnBeforeTransformation = loadTable(fk.getReferencedTableName()).getTablecolumn()
                     .stream()
                     .filter(c->c.getColumnName().equals(fk.getReferencedColumn()))
                     .findFirst()
@@ -116,6 +116,14 @@ public class DBTransformation extends Transformation {
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public Column getFkColumnBeforeTransformation() {
+        return fkColumnBeforeTransformation;
+    }
+
+    public Column getRefColumnBeforeTransformation() {
+        return refColumnBeforeTransformation;
     }
     
     public TransformationTarget getTarget() {
@@ -219,19 +227,17 @@ public class DBTransformation extends Transformation {
         this.transforamtiontype = transforamtiontype;
     }
     
-    public void transfrom() throws SQLException{
+    public void transfrom() throws SQLException{         
         
-        try{           
-                makeCascadeTransformation();           
-        }catch(SQLException e){
-             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, "SQLException during Cascade transformation", e);
-             throw new SQLException(); 
-        }
-        
+        makeCascadeTransformation();           
+ 
         for(SQLQuery query : listQuery){
             query.sqlQueryDo();
         }
         addFkQuery.sqlQueryDo();
+        
+        tableDico.get(fk.getForeingKeyTable()).addForeignKey(fk);
+        
     }    
     public void unDoTransformation() throws SQLException{
         addFkQuery.sqlQueryUndo();
@@ -259,8 +265,8 @@ public class DBTransformation extends Transformation {
     
     private void encodageAnalyse(){
         try {
-            Table fkTable = sqlFactory.loadTable(fk.getForeingKeyTable());
-            Table refTable = sqlFactory.loadTable(fk.getReferencedTableName());
+            Table fkTable = loadTable(fk.getForeingKeyTable());
+            Table refTable = loadTable(fk.getReferencedTableName());
             
             String encodagefk = fkTable.getTablecolumn()
                     .stream()
@@ -302,11 +308,18 @@ public class DBTransformation extends Transformation {
         
         if (target.equals(TransformationTarget.ForeignKeyTable)){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
+             //modifi the BD intern representation
+            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
         }else if(target.equals(TransformationTarget.ReferencedTable)){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
+            //modifi the BD intern representation
+            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
         }else if (target.equals(TransformationTarget.All)){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
+             //modifi the BD intern representation
+            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
+            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
         }
         
         
@@ -314,6 +327,10 @@ public class DBTransformation extends Transformation {
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
             //new ajout pas certain que se soit bon
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
+            //modifi the BD intern representation
+            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
+            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
+        
         }
         this.cascadTransformation = transaction;
         transaction.sqlQueryDo();
@@ -377,7 +394,7 @@ public class DBTransformation extends Transformation {
     //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
     private void loadCascadFk(String tablename, String columnName,TransformationTarget target){
         try {
-            if(!tableDico.containsKey(tablename)){tableDico.put(tablename, sqlFactory.loadTable(tablename));}
+            if(!tableDico.containsKey(tablename)){tableDico.put(tablename, loadTable(tablename));}
             SQLSelectQuery select2 = new SQLSelectQuery(
                     new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
                     sqlFactory.getConn(),
@@ -416,6 +433,8 @@ public class DBTransformation extends Transformation {
             out.append(((StringQueryGetter)query).getStringSQLQueryDo());
         }
         out.append(addFkQuery.getStringSQLQueryDo());
+        //modify intern representation ef Table
+        tableDico.get(fk.getForeingKeyTable()).addForeignKey(fk);
         return out.toString();
     }
     
@@ -431,18 +450,29 @@ public class DBTransformation extends Transformation {
        
         if (target.equals(TransformationTarget.ForeignKeyTable)){
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)).getStringSQLQueryDo());
+            //modifi the BD intern representation
+            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
         }else if(target.equals(TransformationTarget.ReferencedTable)){
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)).getStringSQLQueryDo());
+            //modifi the BD intern representation
+            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);            
         }else if (target.equals(TransformationTarget.All)){
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)).getStringSQLQueryDo());
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)).getStringSQLQueryDo());
+            //modifi the BD intern representation
+            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
+            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
+
         }
-        
-        
+                
         for(ForeignKey fk : this.getCascadeFk()){
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)).getStringSQLQueryDo());
             //new ajout pas certain que se soit bon
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)).getStringSQLQueryDo());
+            //modifi the BD intern representation
+            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
+            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
+
         }
         //this.cascadTransformation = transaction;
         //transaction.sqlQueryDo();
@@ -453,4 +483,14 @@ public class DBTransformation extends Transformation {
         return out.toString();
     }
     
+    private Table loadTable(String tableName) throws SQLException{
+        Table out = null;
+        if (tableDico.containsKey(tableName)){
+            out = tableDico.get(tableName);
+        }else{
+                out = sqlFactory.loadTable(tableName);
+                tableDico.put(tableName,out);
+        }
+        return out;
+    }
 }
