@@ -386,7 +386,7 @@ public class DBTransformation extends Transformation {
     private void analyseCascade(){
         if(!(this.transforamtiontype.equals(transforamtiontype.MBT)||this.transforamtiontype.equals(transforamtiontype.MVMT))){
                 loadCascadFk(fk.getForeingKeyTable(), fk.getForeingKeyColumn(),TransformationTarget.ForeignKeyTable);
-                loadCascadFk(fk.getReferencedTableName(), fk.getReferencedColumn(),TransformationTarget.ForeignKeyTable);
+                loadCascadFk(fk.getReferencedTableName(), fk.getReferencedColumn(),TransformationTarget.ReferencedTable);
         }
     }
 
