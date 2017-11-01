@@ -11,6 +11,7 @@ package Transformation;
  */
 public enum TransformationTarget {
     ForeignKeyTable,
-    ReferencedTable
+    ReferencedTable,
+    All
     
 }
