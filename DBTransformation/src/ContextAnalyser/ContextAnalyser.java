@@ -42,6 +42,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
         this.fks = fks;
         this.tableLoaded = new HashMap<String,Table>();
         this.iteratorIndex=0;
+        this.dicoTable = new HashMap();
     }
        
     // create de transformation map , try to find a transformation strategy for all foreignKeys;
