@@ -54,9 +54,9 @@ public class Test {
             SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"12.32"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"24.15"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"36.2"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"12"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"24"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"35"}).sqlQueryDo();
 
             ArrayList<Column> listCol4 = new ArrayList<>();
             listCol4.add(new Column("4id", "int"));
