@@ -41,6 +41,8 @@ import Transformation.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import EasySQL.Exception.LoadUnexistentTableException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.control.TextArea;
 /**
  *
@@ -475,6 +477,7 @@ public class MainController implements Initializable {
     
     @FXML
     private void fastAnalyseButtonOnClick(){
+        fastAnalyseTextArea.clear();
         drawLine(100,this.fastAnalyseTextArea);
         addLine(fastAnalyseTextArea,"Fast Analyse");
         addLine(fastAnalyseTextArea,"");
@@ -507,8 +510,13 @@ public class MainController implements Initializable {
             }
             drawLine(25,fastAnalyseTextArea);
             addLine(fastAnalyseTextArea,"");
-            addLine(fastAnalyseTextArea,"All foreign keys done :) ");
-            
+            addLine(fastAnalyseTextArea,"All foreign keys done :) "+System.lineSeparator());
+            drawLine(100,this.fastAnalyseTextArea);
+            addLine(fastAnalyseTextArea,"Table state :");
+            drawLine(100,this.fastAnalyseTextArea);
+            contextAnalyser.getDicoTable().forEach((k,v)->addLine(fastAnalyseTextArea,v.toString()));
+            drawLine(100,this.fastAnalyseTextArea);
+            addLine(fastAnalyseTextArea,"");
         }catch(EasySQL.Exception.DBConnexionErrorException e){
             Alert("DB connexion error","Some properties parameter can be wrong");
         }
@@ -549,6 +557,15 @@ public class MainController implements Initializable {
             needCascadeTransfo=true;
             addLine(fastAnalyseTextArea,"[Warning] Existing Cascade Transformation on : ");
             dbtransfo.getCascadeFk().forEach(s->addLine(fastAnalyseTextArea,"    "+s.getConstraintName()+" : "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn() +" -> "+s.getReferencedTableName()+"."+s.getReferencedColumn()) );
+        }
+        
+        if(ok){
+            try {
+                dbtransfo.getTransformationScript();
+                addLine(fastAnalyseTextArea,System.lineSeparator()+"Transformation simulation done");
+            } catch (SQLException ex) {
+                System.err.println("error during fast analyse : " + ex.getMessage());
+            }
         }
     }
 }
