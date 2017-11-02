@@ -522,19 +522,23 @@ public class MainController implements Initializable {
             );
             int i = 0;
             while(contextAnalyser.hasNext()){
-                drawLine(25,fastAnalyseTextArea);
-                addLine(fastAnalyseTextArea,this.fkList.get(i).toString());
-                Transformation transfo = contextAnalyser.next();
-                transformations.add(transfo);
-                if (transfo instanceof DBTransformation){
-                    PrintDBTransformationMenu((DBTransformation)transfo);
-                }else if (transfo instanceof ImpossibleTransformation){
-                    addLine(fastAnalyseTextArea,((ImpossibleTransformation) transfo).getMessage());
-                    
-                }else if (transfo instanceof EmptyTransformation){
-                    addLine(fastAnalyseTextArea,((EmptyTransformation) transfo).getMessage());    
+                try{
+                    drawLine(25,fastAnalyseTextArea);
+                    addLine(fastAnalyseTextArea,this.fkList.get(i).toString());
+                    Transformation transfo = contextAnalyser.next();
+                    transformations.add(transfo);
+                    if (transfo instanceof DBTransformation){
+                        PrintDBTransformationMenu((DBTransformation)transfo);
+                    }else if (transfo instanceof ImpossibleTransformation){
+                        addLine(fastAnalyseTextArea,((ImpossibleTransformation) transfo).getMessage());
+
+                    }else if (transfo instanceof EmptyTransformation){
+                        addLine(fastAnalyseTextArea,((EmptyTransformation) transfo).getMessage());    
+                    }
+                    i++;
+                }catch(RuntimeException e){
+                    addLine(fastAnalyseTextArea,"Error Load Unexistent Table Exception");                 
                 }
-                i++;
             }
             drawLine(25,fastAnalyseTextArea);
             addLine(fastAnalyseTextArea,"");
