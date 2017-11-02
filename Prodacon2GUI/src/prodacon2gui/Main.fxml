@@ -139,7 +139,9 @@
                               <RowConstraints maxHeight="102.0" minHeight="0.0" prefHeight="24.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="117.0" minHeight="0.0" prefHeight="26.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="136.0" minHeight="0.0" prefHeight="21.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="146.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="146.0" minHeight="4.0" prefHeight="22.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="146.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="168.0" minHeight="0.0" prefHeight="36.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="187.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="159.0" vgrow="SOMETIMES" />
@@ -147,17 +149,17 @@
                            <children>
                               <Label text="Transformation Type : " />
                               <Label text="Transformation SubType : " GridPane.rowIndex="1" />
-                              <Label text="Main Target : " GridPane.rowIndex="4" />
-                              <Label text="New Type : " GridPane.rowIndex="5" />
-                              <Label text="Encodage Matching : " GridPane.rowIndex="6" />
-                              <Label text="Umatching Values : " GridPane.rowIndex="7" />
-                              <Label text="Cascade Transformation : " GridPane.rowIndex="8" />
+                              <Label text="Advised Target : " GridPane.rowIndex="4" />
+                              <Label text="Advised New Type : " GridPane.rowIndex="6" />
+                              <Label text="Encodage Matching : " GridPane.rowIndex="8" />
+                              <Label text="Umatching Values : " GridPane.rowIndex="9" />
+                              <Label text="Cascade Transformation : " GridPane.rowIndex="10" />
                               <Label fx:id="transfomrmationType" GridPane.columnIndex="1" />
                               <Label fx:id="transfomationSubtype" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label fx:id="mainTarget" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label fx:id="newType" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Label fx:id="encodageMatching" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <TableView fx:id="unmatchingValue" maxWidth="1.7976931348623157E308" prefHeight="249.0" prefWidth="563.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7">
+                              <Label fx:id="newType" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label fx:id="encodageMatching" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <TableView fx:id="unmatchingValue" maxWidth="1.7976931348623157E308" prefHeight="249.0" prefWidth="563.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9">
                                 <columns>
                                   <TableColumn fx:id="unmatchingValueColumn" maxWidth="1.7976931348623157E308" prefWidth="454.0" text="Value" />
                                 </columns>
@@ -165,7 +167,7 @@
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                               </TableView>
-                              <TableView fx:id="cascadeTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8">
+                              <TableView fx:id="cascadeTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="10">
                                 <columns>
                                   <TableColumn fx:id="cascadeTableColumn" prefWidth="75.0" text="Column" />
                                 </columns>
@@ -177,6 +179,10 @@
                               <Label text="Foreign key reference : " GridPane.rowIndex="3" />
                               <Label fx:id="fkInfoLable" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label fx:id="referenceInfoLable" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label text="Transformation Target : " GridPane.rowIndex="5" />
+                              <Label text="Transformation new type : " GridPane.rowIndex="7" />
+                              <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                            </children>
                            <BorderPane.margin>
                               <Insets />
