@@ -246,7 +246,7 @@
                                     <Insets left="5.0" right="5.0" />
                                  </GridPane.margin>
                               </TableView>
-                              <Label text="Old transformation" />
+                              <Label text="Transformation done" />
                            </children>
                         </GridPane>
                      </right>

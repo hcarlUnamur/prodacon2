@@ -395,7 +395,7 @@ public class DBTransformation extends Transformation {
     
     //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
     private void loadCascadFk(String tablename, String columnName,TransformationTarget target){
-            /*
+            
             try {
             
             if(!tableDico.containsKey(tablename)){tableDico.put(tablename, loadTable(tablename));}
@@ -428,7 +428,23 @@ public class DBTransformation extends Transformation {
             } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
             }
-            */
+            
+            //charger les fk de la représentation interne 
+            this.tableDico.forEach(
+                    (k,v)->{v.getForeignKeys().forEach(
+                            fk->{
+                                if (fk.getReferencedTableName().equals(tablename) && fk.getReferencedTableName().equals(columnName)){
+                                    if(!cascadeFkMap.get(target).contains(fk)){
+                                        cascadeFkMap.get(target).add(fk);
+                                        loadCascadFk(fk.getForeingKeyTable(),fk.getForeingKeyColumn(),target);
+                                        loadCascadFk(fk.getReferencedTableName(),fk.getReferencedColumn(),target);  
+                                    }
+                                }
+                            }
+                    );}
+            );
+            
+        /*
             //memo mixer les 2 methode u fiare l'ancienne méthode puis faire la même recherche mais dans la rep interne
         try {
             SQLSelectQuery select2 = new SQLSelectQuery(
@@ -450,7 +466,7 @@ public class DBTransformation extends Transformation {
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        */
     }
     
     public String getTransformationScript()throws SQLException{
