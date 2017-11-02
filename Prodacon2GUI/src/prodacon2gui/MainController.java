@@ -368,6 +368,7 @@ public class MainController implements Initializable {
             Column col =null;
             col = dbtransfo.getFkColumnBeforeTransformation();
             this.fkInfoLable.setText(f.getForeingKeyTable()+"."+col.getColumnName() +" : " +col.getColumnType() );
+            
             col = dbtransfo.getRefColumnBeforeTransformation();
             this.referenceInfoLable.setText(f.getReferencedTableName()+"."+col.getColumnName() +" : " +col.getColumnType() );
             
@@ -438,10 +439,12 @@ public class MainController implements Initializable {
                     currentDbTransformation=(DBTransformation)transfo;
                     DBTransformationAction((DBTransformation)transfo);
                 }else if (transfo instanceof ImpossibleTransformation){
+                    cleanAnalyseView();
                     this.transfomrmationType.setText("[ImpossibleTransformation] " +((ImpossibleTransformation) transfo).getMessage());
                     actionChoice.put(transfo, Action.Abort);
                     showNextbutton();
                 }else if (transfo instanceof EmptyTransformation){
+                    cleanAnalyseView();
                     this.transfomrmationType.setText("[EmptyTransformation] " +((EmptyTransformation) transfo).getMessage());
                     actionChoice.put(transfo, Action.Abort);
                     showNextbutton();
