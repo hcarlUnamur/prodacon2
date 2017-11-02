@@ -65,22 +65,6 @@ public class DBTransformation extends Transformation {
         this.cascadeFkMap.put(TransformationTarget.ForeignKeyTable, new ArrayList());
         this.cascadeFkMap.put(TransformationTarget.ReferencedTable, new ArrayList());
         
-        try {
-            fkColumnBeforeTransformation = loadTable(fk.getForeingKeyTable()).getTablecolumn()
-                    .stream()
-                    .filter(c->c.getColumnName().equals(fk.getForeingKeyColumn()))
-                    .findFirst()
-                    .get();
-            
-            refColumnBeforeTransformation = loadTable(fk.getReferencedTableName()).getTablecolumn()
-                    .stream()
-                    .filter(c->c.getColumnName().equals(fk.getReferencedColumn()))
-                    .findFirst()
-                    .get();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,HashMap<String,Table> tableDico, ForeignKey fk, TransformationTarget target, String newType, ContextAnalyser.TransformationType transforamtiontype) {
         this.dataBaseHostName = dataBaseHostName;
@@ -102,22 +86,6 @@ public class DBTransformation extends Transformation {
         this.cascadeFkMap.put(TransformationTarget.ForeignKeyTable, new ArrayList());
         this.cascadeFkMap.put(TransformationTarget.ReferencedTable, new ArrayList());
         
-        try {
-            fkColumnBeforeTransformation = loadTable(fk.getForeingKeyTable()).getTablecolumn()
-                    .stream()
-                    .filter(c->c.getColumnName().equals(fk.getForeingKeyColumn()))
-                    .findFirst()
-                    .get();
-            
-            refColumnBeforeTransformation = loadTable(fk.getReferencedTableName()).getTablecolumn()
-                    .stream()
-                    .filter(c->c.getColumnName().equals(fk.getReferencedColumn()))
-                    .findFirst()
-                    .get();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     
     public Column getFkColumnBeforeTransformation() {
@@ -258,6 +226,24 @@ public class DBTransformation extends Transformation {
     }
 
     public void analyse(){
+        
+        try {
+            fkColumnBeforeTransformation = loadTable(fk.getForeingKeyTable()).getTablecolumn()
+                    .stream()
+                    .filter(c->c.getColumnName().equals(fk.getForeingKeyColumn()))
+                    .findFirst()
+                    .get();
+            
+            refColumnBeforeTransformation = loadTable(fk.getReferencedTableName()).getTablecolumn()
+                    .stream()
+                    .filter(c->c.getColumnName().equals(fk.getReferencedColumn()))
+                    .findFirst()
+                    .get();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         encodageAnalyse();
         analyseValues();
         analyseCascade();

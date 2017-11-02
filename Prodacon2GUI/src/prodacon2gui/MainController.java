@@ -467,6 +467,8 @@ public class MainController implements Initializable {
         this.transfomationSubtype.setText("");
         this.mainTarget.setText("");
         this.newType.setText("");
+        this.fkInfoLable.setText("");
+        this.referenceInfoLable.setText("");
         this.encodageMatching.setText("");
         this.unmatchingValueObservableList.clear();
         this.cascadeTransformationObservableList.clear();
@@ -522,10 +524,11 @@ public class MainController implements Initializable {
             );
             int i = 0;
             while(contextAnalyser.hasNext()){
+                Transformation transfo=null;
                 try{
                     drawLine(25,fastAnalyseTextArea);
                     addLine(fastAnalyseTextArea,this.fkList.get(i).toString());
-                    Transformation transfo = contextAnalyser.next();
+                    transfo = contextAnalyser.next();
                     transformations.add(transfo);
                     if (transfo instanceof DBTransformation){
                         PrintDBTransformationMenu((DBTransformation)transfo);
@@ -537,7 +540,7 @@ public class MainController implements Initializable {
                     }
                     i++;
                 }catch(RuntimeException e){
-                    addLine(fastAnalyseTextArea,"Error Load Unexistent Table Exception");                 
+                    addLine(fastAnalyseTextArea,"Error Load Unexistent Table Exception ");                 
                 }
             }
             drawLine(25,fastAnalyseTextArea);
