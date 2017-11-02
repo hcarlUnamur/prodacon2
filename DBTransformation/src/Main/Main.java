@@ -182,6 +182,7 @@ public class Main {
             drawLine(25);
             System.out.println("");
             System.out.println("All foreign keys done :) ");
+            contextAnalyser.getDicoTable().forEach((k,v)->System.out.println(v));
             this.mainMenu();
             
         }catch(EasySQL.Exception.DBConnexionErrorException e){

@@ -44,6 +44,10 @@ public class ContextAnalyser implements Iterator<Transformation> {
         this.iteratorIndex=0;
         this.dicoTable = new HashMap();
     }
+
+    public HashMap<String, Table> getDicoTable() {
+        return dicoTable;
+    }
        
     // create de transformation map , try to find a transformation strategy for all foreignKeys;
     public Transformation analyse(ForeignKey fk) throws LoadUnexistentTableException{

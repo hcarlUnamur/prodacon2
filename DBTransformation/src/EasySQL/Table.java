@@ -160,7 +160,7 @@ public class Table {
         }
         out+="fk :"+" \n";
         for(ForeignKey f : foreignKeys){
-            out+= f.getConstraintName() + " ,"+f.getForeingKeyColumn()+ " ,"+f.getReferencedColumn()+ " ,"+f.getReferencedTableName()+ " ,"+" \n";
+            out+= f.getConstraintName() + " : "+f.getForeingKeyTable()+"."+f.getForeingKeyColumn()+ " -> "+f.getReferencedTableName()+ "."+f.getReferencedColumn()+" \n";
         }
           
         
