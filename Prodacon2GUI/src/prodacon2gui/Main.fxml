@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="prodacon2gui.MainController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="prodacon2gui.MainController">
   <tabs>
     <Tab text="Properties">
          <content>
@@ -134,28 +134,30 @@
                             <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="502.0" prefWidth="555.0" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="26.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="22.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="110.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="97.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="78.0" minHeight="0.0" prefHeight="19.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="82.0" minHeight="4.0" prefHeight="22.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="102.0" minHeight="0.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="117.0" minHeight="0.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="136.0" minHeight="0.0" prefHeight="21.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="146.0" minHeight="4.0" prefHeight="22.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="168.0" minHeight="0.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="187.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="159.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="Transformation Type : " />
                               <Label text="Transformation SubType : " GridPane.rowIndex="1" />
-                              <Label text="Main Target : " GridPane.rowIndex="2" />
-                              <Label text="New Type : " GridPane.rowIndex="3" />
-                              <Label text="Encodage Matching : " GridPane.rowIndex="4" />
-                              <Label text="Umatching Values : " GridPane.rowIndex="5" />
-                              <Label text="Cascade Transformation : " GridPane.rowIndex="6" />
+                              <Label text="Main Target : " GridPane.rowIndex="4" />
+                              <Label text="New Type : " GridPane.rowIndex="5" />
+                              <Label text="Encodage Matching : " GridPane.rowIndex="6" />
+                              <Label text="Umatching Values : " GridPane.rowIndex="7" />
+                              <Label text="Cascade Transformation : " GridPane.rowIndex="8" />
                               <Label fx:id="transfomrmationType" GridPane.columnIndex="1" />
                               <Label fx:id="transfomationSubtype" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label fx:id="mainTarget" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label fx:id="newType" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label fx:id="encodageMatching" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <TableView fx:id="unmatchingValue" maxWidth="1.7976931348623157E308" prefHeight="111.0" prefWidth="251.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5">
+                              <Label fx:id="mainTarget" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label fx:id="newType" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Label fx:id="encodageMatching" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <TableView fx:id="unmatchingValue" maxWidth="1.7976931348623157E308" prefHeight="249.0" prefWidth="563.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7">
                                 <columns>
                                   <TableColumn fx:id="unmatchingValueColumn" maxWidth="1.7976931348623157E308" prefWidth="454.0" text="Value" />
                                 </columns>
@@ -163,19 +165,25 @@
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                               </TableView>
-                              <TableView fx:id="cascadeTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6">
+                              <TableView fx:id="cascadeTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8">
                                 <columns>
-                                  <TableColumn fx:id="cascadeTableColumn" prefWidth="75.0" text="Foreign key" />
-                                  <TableColumn fx:id="cascadeColumnColumn" prefWidth="75.0" text="Reference" />
+                                  <TableColumn fx:id="cascadeTableColumn" prefWidth="75.0" text="Column" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                               </TableView>
+                              <Label text="Foreign key origin : " GridPane.rowIndex="2" />
+                              <Label text="Foreign key reference : " GridPane.rowIndex="3" />
+                              <Label fx:id="fkInfoLable" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label fx:id="referenceInfoLable" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                            </children>
                            <BorderPane.margin>
                               <Insets />
                            </BorderPane.margin>
+                           <padding>
+                              <Insets top="5.0" />
+                           </padding>
                         </GridPane>
                      </center>
                      <bottom>

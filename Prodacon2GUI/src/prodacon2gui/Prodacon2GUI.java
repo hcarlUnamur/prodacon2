@@ -30,7 +30,7 @@ public class Prodacon2GUI extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setMinWidth(1200);
-        stage.setMinHeight(400);
+        stage.setMinHeight(600);
         stage.show();
     }
 

@@ -7,6 +7,7 @@ package prodacon2gui;
 
 import ContextAnalyser.ContextAnalyser;
 import ContextAnalyser.TransformationType;
+import EasySQL.Column;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
@@ -40,9 +41,6 @@ import javafx.scene.layout.HBox;
 import Transformation.*;
 import java.sql.SQLException;
 import java.util.HashMap;
-import EasySQL.Exception.LoadUnexistentTableException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.control.TextArea;
 /**
  *
@@ -75,17 +73,18 @@ public class MainController implements Initializable {
     
 //Run Transformation Menu
     private ObservableList<String> unmatchingValueObservableList = FXCollections.observableArrayList();
-    private ObservableList<ForeignKey> cascadeTransformationObservableList = FXCollections.observableArrayList();
+    private ObservableList<String> cascadeTransformationObservableList = FXCollections.observableArrayList();
     @FXML private Label transfomrmationType;
     @FXML private Label transfomationSubtype;
+    @FXML private Label fkInfoLable;
+    @FXML private Label referenceInfoLable;
     @FXML private Label mainTarget;
     @FXML private Label newType;
     @FXML private Label encodageMatching;
     @FXML private TableView unmatchingValue;
     @FXML private TableColumn<String,String> unmatchingValueColumn;
     @FXML private TableView cascadeTable;
-    @FXML private TableColumn<ForeignKey,String> cascadeTableColumn;
-    @FXML private TableColumn<ForeignKey,String> cascadeColumnColumn;
+    @FXML private TableColumn<String,String> cascadeTableColumn;
     @FXML private HBox analyseButtonBox;
     @FXML private Button addTriggerButton;
     @FXML private Button abordeButton;
@@ -150,8 +149,7 @@ public class MainController implements Initializable {
         
         cascadeTable.setItems(cascadeTransformationObservableList);
         unmatchingValue.setItems(unmatchingValueObservableList);
-        cascadeTableColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getForeingKeyTable()+"."+cellData.getValue().getForeingKeyColumn()));
-        cascadeColumnColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue().getReferencedTableName()+"."+cellData.getValue().getReferencedColumn()));
+        cascadeTableColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue()));
         unmatchingValueColumn.setCellValueFactory(s->new SimpleStringProperty(s.getValue().toString()));
     }    
     
@@ -297,6 +295,7 @@ public class MainController implements Initializable {
     @FXML
     private void abordButtonOnClick(){
         actionChoice.put(currentDbTransformation, Action.Abort);
+        this.transInfoObservableList.add(0,this.currentDbTransformation);
         fkInfoObservableList.remove(0);
         tryNextTransformation();
     }
@@ -306,7 +305,7 @@ public class MainController implements Initializable {
         try {
             this.currentDbTransformation.transfrom();
             actionChoice.put(this.currentDbTransformation, Action.Transform);
-            System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
+            //System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
             this.transInfoObservableList.add(0,this.currentDbTransformation);
             fkInfoObservableList.remove(0);
         } catch (SQLException ex) {
@@ -364,6 +363,14 @@ public class MainController implements Initializable {
             boolean isMBT= dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT) ;            
             this.transfomrmationType.setText("Transformation");
             this.transfomationSubtype.setText(dbtransfo.getTransforamtiontype().name());
+            
+            ForeignKey f = dbtransfo.getFk();
+            Column col =null;
+            col = dbtransfo.getFkColumnBeforeTransformation();
+            this.fkInfoLable.setText(f.getForeingKeyTable()+"."+col.getColumnName() +" : " +col.getColumnType() );
+            col = dbtransfo.getRefColumnBeforeTransformation();
+            this.referenceInfoLable.setText(f.getReferencedTableName()+"."+col.getColumnName() +" : " +col.getColumnType() );
+            
             if(isMBT){
                 //System.out.println("    Juste adding the foreignkey");
                 this.mainTarget.setText("No main target we juste have to add the foreignkey constraint");
@@ -393,7 +400,26 @@ public class MainController implements Initializable {
             }else if (!(dbtransfo.getTransforamtiontype().equals(TransformationType.MBT) || dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT))) {
                 needCascadeTransfo=true;
                 //System.out.println("[Warning] Existing Cascade Transformation on : ");
-                dbtransfo.getCascadeFk().forEach(s->this.cascadeTransformationObservableList.add(s));
+                dbtransfo.getCascadeFk().forEach(
+                        s->{
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(s.getForeingKeyTable());
+                            sb.append(".");
+                            sb.append(s.getForeingKeyColumn());
+                            if (!this.cascadeTransformationObservableList.contains(sb.toString())){
+                               this.cascadeTransformationObservableList.add(sb.toString());
+                            }
+                            
+                            sb = new StringBuilder();
+                            sb.append(s.getReferencedTableName());
+                            sb.append(".");
+                            sb.append(s.getReferencedColumn());
+                            if (!this.cascadeTransformationObservableList.contains(sb.toString())){
+                               this.cascadeTransformationObservableList.add(sb.toString());
+                            }
+                            
+                        }
+                );
             }
 
             if(!ok){this.ExeButton.setDisable(true);}
@@ -422,6 +448,8 @@ public class MainController implements Initializable {
                 }
             }catch(RuntimeException e){
                 Alert("Error Load Unexistent Table Exception");
+                actionChoice.put(currentDbTransformation, Action.Abort);
+                fkInfoObservableList.remove(0);
                 tryNextTransformation();
             }
         }else{
