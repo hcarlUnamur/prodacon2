@@ -41,7 +41,13 @@ import javafx.scene.layout.HBox;
 import Transformation.*;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.ReentrantLock;
+import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 /**
  *
  * @author carl_
@@ -504,12 +510,61 @@ public class MainController implements Initializable {
         addLine(textArea, s.toString());
     }
     
-    private static void addLine(TextArea area,String line){
-        area.setText(area.getText()+System.lineSeparator()+line);
+    
+    private  void addLine(TextArea area,String line){
+        fastAQueu.add(line+System.lineSeparator());
+        signalUpdate();
+        //area.setText(area.getText()+System.lineSeparator()+line);
+        //Platform.runLater(()->area.setText(area.getText()+System.lineSeparator()+line));
+    }
+    
+    private Service<Void> fastAnalyseService = new Service(){
+        @Override
+          protected Task<Void> createTask() {
+              return new Task() {
+                  @Override
+                  protected Object call() throws Exception {
+                      fastAnalyse();
+                      return null;
+                  }
+              };
+          }	
+    };
+    
+    private ConcurrentLinkedQueue<String> fastAQueu = new ConcurrentLinkedQueue();
+    private ReentrantLock lock = new ReentrantLock();
+    private void signalUpdate(){
+        Platform.runLater(new Runnable() {                  
+            @Override
+            public void run() {
+               lock.lock();
+               fastAnalyseTextArea.appendText(fastAQueu.poll());
+               lock.unlock();
+            }
+        });
     }
     
     @FXML
     private void fastAnalyseButtonOnClick(){
+        fastAnalyseTextArea.clear();
+        //fastAnalyse();
+        if (!fastAnalyseService.isRunning()){
+            //System.out.println(fastAnalyseService);
+            fastAnalyseService.restart();
+        }
+        System.out.println("end");
+    }
+    
+    private void updatelatter(String message,TextArea area){
+        Platform.runLater(new Runnable() {                  
+            @Override
+            public void run() {
+                addLine(area, message);
+            }
+        });
+    }
+    /*@FXML
+    private void fastAnalyse(){
         fastAnalyseTextArea.clear();
         drawLine(100,this.fastAnalyseTextArea);
         addLine(fastAnalyseTextArea,"Fast Analyse");
@@ -545,6 +600,60 @@ public class MainController implements Initializable {
                 }catch(RuntimeException e){
                     addLine(fastAnalyseTextArea,"Error Load Unexistent Table Exception ");                 
                 }
+                
+            }
+            drawLine(25,fastAnalyseTextArea);
+            addLine(fastAnalyseTextArea,"");
+            addLine(fastAnalyseTextArea,"All foreign keys done :) "+System.lineSeparator());
+            drawLine(100,this.fastAnalyseTextArea);
+            addLine(fastAnalyseTextArea,"Table state :");
+            drawLine(100,this.fastAnalyseTextArea);
+            contextAnalyser.getDicoTable().forEach((k,v)->addLine(fastAnalyseTextArea,v.toString()));
+            drawLine(100,this.fastAnalyseTextArea);
+            addLine(fastAnalyseTextArea,"");
+        }catch(EasySQL.Exception.DBConnexionErrorException e){
+            Alert("DB connexion error","Some properties parameter can be wrong");
+        }
+        
+    }*/
+    
+    @FXML
+    private void fastAnalyse(){
+        drawLine(100,this.fastAnalyseTextArea);
+        addLine(fastAnalyseTextArea,"Fast Analyse");
+        addLine(fastAnalyseTextArea,"");
+        
+        ContextAnalyser contextAnalyser = null;
+        try{
+            contextAnalyser = new ContextAnalyser(
+                    this.dbhostName.getText(),
+                    this.dbName.getText(),
+                    this.dbPort.getText(),
+                    this.dbLogin.getText(),
+                    this.dbPassWord.getText(),
+                    new ArrayList(this.fkList)
+            );
+            int i = 0;
+            while(contextAnalyser.hasNext()){
+                Transformation transfo=null;
+                try{
+                    drawLine(25,fastAnalyseTextArea);
+                    addLine(fastAnalyseTextArea,this.fkList.get(i).toString());
+                    transfo = contextAnalyser.next();
+                    transformations.add(transfo);
+                    if (transfo instanceof DBTransformation){
+                        PrintDBTransformationMenu((DBTransformation)transfo);
+                    }else if (transfo instanceof ImpossibleTransformation){
+                        addLine(fastAnalyseTextArea,((ImpossibleTransformation) transfo).getMessage());
+
+                    }else if (transfo instanceof EmptyTransformation){
+                        addLine(fastAnalyseTextArea,((EmptyTransformation) transfo).getMessage());    
+                    }
+                    i++;
+                }catch(RuntimeException e){
+                    addLine(fastAnalyseTextArea,"Error Load Unexistent Table Exception ");                 
+                }
+                
             }
             drawLine(25,fastAnalyseTextArea);
             addLine(fastAnalyseTextArea,"");
@@ -560,6 +669,7 @@ public class MainController implements Initializable {
         }
         
     }
+
     
     private void PrintDBTransformationMenu(DBTransformation dbtransfo) {
         boolean ok = true;
