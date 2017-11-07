@@ -48,11 +48,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.event.EventType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 /**
  *
@@ -424,7 +422,12 @@ public class MainController implements Initializable {
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()||textFieldNewTypeLength2.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 Integer.parseInt(textFieldNewTypeLength1.getText());
                 Integer.parseInt(textFieldNewTypeLength2.getText());
-                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength1.getText()+")");
+                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength2.getText()+")");
+            }else{
+                if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
+                if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
+                Integer.parseInt(textFieldNewTypeLength1.getText());
+                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+")");
             }
             
             this.currentDbTransformation.transfrom();
@@ -508,8 +511,19 @@ public class MainController implements Initializable {
             }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
                 this.mainTarget.setText(dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn());               
             }
+            
             this.newType.setText(dbtransfo.getNewType());
-            this.choiceBoxTarget.setValue(dbtransfo.getTarget());          
+            System.out.println("target : " + dbtransfo.getTarget());
+            this.choiceBoxTarget.setValue(dbtransfo.getTarget());//attenton au effet de bord qui modifie aussi l'état de crrent transformation'
+            TransformationTarget newtarget = dbtransfo.getTarget();
+            if(newtarget.equals(TransformationTarget.ForeignKeyTable)){
+                    labelTransfoTableInfo.setText(currentDbTransformation.getFk().getForeingKeyTable()+"."+currentDbTransformation.getFk().getForeingKeyColumn());
+            }else if(newtarget.equals(TransformationTarget.ReferencedTable)){
+                    labelTransfoTableInfo.setText(currentDbTransformation.getFk().getReferencedTableName()+"."+currentDbTransformation.getFk().getReferencedColumn());
+            }else if(newtarget.equals(TransformationTarget.All)){
+                    labelTransfoTableInfo.setText(currentDbTransformation.getFk().getForeingKeyTable()+"."+currentDbTransformation.getFk().getForeingKeyColumn()+" & "+currentDbTransformation.getFk().getReferencedTableName()+"."+currentDbTransformation.getFk().getReferencedColumn());
+            }
+
             //this.labelTransfoTableInfo.setText(this.mainTarget.getText());
 
             this.choiceBoxNexType.setValue(typeParser(dbtransfo.getNewType())[0]);
