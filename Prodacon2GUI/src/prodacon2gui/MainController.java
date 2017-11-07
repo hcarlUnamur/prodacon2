@@ -341,7 +341,7 @@ public class MainController implements Initializable {
     
     @FXML
     private void SaveDefaultButtonOnClick(){
-        System.out.println("SDBOC begin");
+        //System.out.println("SDBOC begin");
         Properties prop = new Properties();
 	OutputStream output = null;
 	try {
@@ -368,7 +368,7 @@ public class MainController implements Initializable {
 		}
             }
 	}
-        System.out.println("SDBOC end");
+        //System.out.println("SDBOC end");
     }
     
     private void Alert(String message){
@@ -513,7 +513,7 @@ public class MainController implements Initializable {
             }
             
             this.newType.setText(dbtransfo.getNewType());
-            System.out.println("target : " + dbtransfo.getTarget());
+            //System.out.println("target : " + dbtransfo.getTarget());
             this.choiceBoxTarget.setValue(dbtransfo.getTarget());//attenton au effet de bord qui modifie aussi l'état de crrent transformation'
             TransformationTarget newtarget = dbtransfo.getTarget();
             if(newtarget.equals(TransformationTarget.ForeignKeyTable)){
@@ -651,6 +651,9 @@ public class MainController implements Initializable {
                            }
                         }
                     }
+        analyseButtonBox.getChildren().clear();
+        startButton.setText("Start");
+        analyseButtonBox.getChildren().add(startButton);
         Alert(AlertType.INFORMATION,"Undo done","");
     }
     
