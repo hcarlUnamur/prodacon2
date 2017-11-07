@@ -131,6 +131,7 @@ public class MainController implements Initializable {
     private static String[] TIME_TYPES_TRANSFORMABLE = {"TIMESTAMP","DATETIME"};
     private static String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
     private static String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
+    private static String[] CHARSET_TYPE={"CHAR","VARCHAR","TEXT"};
 
 //ScriptGeneretedMenu
     @FXML private TextArea textAreaScript;
@@ -221,7 +222,8 @@ public class MainController implements Initializable {
                             sb.append(".");
                             sb.append(s.getForeingKeyColumn());
                             sb.append(" : ");
-                            sb.append(currentDbTransformation.getTableDico().get(s.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getForeingKeyColumn())).findFirst().get().getColumnType().toString());
+                            Column col = currentDbTransformation.getTableDico().get(s.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getForeingKeyColumn())).findFirst().get();
+                            sb.append(col.getColumnType().toString() + ((col.getCharset()!=null)?col.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }
@@ -231,7 +233,8 @@ public class MainController implements Initializable {
                             sb.append(".");
                             sb.append(s.getReferencedColumn());
                             sb.append(" : ");
-                            sb.append(currentDbTransformation.getTableDico().get(s.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getReferencedColumn())).findFirst().get().getColumnType().toString());
+                            Column colr = currentDbTransformation.getTableDico().get(s.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getReferencedColumn())).findFirst().get();
+                            sb.append(colr.getColumnType().toString() + ((colr.getCharset()!=null)?colr.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }
@@ -260,30 +263,34 @@ public class MainController implements Initializable {
     }    
     
     public void startScriptGenerationButtonOnclickAction(){
-       sqlScript=true;
-       try{
-            contextAnalyser = new ContextAnalyser(
-                    this.dbhostName.getText(),
-                    this.dbName.getText(),
-                    this.dbPort.getText(),
-                    this.dbLogin.getText(),
-                    this.dbPassWord.getText(),
-                    new ArrayList(this.fkList)
-            );
+       if(fkList.isEmpty()){
+           Alert("Empty Foreign Key List","There are no koreignKey loaded to proceed");
+        }else{
+            sqlScript=true;
+            try{
+                 contextAnalyser = new ContextAnalyser(
+                         this.dbhostName.getText(),
+                         this.dbName.getText(),
+                         this.dbPort.getText(),
+                         this.dbLogin.getText(),
+                         this.dbPassWord.getText(),
+                         new ArrayList(this.fkList)
+                 );
 
-            //clear
-            transformations.clear();
-            actionChoice.clear();
-            //currentDbTransformation=null;
-            transInfoObservableList.clear();
-            //end clear
-            
-            showAnalysebutton();
-            fkList.forEach(fk -> fkInfoObservableList.add(fk));
-            tryNextTransformation();
-        }catch(EasySQL.Exception.DBConnexionErrorException e){
-            Alert("DB connexion error","Some properties parameter can be wrong");
-        }
+                 //clear
+                 transformations.clear();
+                 actionChoice.clear();
+                 //currentDbTransformation=null;
+                 transInfoObservableList.clear();
+                 //end clear
+
+                 showAnalysebutton();
+                 fkList.forEach(fk -> fkInfoObservableList.add(fk));
+                 tryNextTransformation();
+             }catch(EasySQL.Exception.DBConnexionErrorException e){
+                 Alert("DB connexion error","Some properties parameter can be wrong");
+             }
+       }
     }
     
     @FXML
@@ -494,29 +501,33 @@ public class MainController implements Initializable {
     }
     
     private void startButtonOnclickAction() {
-        try{
-            contextAnalyser = new ContextAnalyser(
-                    this.dbhostName.getText(),
-                    this.dbName.getText(),
-                    this.dbPort.getText(),
-                    this.dbLogin.getText(),
-                    this.dbPassWord.getText(),
-                    new ArrayList(this.fkList)
-            );
+        if(fkList.isEmpty()){
+           Alert("Empty Foreign Key List","There are no koreignKey loaded to proceed");
+        }else{
+            try{
+                contextAnalyser = new ContextAnalyser(
+                        this.dbhostName.getText(),
+                        this.dbName.getText(),
+                        this.dbPort.getText(),
+                        this.dbLogin.getText(),
+                        this.dbPassWord.getText(),
+                        new ArrayList(this.fkList)
+                );
 
-            //clear
-            transformations.clear();
-            actionChoice.clear();
-            //currentDbTransformation=null;
-            transInfoObservableList.clear();
-            //end clear
-            
-            showAnalysebutton();
-            fkList.forEach(fk -> fkInfoObservableList.add(fk));
-            tryNextTransformation();
-        }catch(EasySQL.Exception.DBConnexionErrorException e){
-            Alert("DB connexion error","Some properties parameter can be wrong");
-        }       
+                //clear
+                transformations.clear();
+                actionChoice.clear();
+                //currentDbTransformation=null;
+                transInfoObservableList.clear();
+                //end clear
+
+                showAnalysebutton();
+                fkList.forEach(fk -> fkInfoObservableList.add(fk));
+                tryNextTransformation();
+            }catch(EasySQL.Exception.DBConnexionErrorException e){
+                Alert("DB connexion error","Some properties parameter can be wrong");
+            }
+        }
     }
 
     private void showNextbutton(){
@@ -553,10 +564,10 @@ public class MainController implements Initializable {
             ForeignKey f = dbtransfo.getFk();
             Column col =null;
             col = dbtransfo.getFkColumnBeforeTransformation();
-            this.fkInfoLable.setText(f.getForeingKeyTable()+"."+col.getColumnName() +" : " +col.getColumnType() );
+            this.fkInfoLable.setText(f.getForeingKeyTable()+"."+col.getColumnName() +" : " +col.getColumnType() +((col.getCharset()!=null)?col.getCharset():"") );
             
             col = dbtransfo.getRefColumnBeforeTransformation();
-            this.referenceInfoLable.setText(f.getReferencedTableName()+"."+col.getColumnName() +" : " +col.getColumnType() );
+            this.referenceInfoLable.setText(f.getReferencedTableName()+"."+col.getColumnName() +" : " +col.getColumnType() +((col.getCharset()!=null)?col.getCharset():"") );
             
             if(isMBT){
                 //System.out.println("    Juste adding the foreignkey");
