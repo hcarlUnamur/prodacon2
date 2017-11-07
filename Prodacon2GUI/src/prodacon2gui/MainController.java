@@ -48,7 +48,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.event.EventType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
@@ -221,6 +220,8 @@ public class MainController implements Initializable {
                             sb.append(s.getForeingKeyTable());
                             sb.append(".");
                             sb.append(s.getForeingKeyColumn());
+                            sb.append(" : ");
+                            sb.append(currentDbTransformation.getTableDico().get(s.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getForeingKeyColumn())).findFirst().get().getColumnType().toString());
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }
@@ -229,6 +230,8 @@ public class MainController implements Initializable {
                             sb.append(s.getReferencedTableName());
                             sb.append(".");
                             sb.append(s.getReferencedColumn());
+                            sb.append(" : ");
+                            sb.append(currentDbTransformation.getTableDico().get(s.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getReferencedColumn())).findFirst().get().getColumnType().toString());
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }
@@ -606,18 +609,21 @@ public class MainController implements Initializable {
                             sb.append(s.getForeingKeyTable());
                             sb.append(".");
                             sb.append(s.getForeingKeyColumn());
-                            if (!this.cascadeTransformationObservableList.contains(sb.toString())){
-                               this.cascadeTransformationObservableList.add(sb.toString());
+                            sb.append(" : ");
+                            sb.append(currentDbTransformation.getTableDico().get(s.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getForeingKeyColumn())).findFirst().get().getColumnType().toString());
+                            if (!cascadeTransformationObservableList.contains(sb.toString())){
+                               cascadeTransformationObservableList.add(sb.toString());
                             }
                             
                             sb = new StringBuilder();
                             sb.append(s.getReferencedTableName());
                             sb.append(".");
                             sb.append(s.getReferencedColumn());
-                            if (!this.cascadeTransformationObservableList.contains(sb.toString())){
-                               this.cascadeTransformationObservableList.add(sb.toString());
-                            }
-                            
+                            sb.append(" : ");
+                            sb.append(currentDbTransformation.getTableDico().get(s.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getReferencedColumn())).findFirst().get().getColumnType().toString());
+                            if (!cascadeTransformationObservableList.contains(sb.toString())){
+                               cascadeTransformationObservableList.add(sb.toString());
+                            }                          
                         }
                 );
             }
