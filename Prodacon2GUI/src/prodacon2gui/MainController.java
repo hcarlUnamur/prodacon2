@@ -48,6 +48,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.EventType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
@@ -99,6 +100,7 @@ public class MainController implements Initializable {
     @FXML private Button addTriggerButton;
     @FXML private Button abordeButton;
     @FXML private Button ExeButton;
+    @FXML private Button startScriptGenerationButton = new Button("Start Script Generation");
     private Button startButton = new Button("Start");
     private Button nextbutton = new Button("Next");
     private Button undoButton = new Button("undo All");
@@ -109,6 +111,7 @@ public class MainController implements Initializable {
     @FXML private TableColumn<DBTransformation,String> transCol2;
     private ObservableList<ForeignKey> fkInfoObservableList = FXCollections.observableArrayList();
     private ObservableList<Transformation> transInfoObservableList = FXCollections.observableArrayList();
+
 //men fast Analyse
     @FXML private TextArea fastAnalyseTextArea;
     @FXML private Button fastAnalyseButton;
@@ -129,7 +132,10 @@ public class MainController implements Initializable {
     private static String[] TIME_TYPES_TRANSFORMABLE = {"TIMESTAMP","DATETIME"};
     private static String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
     private static String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
-    
+
+//ScriptGeneretedMenu
+    @FXML private TextArea textAreaScript;
+    private boolean sqlScript;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -148,10 +154,12 @@ public class MainController implements Initializable {
         fkInfoCol1.setCellValueFactory(fk-> new SimpleStringProperty(fk.getValue().getConstraintName()) );
         transCol1.setCellValueFactory(trans ->new SimpleStringProperty(trans.getValue().getTransforamtiontype().name()));
         transCol2.setCellValueFactory(trans ->  new SimpleStringProperty(this.actionChoice.get(trans.getValue()).name()));
+        /*
         analyseButtonBox.getChildren().clear();
         startButton.setMinWidth(100);
-        analyseButtonBox.getChildren().add(startButton);
-        
+        analyseButtonBox.getChildren().add(startButton);       
+        */
+        showStartButton();
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -236,7 +244,44 @@ public class MainController implements Initializable {
                 }
             }
         });
+        
+        //scriptButton
+        sqlScript=false;
+        this.startScriptGenerationButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                startScriptGenerationButtonOnclickAction();
+            }
+        });
+    
     }    
+    
+    public void startScriptGenerationButtonOnclickAction(){
+       sqlScript=true;
+       try{
+            contextAnalyser = new ContextAnalyser(
+                    this.dbhostName.getText(),
+                    this.dbName.getText(),
+                    this.dbPort.getText(),
+                    this.dbLogin.getText(),
+                    this.dbPassWord.getText(),
+                    new ArrayList(this.fkList)
+            );
+
+            //clear
+            transformations.clear();
+            actionChoice.clear();
+            //currentDbTransformation=null;
+            transInfoObservableList.clear();
+            //end clear
+            
+            showAnalysebutton();
+            fkList.forEach(fk -> fkInfoObservableList.add(fk));
+            tryNextTransformation();
+        }catch(EasySQL.Exception.DBConnexionErrorException e){
+            Alert("DB connexion error","Some properties parameter can be wrong");
+        }
+    }
     
     @FXML
     private void buttonRestoreOnClick(){
@@ -378,7 +423,6 @@ public class MainController implements Initializable {
         alert.showAndWait();
     }
     
-    
     private void Alert(String message,String message2){
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("ERROR");      
@@ -394,8 +438,7 @@ public class MainController implements Initializable {
         alert.setContentText(message2);
         alert.showAndWait();
     }
-    
-    
+      
     @FXML
     private void addTriggerButtonOnClick(){
         actionChoice.put(currentDbTransformation, Action.AddFK);
@@ -414,10 +457,8 @@ public class MainController implements Initializable {
     @FXML
     private void executeTransformationButtonOnClick(){
         try {
+            //test type parameter
             if(isIn((String)choiceBoxNexType.getValue(),TWO_PARAMETER_TYPE)){
-                //Test if input is int               
-                //System.out.println("textFieldNewTypeLength1.getText()=\""+textFieldNewTypeLength1.getText()+"\"");
-                //System.out.println("textFieldNewTypeLength2.getText()=\""+textFieldNewTypeLength2.getText()+"\"");
                 if(textFieldNewTypeLength1.getText()==null || textFieldNewTypeLength2.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()||textFieldNewTypeLength2.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 Integer.parseInt(textFieldNewTypeLength1.getText());
@@ -430,7 +471,12 @@ public class MainController implements Initializable {
                 currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+")");
             }
             
-            this.currentDbTransformation.transfrom();
+            if(!sqlScript){
+                this.currentDbTransformation.transfrom();
+            }else{
+                textAreaScript.appendText("-- processing of : "+this.currentDbTransformation.getFk()+System.lineSeparator()+currentDbTransformation.getTransformationScript().replace(";", ";"+System.lineSeparator())+System.lineSeparator());
+            }
+     
             actionChoice.put(this.currentDbTransformation, Action.Transform);
             //System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
             this.transInfoObservableList.add(0,this.currentDbTransformation);
@@ -467,9 +513,7 @@ public class MainController implements Initializable {
             tryNextTransformation();
         }catch(EasySQL.Exception.DBConnexionErrorException e){
             Alert("DB connexion error","Some properties parameter can be wrong");
-        }
-        
-        
+        }       
     }
 
     private void showNextbutton(){
@@ -482,6 +526,15 @@ public class MainController implements Initializable {
         this.analyseButtonBox.getChildren().add(this.addTriggerButton);
         this.analyseButtonBox.getChildren().add(this.abordeButton);
         this.analyseButtonBox.getChildren().add(this.ExeButton);    
+    }
+    
+    private void showStartButton(){
+        this.analyseButtonBox.getChildren().clear();
+        analyseButtonBox.setSpacing(5);
+        startButton.setText("Start direct DB transformation");
+        this.analyseButtonBox.getChildren().add(startButton);
+        startScriptGenerationButton.setText("Start Script Generation");
+        this.analyseButtonBox.getChildren().add(startScriptGenerationButton);
     }
     
     private void DBTransformationAction(DBTransformation dbtransfo) {
@@ -613,11 +666,15 @@ public class MainController implements Initializable {
             }
         }else{
             cleanAnalyseView();
+            analyseButtonBox.setSpacing(5);
             analyseButtonBox.getChildren().clear();
-            startButton.setText("Restart");           
+            startButton.setText("Restart a Direct DB Transforamtion");
+            startScriptGenerationButton.setText("Restart a Transformation Script Generation");
             analyseButtonBox.getChildren().add(startButton);
-            analyseButtonBox.getChildren().add(undoButton);
-                    
+            analyseButtonBox.getChildren().add(startScriptGenerationButton);
+            if(!sqlScript){
+                analyseButtonBox.getChildren().add(undoButton);
+            }
         }
     }
 
@@ -637,8 +694,7 @@ public class MainController implements Initializable {
         fkInfoObservableList.remove(0);
         tryNextTransformation();
     }
-    
-    
+      
     private void UndoButtonOnclickAction() {
         for(int i=this.transformations.size()-1;i>=0;i--){
                     //System.out.println("");
@@ -651,9 +707,7 @@ public class MainController implements Initializable {
                            }
                         }
                     }
-        analyseButtonBox.getChildren().clear();
-        startButton.setText("Start");
-        analyseButtonBox.getChildren().add(startButton);
+        showStartButton();
         Alert(AlertType.INFORMATION,"Undo done","");
     }
     
@@ -662,8 +716,7 @@ public class MainController implements Initializable {
         for(int i=0;i<length;i++){s.append("_");}
         addLine(textArea, s.toString());
     }
-    
-    
+      
     private  void addLine(TextArea area,String line){
         fastAQueu.add(line+System.lineSeparator());
         signalUpdate();
@@ -716,59 +769,6 @@ public class MainController implements Initializable {
             }
         });
     }
-    /*@FXML
-    private void fastAnalyse(){
-        fastAnalyseTextArea.clear();
-        drawLine(100,this.fastAnalyseTextArea);
-        addLine(fastAnalyseTextArea,"Fast Analyse");
-        addLine(fastAnalyseTextArea,"");
-        
-        ContextAnalyser contextAnalyser = null;
-        try{
-            contextAnalyser = new ContextAnalyser(
-                    this.dbhostName.getText(),
-                    this.dbName.getText(),
-                    this.dbPort.getText(),
-                    this.dbLogin.getText(),
-                    this.dbPassWord.getText(),
-                    new ArrayList(this.fkList)
-            );
-            int i = 0;
-            while(contextAnalyser.hasNext()){
-                Transformation transfo=null;
-                try{
-                    drawLine(25,fastAnalyseTextArea);
-                    addLine(fastAnalyseTextArea,this.fkList.get(i).toString());
-                    transfo = contextAnalyser.next();
-                    transformations.add(transfo);
-                    if (transfo instanceof DBTransformation){
-                        PrintDBTransformationMenu((DBTransformation)transfo);
-                    }else if (transfo instanceof ImpossibleTransformation){
-                        addLine(fastAnalyseTextArea,((ImpossibleTransformation) transfo).getMessage());
-
-                    }else if (transfo instanceof EmptyTransformation){
-                        addLine(fastAnalyseTextArea,((EmptyTransformation) transfo).getMessage());    
-                    }
-                    i++;
-                }catch(RuntimeException e){
-                    addLine(fastAnalyseTextArea,"Error Load Unexistent Table Exception ");                 
-                }
-                
-            }
-            drawLine(25,fastAnalyseTextArea);
-            addLine(fastAnalyseTextArea,"");
-            addLine(fastAnalyseTextArea,"All foreign keys done :) "+System.lineSeparator());
-            drawLine(100,this.fastAnalyseTextArea);
-            addLine(fastAnalyseTextArea,"Table state :");
-            drawLine(100,this.fastAnalyseTextArea);
-            contextAnalyser.getDicoTable().forEach((k,v)->addLine(fastAnalyseTextArea,v.toString()));
-            drawLine(100,this.fastAnalyseTextArea);
-            addLine(fastAnalyseTextArea,"");
-        }catch(EasySQL.Exception.DBConnexionErrorException e){
-            Alert("DB connexion error","Some properties parameter can be wrong");
-        }
-        
-    }*/
     
     @FXML
     private void fastAnalyse(){
@@ -822,8 +822,7 @@ public class MainController implements Initializable {
         }
         
     }
-
-    
+  
     private void PrintDBTransformationMenu(DBTransformation dbtransfo) {
         boolean ok = true;
         boolean needCascadeTransfo=false;
