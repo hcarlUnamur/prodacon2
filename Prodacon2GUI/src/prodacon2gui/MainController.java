@@ -621,7 +621,8 @@ public class MainController implements Initializable {
                             sb.append(".");
                             sb.append(s.getForeingKeyColumn());
                             sb.append(" : ");
-                            sb.append(currentDbTransformation.getTableDico().get(s.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getForeingKeyColumn())).findFirst().get().getColumnType().toString());
+                            Column colf = currentDbTransformation.getTableDico().get(s.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getForeingKeyColumn())).findFirst().get();
+                            sb.append(colf.getColumnType().toString() + ((colf.getCharset()!=null)?colf.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }
@@ -631,7 +632,8 @@ public class MainController implements Initializable {
                             sb.append(".");
                             sb.append(s.getReferencedColumn());
                             sb.append(" : ");
-                            sb.append(currentDbTransformation.getTableDico().get(s.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getReferencedColumn())).findFirst().get().getColumnType().toString());
+                            Column colr = currentDbTransformation.getTableDico().get(s.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getReferencedColumn())).findFirst().get();
+                            sb.append(colr.getColumnType().toString() + ((colr.getCharset()!=null)?colr.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }                          
