@@ -134,17 +134,18 @@
                             <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="502.0" prefWidth="555.0" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints maxHeight="78.0" minHeight="0.0" prefHeight="19.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="82.0" minHeight="4.0" prefHeight="22.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="102.0" minHeight="0.0" prefHeight="24.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="117.0" minHeight="0.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="136.0" minHeight="0.0" prefHeight="21.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="146.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="146.0" minHeight="4.0" prefHeight="22.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="146.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="168.0" minHeight="0.0" prefHeight="36.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="187.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="159.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="78.0" minHeight="0.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="82.0" minHeight="4.0" prefHeight="19.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="102.0" minHeight="0.0" prefHeight="17.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="117.0" minHeight="0.0" prefHeight="18.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="136.0" minHeight="0.0" prefHeight="14.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="146.0" minHeight="6.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="146.0" minHeight="4.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="146.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="168.0" minHeight="0.0" prefHeight="21.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="165.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="23.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="Transformation Type : " />
@@ -181,8 +182,34 @@
                               <Label fx:id="referenceInfoLable" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <Label text="Transformation Target : " GridPane.rowIndex="5" />
                               <Label text="Transformation new type : " GridPane.rowIndex="7" />
-                              <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <HBox fx:id="hBoxnewType" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                 <children>
+                                    <ChoiceBox fx:id="choiceBoxNexType" prefWidth="150.0" />
+                                    <Label text="(">
+                                       <HBox.margin>
+                                          <Insets left="5.0" right="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <TextField fx:id="textFieldNewTypeLength1" alignment="CENTER" prefHeight="25.0" prefWidth="50.0" />
+                                    <Label text=")">
+                                       <HBox.margin>
+                                          <Insets left="5.0" right="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <Label text="Info : " GridPane.rowIndex="11" />
+                              <Label fx:id="labelInfo" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <children>
+                                    <ChoiceBox fx:id="choiceBoxTarget" prefWidth="150.0" />
+                                    <Label fx:id="labelTransfoTableInfo">
+                                       <HBox.margin>
+                                          <Insets left="5.0" right="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
                            </children>
                            <BorderPane.margin>
                               <Insets />

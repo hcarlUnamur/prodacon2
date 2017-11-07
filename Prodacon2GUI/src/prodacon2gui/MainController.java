@@ -44,10 +44,16 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.EventType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 /**
  *
  * @author carl_
@@ -107,8 +113,24 @@ public class MainController implements Initializable {
     private ObservableList<Transformation> transInfoObservableList = FXCollections.observableArrayList();
 //men fast Analyse
     @FXML private TextArea fastAnalyseTextArea;
-    @FXML private Button fastAnalyseButton;        
-    
+    @FXML private Button fastAnalyseButton;
+    @FXML private ChoiceBox choiceBoxTarget;
+    private ObservableList choiceBoxTargetList= FXCollections.observableArrayList();
+    @FXML private Label labelTransfoTableInfo;
+    @FXML private HBox hBoxnewType;
+    @FXML private ChoiceBox choiceBoxNexType;
+    private ObservableList choiceBoxNexTypeList= FXCollections.observableArrayList();;
+    @FXML private TextField textFieldNewTypeLength1;
+    private TextField textFieldNewTypeLength2 = new TextField();
+    @FXML private Label labelInfo;
+    private static String[] INT_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT"};
+    private static String[] NUMERIC_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT","FLOAT","DOUBLE","DECIMAL"};
+    private static String[] DECIMAL_NUMERIC_TYPES = {"FLOAT","DOUBLE","DECIMAL"};
+    private static String[] ALPHA_NUMERIC_TYPES = {"ENUM","CHAR","VARCHAR","BLOB","TEXT","TINYBLOB","TINYTEXT","MEDIUMBLOB","MEDIUMTEXT","LONGBLOB","LONGTEXT"};
+    private static String[] TIME_TYPES = {"TIME","YEAR","DATE","TIMESTAMP","DATETIME"};
+    private static String[] TIME_TYPES_TRANSFORMABLE = {"TIMESTAMP","DATETIME"};
+    private static String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
+    private static String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
     
     
     @Override
@@ -131,12 +153,13 @@ public class MainController implements Initializable {
         analyseButtonBox.getChildren().clear();
         startButton.setMinWidth(100);
         analyseButtonBox.getChildren().add(startButton);
+        
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 startButtonOnclickAction();
             }
-        });
+        });       
         
         nextbutton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -157,13 +180,97 @@ public class MainController implements Initializable {
         unmatchingValue.setItems(unmatchingValueObservableList);
         cascadeTableColumn.setCellValueFactory(cellData->new SimpleStringProperty(cellData.getValue()));
         unmatchingValueColumn.setCellValueFactory(s->new SimpleStringProperty(s.getValue().toString()));
+        
+        choiceBoxNexType.setItems(choiceBoxNexTypeList);
+        choiceBoxNexTypeList.addAll(INT_TYPES);
+        choiceBoxNexTypeList.add(new Separator());
+        choiceBoxNexTypeList.addAll(DECIMAL_NUMERIC_TYPES);
+        choiceBoxNexTypeList.add(new Separator());
+        choiceBoxNexTypeList.addAll(ALPHA_NUMERIC_TYPES);
+        choiceBoxNexTypeList.add(new Separator());
+        choiceBoxNexTypeList.addAll(TIME_TYPES);
+        choiceBoxNexType.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if(isIn((String)newValue, TWO_PARAMETER_TYPE)){
+                    hboxNewType2parameterTransforamtion();
+                }else{
+                    hboxNewType1parameterTransforamtion();
+                }
+            }
+        });
+        
+        
+        choiceBoxTarget.setItems(choiceBoxTargetList);
+        choiceBoxTargetList.addAll(TransformationTarget.values());
+        choiceBoxTarget.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                TransformationTarget newtarget =(TransformationTarget)newValue;
+                currentDbTransformation.setTarget(newtarget);
+                cascadeTransformationObservableList.clear();
+                currentDbTransformation.getCascadeFk().forEach(
+                        s->{
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(s.getForeingKeyTable());
+                            sb.append(".");
+                            sb.append(s.getForeingKeyColumn());
+                            if (!cascadeTransformationObservableList.contains(sb.toString())){
+                               cascadeTransformationObservableList.add(sb.toString());
+                            }
+                            
+                            sb = new StringBuilder();
+                            sb.append(s.getReferencedTableName());
+                            sb.append(".");
+                            sb.append(s.getReferencedColumn());
+                            if (!cascadeTransformationObservableList.contains(sb.toString())){
+                               cascadeTransformationObservableList.add(sb.toString());
+                            }
+                            
+                        }
+                );
+                if(newtarget.equals(TransformationTarget.ForeignKeyTable)){
+                    labelTransfoTableInfo.setText(currentDbTransformation.getFk().getForeingKeyTable()+"."+currentDbTransformation.getFk().getForeingKeyColumn());
+                }else if(newtarget.equals(TransformationTarget.ReferencedTable)){
+                    labelTransfoTableInfo.setText(currentDbTransformation.getFk().getReferencedTableName()+"."+currentDbTransformation.getFk().getReferencedColumn());
+                }else if(newtarget.equals(TransformationTarget.All)){
+                    labelTransfoTableInfo.setText(currentDbTransformation.getFk().getForeingKeyTable()+"."+currentDbTransformation.getFk().getForeingKeyColumn()+" & "+currentDbTransformation.getFk().getReferencedTableName()+"."+currentDbTransformation.getFk().getReferencedColumn());
+                }
+            }
+        });
     }    
     
     @FXML
     private void buttonRestoreOnClick(){
-    
+        ObservableList l = hBoxnewType.getChildren();
+        l.clear();
+        l.add(choiceBoxNexType);
+        l.add(new Label(" ( "));
+        l.add(textFieldNewTypeLength1);
+        l.add(new Label(" ) "));
     }
     
+    private void hboxNewType2parameterTransforamtion(){
+        ObservableList l = hBoxnewType.getChildren();
+        l.clear();
+        l.add(choiceBoxNexType);
+        l.add(new Label(" ( "));
+        l.add(textFieldNewTypeLength1);
+        l.add(new Label(" , "));
+        textFieldNewTypeLength2.setPrefWidth(50);
+        l.add(textFieldNewTypeLength2);
+        l.add(new Label(" ) "));
+        
+    }
+    
+    private void hboxNewType1parameterTransforamtion(){
+        ObservableList l = hBoxnewType.getChildren();
+        l.clear();
+        l.add(choiceBoxNexType);
+        l.add(new Label(" ( "));
+        l.add(textFieldNewTypeLength1);
+        l.add(new Label(" ) "));
+    }
     
     @FXML
     private void buttonLoadOnClick(){
@@ -309,15 +416,29 @@ public class MainController implements Initializable {
     @FXML
     private void executeTransformationButtonOnClick(){
         try {
+            if(isIn((String)choiceBoxNexType.getValue(),TWO_PARAMETER_TYPE)){
+                //Test if input is int               
+                //System.out.println("textFieldNewTypeLength1.getText()=\""+textFieldNewTypeLength1.getText()+"\"");
+                //System.out.println("textFieldNewTypeLength2.getText()=\""+textFieldNewTypeLength2.getText()+"\"");
+                if(textFieldNewTypeLength1.getText()==null || textFieldNewTypeLength2.getText()==null){throw new NumberFormatException();}
+                if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()||textFieldNewTypeLength2.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
+                Integer.parseInt(textFieldNewTypeLength1.getText());
+                Integer.parseInt(textFieldNewTypeLength2.getText());
+                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength1.getText()+")");
+            }
+            
             this.currentDbTransformation.transfrom();
             actionChoice.put(this.currentDbTransformation, Action.Transform);
             //System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
             this.transInfoObservableList.add(0,this.currentDbTransformation);
             fkInfoObservableList.remove(0);
+            tryNextTransformation();
+        }catch(NumberFormatException e){
+            labelInfo.setTextFill(Color.RED);
+            labelInfo.setText("transformation new type size parametter is not string ");
         } catch (SQLException ex) {
             Alert("Error during transformation",ex.getMessage());
         }
-        tryNextTransformation();
     }
     
     private void startButtonOnclickAction() {
@@ -383,14 +504,19 @@ public class MainController implements Initializable {
                 this.mainTarget.setText("No main target we juste have to add the foreignkey constraint");
             }
             else if(dbtransfo.getTarget().equals(TransformationTarget.ForeignKeyTable)){
-                this.mainTarget.setText(dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn());
-                this.newType.setText(dbtransfo.getNewType());
+                this.mainTarget.setText(dbtransfo.getFk().getForeingKeyTable()+"."+dbtransfo.getFk().getForeingKeyColumn());               
             }else if(dbtransfo.getTarget().equals(TransformationTarget.ReferencedTable)){
-                this.mainTarget.setText(dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn());
-                this.newType.setText(dbtransfo.getNewType());
+                this.mainTarget.setText(dbtransfo.getFk().getReferencedTableName()+"."+dbtransfo.getFk().getReferencedColumn());               
             }
+            this.newType.setText(dbtransfo.getNewType());
+            this.choiceBoxTarget.setValue(dbtransfo.getTarget());          
+            //this.labelTransfoTableInfo.setText(this.mainTarget.getText());
 
-            ok = dbtransfo.isEncodageMatching(); 
+            this.choiceBoxNexType.setValue(typeParser(dbtransfo.getNewType())[0]);
+            this.textFieldNewTypeLength1.setText(typeParser(dbtransfo.getNewType())[1]);
+            this.textFieldNewTypeLength2.setText(typeParser(dbtransfo.getNewType())[2]);
+            
+            ok = dbtransfo.isEncodageMatching();
             this.encodageMatching.setText((dbtransfo.isEncodageMatching()?"[OK] Encodage matching":"[KO] Encodage mismatching"));
 
             if(dbtransfo.getUnmatchingValue().size()==0){
@@ -431,6 +557,16 @@ public class MainController implements Initializable {
 
             if(!ok){this.ExeButton.setDisable(true);}
             else{this.ExeButton.setDisable(false);}
+    }
+    
+    private static String[] typeParser(String s){
+        String[] out = new String[3];
+        int i=0;
+        for(String p : s.split("\\(|\\)|,")){
+            out[i]=p.toUpperCase();
+            i++;
+        }
+        return out;
     }
     
     private void tryNextTransformation(){
@@ -716,4 +852,12 @@ public class MainController implements Initializable {
             }
         }
     }
+    
+    private static boolean isIn(String s , String[] table){
+            for(String e : table){
+                if(s.toUpperCase().equals(e.toUpperCase())){return true;}
+            }
+        return false;
+    };
+
 }
