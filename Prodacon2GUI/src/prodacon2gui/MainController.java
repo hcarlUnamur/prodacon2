@@ -223,7 +223,7 @@ public class MainController implements Initializable {
                             sb.append(s.getForeingKeyColumn());
                             sb.append(" : ");
                             Column col = currentDbTransformation.getTableDico().get(s.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getForeingKeyColumn())).findFirst().get();
-                            sb.append(col.getColumnType().toString() + ((col.getCharset()!=null)?col.getCharset():""));
+                            sb.append(col.getColumnType().toString() +" "+ ((col.getCharset()!=null)?col.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }
@@ -234,7 +234,7 @@ public class MainController implements Initializable {
                             sb.append(s.getReferencedColumn());
                             sb.append(" : ");
                             Column colr = currentDbTransformation.getTableDico().get(s.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getReferencedColumn())).findFirst().get();
-                            sb.append(colr.getColumnType().toString() + ((colr.getCharset()!=null)?colr.getCharset():""));
+                            sb.append(colr.getColumnType().toString() +" "+ ((colr.getCharset()!=null)?colr.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }
@@ -622,7 +622,7 @@ public class MainController implements Initializable {
                             sb.append(s.getForeingKeyColumn());
                             sb.append(" : ");
                             Column colf = currentDbTransformation.getTableDico().get(s.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getForeingKeyColumn())).findFirst().get();
-                            sb.append(colf.getColumnType().toString() + ((colf.getCharset()!=null)?colf.getCharset():""));
+                            sb.append(colf.getColumnType().toString() +" "+ ((colf.getCharset()!=null)?colf.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }
@@ -633,7 +633,7 @@ public class MainController implements Initializable {
                             sb.append(s.getReferencedColumn());
                             sb.append(" : ");
                             Column colr = currentDbTransformation.getTableDico().get(s.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(s.getReferencedColumn())).findFirst().get();
-                            sb.append(colr.getColumnType().toString() + ((colr.getCharset()!=null)?colr.getCharset():""));
+                            sb.append(colr.getColumnType().toString() +" "+((colr.getCharset()!=null)?colr.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
                             }                          
