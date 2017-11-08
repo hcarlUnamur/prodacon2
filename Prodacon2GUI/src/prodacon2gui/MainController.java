@@ -540,10 +540,10 @@ public class MainController implements Initializable {
                     !choiceBoxTarget.getValue().equals(TransformationTarget.All)                     
                 ){
                 if (!choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType().toUpperCase())){
-                    throw new Exception("impossible to add relative fk with this parametters");
+                    throw new Exception("impossible to add relative fk with this parametters["+newtype.split("\\(")[0].toUpperCase()+" != "+currentDbTransformation.getRefColumnBeforeTransformation().getColumnType().toUpperCase()+"]");
                 }
                 if (!choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType().toUpperCase())){
-                    throw new Exception("impossible to add relative fk with this parametters");
+                    throw new Exception("impossible to add relative fk with this parametters["+newtype.split("\\(")[0].toUpperCase()+" != "+currentDbTransformation.getFkColumnBeforeTransformation().getColumnType().toUpperCase()+"]");
                 }
             }
             
