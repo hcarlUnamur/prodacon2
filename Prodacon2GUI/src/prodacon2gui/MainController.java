@@ -539,10 +539,10 @@ public class MainController implements Initializable {
             if(     //currentDbTransformation.getTransforamtiontype().equals(TransformationType.DTT) &&
                     !choiceBoxTarget.getValue().equals(TransformationTarget.All)                     
                 ){
-                if (!choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType().split("\\(")[0].toUpperCase())){
+                if (!choiceBoxNexType.getValue().equals(TransformationTarget.ForeignKeyTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType().split("\\(")[0].toUpperCase())){
                     throw new Exception("impossible to add relative fk with this parametters["+newtype.split("\\(")[0].toUpperCase()+" != "+currentDbTransformation.getRefColumnBeforeTransformation().getColumnType().split("\\(")[0].toUpperCase()+"]");
                 }
-                if (!choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType().split("\\(")[0].toUpperCase())){
+                if (!choiceBoxNexType.getValue().equals(TransformationTarget.ReferencedTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType().split("\\(")[0].toUpperCase())){
                     throw new Exception("impossible to add relative fk with this parametters["+newtype.split("\\(")[0].toUpperCase()+" != "+currentDbTransformation.getFkColumnBeforeTransformation().getColumnType().split("\\(")[0].toUpperCase()+"]");
                 }
             }
