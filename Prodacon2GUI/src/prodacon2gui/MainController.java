@@ -511,8 +511,10 @@ public class MainController implements Initializable {
             }else if(isIn((String)choiceBoxNexType.getValue(),CHARSET_TYPE)){
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
-                Integer.parseInt(textFieldNewTypeLength1.getText());               
-                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+textFieldcharset.getText());
+                Integer.parseInt(textFieldNewTypeLength1.getText());
+                if(textFieldcharset.getText()==null){throw new NumberFormatException();}
+                if(textFieldcharset.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
+                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+"CHARACTER SET "+textFieldcharset.getText());
             }else{
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
