@@ -756,6 +756,7 @@ public class MainController implements Initializable {
         this.encodageMatching.setText("");
         this.unmatchingValueObservableList.clear();
         this.cascadeTransformationObservableList.clear();
+        this.labelInfo.setText("");
     }
     
     private void nextButtonOnclickAction(){
