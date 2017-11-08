@@ -136,6 +136,7 @@ public class MainController implements Initializable {
     private static String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
     private static String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
     private static String[] CHARSET_TYPE={"CHAR","VARCHAR","TEXT"};
+    private static String[] ALL_CHARSET={"big5","dec8","cp850","hp8","koi8r","latin1","latin2","swe7","ascii","ujis","sjis","hebrew","tis620","euckr","koi8u","gb2312","greek","cp1250","gbk","latin5","armscii8","utf8","ucs2","cp866","keybcs2","macce","macroman","cp852","latin7","utf8mb4","cp1251","utf16","utf16le","cp1256","cp1257","utf32","binary","geostd8","cp932","eucjpms","gb18030"};
 
 //END variable Declaration ***********************************************************************************************************************************************    
     
@@ -514,6 +515,7 @@ public class MainController implements Initializable {
                 Integer.parseInt(textFieldNewTypeLength1.getText());
                 if(textFieldcharset.getText()==null){throw new NumberFormatException();}
                 if(textFieldcharset.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
+                if(!isIn(textFieldcharset.getText(),ALL_CHARSET)){throw new NumberFormatException();}
                 currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+"CHARACTER SET "+textFieldcharset.getText());
             }else{
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
@@ -536,7 +538,7 @@ public class MainController implements Initializable {
             tryNextTransformation();
         }catch(NumberFormatException e){
             labelInfo.setTextFill(Color.RED);
-            labelInfo.setText("transformation new type size parametter is not string ");
+            labelInfo.setText("transformation new type size parametter is not string or charset invalid");
         } catch (SQLException ex) {
             Alert("Error during transformation",ex.getMessage());
         }
