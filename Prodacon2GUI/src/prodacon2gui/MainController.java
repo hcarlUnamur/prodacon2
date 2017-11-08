@@ -931,7 +931,7 @@ public class MainController implements Initializable {
             dbtransfo.getCascadeFk().forEach(s->addLine(fastAnalyseTextArea,"    "+s.getConstraintName()+" : "+s.getForeingKeyTable()+"."+s.getForeingKeyColumn() +" -> "+s.getReferencedTableName()+"."+s.getReferencedColumn()) );
         }
         
-        if(ok){
+        if(ok && !dbtransfo.getTransforamtiontype().equals(TransformationType.DTT)){
             try {
                 dbtransfo.getTransformationScript();
                 addLine(fastAnalyseTextArea,System.lineSeparator()+"Transformation simulation done");

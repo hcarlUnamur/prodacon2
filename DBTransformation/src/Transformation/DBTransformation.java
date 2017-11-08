@@ -517,13 +517,24 @@ public class DBTransformation extends Transformation {
         return out;
     }
     
+    private static String[] CHARSET_TYPE={"CHAR","VARCHAR","TEXT"};
     private static void setColumnWithTypAndCharset(Column col,String type){
         if (type.toUpperCase().contains("CHARACTER SET")){
             String [] st = type.toUpperCase().split("CHARACTER SET");
             col.setColumnType(st[0]);
             col.setCharset(st[1]);
-        } else{
+        } else if(!isIn(type.split("\\(|\\|,)")[0],CHARSET_TYPE)){          
+            col.setColumnType(type);
+            col.setCharset(null);
+        }else{
             col.setColumnType(type);
         }
     }
+    
+    private static boolean isIn(String s , String[] table){
+            for(String e : table){
+                if(s.toUpperCase().equals(e.toUpperCase())){return true;}
+            }
+        return false;
+    };
 }
