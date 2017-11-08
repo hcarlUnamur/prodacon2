@@ -162,9 +162,15 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 return dbt;
             } 
         }else{
-            return new ImpossibleTransformation("Type mismatching and no transformation found [between :" + fkColumn.getColumnType() +" -> "+ referencedColumn.getColumnType()+"]");
+            DBTransformation dbt = new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.DTT);
+            dbt.setTableDico(dicoTable);
+            return dbt;
+            //return new ImpossibleTransformation("Type mismatching and no transformation found [between :" + fkColumn.getColumnType() +" -> "+ referencedColumn.getColumnType()+"]");
         }
-        return new ImpossibleTransformation("Type mismatching and no transformation found [between :" + fkColumn.getColumnType() +" -> "+ referencedColumn.getColumnType()+"]");
+        DBTransformation dbt = new DBTransformation(factory, tableLoaded, fk, TransformationTarget.ForeignKeyTable, referencedColumn.getColumnType(),TransformationType.DTT);
+        dbt.setTableDico(dicoTable);
+        return dbt;
+        //return new ImpossibleTransformation("Type mismatching and no transformation found [between :" + fkColumn.getColumnType() +" -> "+ referencedColumn.getColumnType()+"]");
     }
     
     private Transformation sameTypeButDifferentlength(Table usedTable, Table referencedTable,ForeignKey fk,Column fkColumn,Column referencedColumn){
