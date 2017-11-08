@@ -629,10 +629,10 @@ public class MainController implements Initializable {
             ForeignKey f = dbtransfo.getFk();
             Column col =null;
             col = dbtransfo.getFkColumnBeforeTransformation();
-            this.fkInfoLable.setText(f.getForeingKeyTable()+"."+col.getColumnName() +" : " +col.getColumnType() +((col.getCharset()!=null)?col.getCharset():"") );
+            this.fkInfoLable.setText(f.getForeingKeyTable()+"."+col.getColumnName() +" : " +col.getColumnType() +((col.getCharset()!=null)?" "+col.getCharset():"") );
             
             col = dbtransfo.getRefColumnBeforeTransformation();
-            this.referenceInfoLable.setText(f.getReferencedTableName()+"."+col.getColumnName() +" : " +col.getColumnType() +((col.getCharset()!=null)?col.getCharset():"") );
+            this.referenceInfoLable.setText(f.getReferencedTableName()+"."+col.getColumnName() +" : " +col.getColumnType() +((col.getCharset()!=null)?" "+col.getCharset():"") );
             
             if(isMBT){
                 //System.out.println("    Juste adding the foreignkey");
