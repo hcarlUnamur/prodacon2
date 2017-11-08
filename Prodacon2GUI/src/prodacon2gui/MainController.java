@@ -682,7 +682,7 @@ public class MainController implements Initializable {
                         }
                 );
             }
-            
+            this.ExeButton.setDisable(false);
             /*
             if(!ok){this.ExeButton.setDisable(true);}
             else{this.ExeButton.setDisable(false);}
