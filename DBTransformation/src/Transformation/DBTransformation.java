@@ -523,7 +523,7 @@ public class DBTransformation extends Transformation {
             String [] st = type.toUpperCase().split("CHARACTER SET");
             col.setColumnType(st[0]);
             col.setCharset(st[1]);
-        } else if(!isIn(type.split("\\(|\\|,)")[0],CHARSET_TYPE)){          
+        } else if(!isIn(type.split("\\(|\\)")[0],CHARSET_TYPE)){          
             col.setColumnType(type);
             col.setCharset(null);
         }else{
