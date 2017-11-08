@@ -270,16 +270,16 @@ public class DBTransformation extends Transformation {
                     .get()
                     .getCharset();
             
-            System.out.println("ref charset : "+encodageRef);
-            System.out.println("fk charset "+encodagefk);
+            //System.out.println("ref charset : "+encodageRef);
+            //System.out.println("fk charset "+encodagefk);
             if(encodageRef ==null && encodagefk==null){
-                 System.out.println("case1");
+                 //System.out.println("case1");
                 this.encodageMatching=true;
             }else if ((encodageRef !=null && encodagefk==null) || (encodageRef ==null && encodagefk!=null)){
-                System.out.println("case2");
+                //System.out.println("case2");
                 this.encodageMatching=false;
             } else{
-                System.out.println("case3 : "+encodageRef.toUpperCase().equals(encodagefk.toUpperCase()));
+                //System.out.println("case3 : "+encodageRef.toUpperCase().equals(encodagefk.toUpperCase()));
                 this.encodageMatching = encodageRef.toUpperCase().equals(encodagefk.toUpperCase());
             }
         } catch (SQLException ex) {
