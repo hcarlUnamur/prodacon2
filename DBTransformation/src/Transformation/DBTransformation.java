@@ -301,18 +301,20 @@ public class DBTransformation extends Transformation {
         
         if (target.equals(TransformationTarget.ForeignKeyTable)){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
-             //modifi the BD intern representation
-            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
+            //modifi the BD intern representation
+            Column col = tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get();
+            setColumnWithTypAndCharset(col,newType);
         }else if(target.equals(TransformationTarget.ReferencedTable)){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
             //modifi the BD intern representation
-            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
+            Column col = tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get();
+            setColumnWithTypAndCharset(col,newType);
         }else if (target.equals(TransformationTarget.All)){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
              //modifi the BD intern representation
-            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
-            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get(),newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get(),newType);
         }
         
         
@@ -321,8 +323,8 @@ public class DBTransformation extends Transformation {
             //new ajout pas certain que se soit bon
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)));
             //modifi the BD intern representation
-            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
-            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get(),newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get(),newType);
         
         }
         this.cascadTransformation = transaction;
@@ -463,17 +465,17 @@ public class DBTransformation extends Transformation {
         if (target.equals(TransformationTarget.ForeignKeyTable)){
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)).getStringSQLQueryDo());
             //modifi the BD intern representation
-            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get(),newType);
         }else if(target.equals(TransformationTarget.ReferencedTable)){
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)).getStringSQLQueryDo());
             //modifi the BD intern representation
-            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);            
+            setColumnWithTypAndCharset(tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get(),newType);            
         }else if (target.equals(TransformationTarget.All)){
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)).getStringSQLQueryDo());
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)).getStringSQLQueryDo());
             //modifi the BD intern representation
-            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
-            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get(),newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get(),newType);
 
         }
                 
@@ -482,8 +484,8 @@ public class DBTransformation extends Transformation {
             //new ajout pas certain que se soit bon
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)).getStringSQLQueryDo());
             //modifi the BD intern representation
-            tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get().setColumnType(newType);
-            tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get().setColumnType(newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get(),newType);
+            setColumnWithTypAndCharset(tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get(),newType);
 
         }
         //this.cascadTransformation = transaction;
@@ -513,5 +515,15 @@ public class DBTransformation extends Transformation {
                 tableDico.put(tableName,out);
         }
         return out;
+    }
+    
+    private static void setColumnWithTypAndCharset(Column col,String type){
+        if (type.toUpperCase().contains("CHARACTER SET")){
+            String [] st = type.toUpperCase().split("CHARACTER SET");
+            col.setColumnType(st[0]);
+            col.setCharset(st[1]);
+        } else{
+            col.setColumnType(type);
+        }
     }
 }
