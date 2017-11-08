@@ -18,7 +18,7 @@ public class Column {
     }
     
     public String getCharset() {
-        return charset.replace(" ", "").toLowerCase();
+        return ((charset!=null)?charset.replace(" ", "").toLowerCase():null);
     }
 
     public void setCharset(String charset) {

@@ -709,7 +709,9 @@ public class MainController implements Initializable {
                 if (transfo instanceof DBTransformation){
                     showAnalysebutton();
                     currentDbTransformation=(DBTransformation)transfo;
+                    System.out.println("1");
                     DBTransformationAction((DBTransformation)transfo);
+                    System.out.println("2");
                 }else if (transfo instanceof ImpossibleTransformation){
                     cleanAnalyseView();
                     this.transfomrmationType.setText("[ImpossibleTransformation] " +((ImpossibleTransformation) transfo).getMessage());
@@ -722,6 +724,7 @@ public class MainController implements Initializable {
                     showNextbutton();
                 }
             }catch(RuntimeException e){
+                System.out.println(e);
                 Alert("Error Load Unexistent Table Exception");
                 actionChoice.put(currentDbTransformation, Action.Abort);
                 fkInfoObservableList.remove(0);
