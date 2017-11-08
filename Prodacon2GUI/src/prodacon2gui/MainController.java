@@ -535,7 +535,8 @@ public class MainController implements Initializable {
                 currentDbTransformation.setNewType(newtype);
             }
             
-            if(     currentDbTransformation.getTransforamtiontype().equals(TransformationType.DTT) &&
+            //test on DTT case if the fk will be accepted
+            if(     //currentDbTransformation.getTransforamtiontype().equals(TransformationType.DTT) &&
                     !choiceBoxTarget.getValue().equals(TransformationTarget.All)                     
                 ){
                 if (!choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType().toUpperCase())){
