@@ -43,6 +43,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -501,28 +503,47 @@ public class MainController implements Initializable {
     
     @FXML
     private void executeTransformationButtonOnClick(){
+        String message="";
+        String newtype ="";
         try {
             //test type parameter
             if(isIn((String)choiceBoxNexType.getValue(),TWO_PARAMETER_TYPE)){
+                message="transformation new type size parametter is not Integer";
                 if(textFieldNewTypeLength1.getText()==null || textFieldNewTypeLength2.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()||textFieldNewTypeLength2.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 Integer.parseInt(textFieldNewTypeLength1.getText());
                 Integer.parseInt(textFieldNewTypeLength2.getText());
-                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength2.getText()+")");
+                newtype=(String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength2.getText()+")"; 
+                currentDbTransformation.setNewType(newtype);
             }else if(isIn((String)choiceBoxNexType.getValue(),CHARSET_TYPE)){
+                message="transformation new type size parametter is not Integer";
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 Integer.parseInt(textFieldNewTypeLength1.getText());
                 if(textFieldcharset.getText()==null){throw new NumberFormatException();}
                 if(textFieldcharset.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
+                message="transformation new charset type is invalid ";
                 if(!isIn(textFieldcharset.getText(),ALL_CHARSET)){throw new NumberFormatException();}
-                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+"CHARACTER SET "+textFieldcharset.getText());
+                newtype = (String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+"CHARACTER SET "+textFieldcharset.getText() ;
+                currentDbTransformation.setNewType(newtype);           
             }else{
+                message="transformation new type size parametter is not Integer";
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 Integer.parseInt(textFieldNewTypeLength1.getText());
-                
-                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+")");
+                newtype = (String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+")" ;
+                currentDbTransformation.setNewType(newtype);
+            }
+            
+            if(     currentDbTransformation.getTransforamtiontype().equals(TransformationType.DTT) &&
+                    !choiceBoxTarget.getValue().equals(TransformationTarget.All)                     
+                ){
+                if (!choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType().toUpperCase())){
+                    throw new Exception("impossible to add relative fk with this parametters");
+                }
+                if (!choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable) && !(newtype.split("\\(")[0]).toUpperCase().equals(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType().toUpperCase())){
+                    throw new Exception("impossible to add relative fk with this parametters");
+                }
             }
             
             if(!sqlScript){
@@ -538,8 +559,10 @@ public class MainController implements Initializable {
             tryNextTransformation();
         }catch(NumberFormatException e){
             labelInfo.setTextFill(Color.RED);
-            labelInfo.setText("transformation new type size parametter is not string or charset invalid");
+            labelInfo.setText(message);
         } catch (SQLException ex) {
+            Alert("Error during transformation",ex.getMessage());
+        } catch (Exception ex) {
             Alert("Error during transformation",ex.getMessage());
         }
     }
