@@ -82,6 +82,7 @@ public class MainController implements Initializable {
     @FXML private TextField filePath; 
     
 //Run Transformation Menu
+    //center screen table variables
     private ObservableList<String> unmatchingValueObservableList = FXCollections.observableArrayList();
     private ObservableList<String> cascadeTransformationObservableList = FXCollections.observableArrayList();
     @FXML private Label transfomrmationType;
@@ -95,6 +96,8 @@ public class MainController implements Initializable {
     @FXML private TableColumn<String,String> unmatchingValueColumn;
     @FXML private TableView cascadeTable;
     @FXML private TableColumn<String,String> cascadeTableColumn;
+    private TextField textFieldcharset = new TextField();
+    //button from bottom screen
     @FXML private HBox analyseButtonBox;
     @FXML private Button addTriggerButton;
     @FXML private Button abordeButton;
@@ -103,6 +106,7 @@ public class MainController implements Initializable {
     private Button startButton = new Button("Start");
     private Button nextbutton = new Button("Next");
     private Button undoButton = new Button("undo All");
+    //left and right table
     @FXML private TableView fkInfo;
     @FXML private TableColumn<ForeignKey,String> fkInfoCol1;
     @FXML private TableView transInfo;
@@ -133,6 +137,8 @@ public class MainController implements Initializable {
     private static String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
     private static String[] CHARSET_TYPE={"CHAR","VARCHAR","TEXT"};
 
+//END variable Declaration ***********************************************************************************************************************************************    
+    
 //ScriptGeneretedMenu
     @FXML private TextArea textAreaScript;
     private boolean sqlScript;
@@ -148,17 +154,13 @@ public class MainController implements Initializable {
         colRC.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getReferencedColumn()));
         colRT.setCellValueFactory(cellData ->  new SimpleStringProperty(cellData.getValue().getReferencedTableName()));
         
-    //Run Transformation        
+        //Run Transformation        
         fkInfo.setItems(fkInfoObservableList);
         transInfo.setItems(transInfoObservableList);
         fkInfoCol1.setCellValueFactory(fk-> new SimpleStringProperty(fk.getValue().getConstraintName()) );
         transCol1.setCellValueFactory(trans ->new SimpleStringProperty(trans.getValue().getTransforamtiontype().name()));
         transCol2.setCellValueFactory(trans ->  new SimpleStringProperty(this.actionChoice.get(trans.getValue()).name()));
-        /*
-        analyseButtonBox.getChildren().clear();
-        startButton.setMinWidth(100);
-        analyseButtonBox.getChildren().add(startButton);       
-        */
+        
         showStartButton();
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -200,6 +202,25 @@ public class MainController implements Initializable {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 if(isIn((String)newValue, TWO_PARAMETER_TYPE)){
                     hboxNewType2parameterTransforamtion();
+                    //remplire le 2eme paramettre 
+                    /*
+                    if(choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable)){
+                        String charset = currentDbTransformation.getRefColumnBeforeTransformation().getCharset();
+                        textFieldNewTypeLength2.setText((charset!=null)?charset:"");
+                    } else if (choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable)){
+                        String charset = currentDbTransformation.getFkColumnBeforeTransformation().getCharset();
+                        textFieldNewTypeLength2.setText((charset!=null)?charset:"");
+                    }
+                    */
+                }else if(isIn((String)newValue, CHARSET_TYPE)){
+                   hboxCharsetForm();
+                   if(choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable)){
+                        String charset = currentDbTransformation.getFkColumnBeforeTransformation().getCharset();
+                        textFieldNewTypeLength2.setText((charset!=null)?charset:"");
+                    } else if (choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable)){
+                        String charset = currentDbTransformation.getRefColumnBeforeTransformation().getCharset();
+                        textFieldNewTypeLength2.setText((charset!=null)?charset:"");
+                    }
                 }else{
                     hboxNewType1parameterTransforamtion();
                 }
@@ -259,8 +280,11 @@ public class MainController implements Initializable {
                 startScriptGenerationButtonOnclickAction();
             }
         });
-    
+        
+        textFieldcharset.setPromptText("Charset Value");
     }    
+
+//END  initialize ***************************************************************************************************************************************************************
     
     public void startScriptGenerationButtonOnclickAction(){
        if(fkList.isEmpty()){
@@ -323,6 +347,16 @@ public class MainController implements Initializable {
         l.add(new Label(" ( "));
         l.add(textFieldNewTypeLength1);
         l.add(new Label(" ) "));
+    }
+    
+    private void hboxCharsetForm(){
+        ObservableList l = hBoxnewType.getChildren();
+        l.clear();
+        l.add(choiceBoxNexType);
+        l.add(new Label(" ( "));
+        l.add(textFieldNewTypeLength1);
+        l.add(new Label(" ) "));
+        l.add(textFieldcharset);
     }
     
     @FXML
@@ -474,10 +508,16 @@ public class MainController implements Initializable {
                 Integer.parseInt(textFieldNewTypeLength1.getText());
                 Integer.parseInt(textFieldNewTypeLength2.getText());
                 currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength2.getText()+")");
+            }else if(isIn((String)choiceBoxNexType.getValue(),CHARSET_TYPE)){
+                if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
+                if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
+                Integer.parseInt(textFieldNewTypeLength1.getText());               
+                currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+textFieldcharset.getText());
             }else{
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 Integer.parseInt(textFieldNewTypeLength1.getText());
+                
                 currentDbTransformation.setNewType((String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+")");
             }
             
