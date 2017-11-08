@@ -682,9 +682,11 @@ public class MainController implements Initializable {
                         }
                 );
             }
-
+            
+            /*
             if(!ok){this.ExeButton.setDisable(true);}
             else{this.ExeButton.setDisable(false);}
+            */
     }
     
     private static String[] typeParser(String s){
