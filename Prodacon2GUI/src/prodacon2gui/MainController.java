@@ -757,6 +757,9 @@ public class MainController implements Initializable {
         this.unmatchingValueObservableList.clear();
         this.cascadeTransformationObservableList.clear();
         this.labelInfo.setText("");
+        this.textFieldcharset.setText("");
+        this.textFieldNewTypeLength1.setText("");
+        this.textFieldNewTypeLength2.setText("");
     }
     
     private void nextButtonOnclickAction(){
