@@ -731,7 +731,7 @@ public class MainController implements Initializable {
             cleanAnalyseView();
             analyseButtonBox.setSpacing(5);
             analyseButtonBox.getChildren().clear();
-            startButton.setText("Restart a Direct DB Transforamtion");
+            startButton.setText("Restart a Direct DB Transformation");
             startScriptGenerationButton.setText("Restart a Transformation Script Generation");
             analyseButtonBox.getChildren().add(startButton);
             analyseButtonBox.getChildren().add(startScriptGenerationButton);
