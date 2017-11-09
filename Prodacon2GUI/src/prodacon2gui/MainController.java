@@ -732,9 +732,7 @@ public class MainController implements Initializable {
                 if (transfo instanceof DBTransformation){
                     showAnalysebutton();
                     currentDbTransformation=(DBTransformation)transfo;
-                    System.out.println("1");
                     DBTransformationAction((DBTransformation)transfo);
-                    System.out.println("2");
                 }else if (transfo instanceof ImpossibleTransformation){
                     cleanAnalyseView();
                     this.transfomrmationType.setText("[ImpossibleTransformation] " +((ImpossibleTransformation) transfo).getMessage());
@@ -851,7 +849,7 @@ public class MainController implements Initializable {
             //System.out.println(fastAnalyseService);
             fastAnalyseService.restart();
         }
-        System.out.println("end");
+        //System.out.println("end");
     }
     
     private void updatelatter(String message,TextArea area){
