@@ -311,7 +311,7 @@
                   <TextArea fx:id="fastAnalyseTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" BorderPane.alignment="CENTER" />
                </center>
                <bottom>
-                  <HBox alignment="CENTER" prefHeight="49.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+                  <HBox fx:id="hBoxFastAnalyseButton" alignment="CENTER" prefHeight="49.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
                      <children>
                         <Button fx:id="fastAnalyseButton" mnemonicParsing="false" onAction="#fastAnalyseButtonOnClick" text="Start Fast Analyse " />
                      </children>

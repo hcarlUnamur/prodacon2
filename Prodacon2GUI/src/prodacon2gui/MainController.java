@@ -118,7 +118,6 @@ public class MainController implements Initializable {
     @FXML private TableColumn<DBTransformation,String> transCol2;
     private ObservableList<ForeignKey> fkInfoObservableList = FXCollections.observableArrayList();
     private ObservableList<Transformation> transInfoObservableList = FXCollections.observableArrayList();
-    private ProgressIndicator progressIndicator = new ProgressIndicator(-1);
 
 //men fast Analyse
     @FXML private TextArea fastAnalyseTextArea;
@@ -132,6 +131,8 @@ public class MainController implements Initializable {
     @FXML private TextField textFieldNewTypeLength1;
     private TextField textFieldNewTypeLength2 = new TextField();
     @FXML private Label labelInfo;
+    private ProgressIndicator progressIndicator = new ProgressIndicator(-1);
+    @FXML HBox hBoxFastAnalyseButton;
     
     private static String[] INT_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT"};
     private static String[] NUMERIC_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT","FLOAT","DOUBLE","DECIMAL"};
@@ -833,8 +834,17 @@ public class MainController implements Initializable {
               return new Task() {
                   @Override
                   protected Object call() throws Exception {
-                      fastAnalyse();
-                      return null;
+                    fastAnalyse();
+                    
+                    Platform.runLater(new Runnable() {                  
+                    @Override
+                    public void run() {
+                        hBoxFastAnalyseButton.getChildren().clear();
+                        hBoxFastAnalyseButton.getChildren().add(fastAnalyseButton);
+                    }
+                     });
+                                     
+                    return null;
                   }
               };
           }	
@@ -860,7 +870,8 @@ public class MainController implements Initializable {
         if (!fastAnalyseService.isRunning()){
             //System.out.println(fastAnalyseService);
             fastAnalyseService.restart();
-            
+            hBoxFastAnalyseButton.getChildren().clear();
+            hBoxFastAnalyseButton.getChildren().add(progressIndicator);
         }
         //System.out.println("end");
     }
