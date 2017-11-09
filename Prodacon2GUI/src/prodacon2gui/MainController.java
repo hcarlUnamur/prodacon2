@@ -533,7 +533,7 @@ public class MainController implements Initializable {
                 newtype = (String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+"CHARACTER SET "+textFieldcharset.getText() ;
                 currentDbTransformation.setNewType(newtype);           
             }else{
-                message="transformation new type size parametter is not Integer";
+                message="transformation new type size parametter is not a valid Integer";
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 int i1 = Integer.parseInt(textFieldNewTypeLength1.getText());
@@ -567,8 +567,9 @@ public class MainController implements Initializable {
             
             tryNextTransformation();
         }catch(NumberFormatException e){
-            labelInfo.setTextFill(Color.RED);
-            labelInfo.setText(message);
+            //labelInfo.setTextFill(Color.RED);
+            //labelInfo.setText(message);
+            Alert("Error can't proceed the transformation",message);
         } catch (SQLException ex) {
             Alert("Error during transformation",ex.getMessage());
         } catch (Exception ex) {
@@ -859,6 +860,7 @@ public class MainController implements Initializable {
         if (!fastAnalyseService.isRunning()){
             //System.out.println(fastAnalyseService);
             fastAnalyseService.restart();
+            
         }
         //System.out.println("end");
     }
