@@ -544,9 +544,31 @@ public class MainController implements Initializable {
             }
             
             //change button to progress bar
-            //analyseButtonBox.getChildren().clear();
-            //analyseButtonBox.getChildren().add(progressIndicator);
-            
+            analyseButtonBox.getChildren().clear();
+            analyseButtonBox.getChildren().add(progressIndicator);
+            Thread t = new Thread( ()->{
+                try{
+                if(!sqlScript){
+                        this.currentDbTransformation.transfrom();
+                }else{
+                    textAreaScript.appendText("-- processing of : "+this.currentDbTransformation.getFk()+System.lineSeparator()+currentDbTransformation.getTransformationScript().replace(";", ";"+System.lineSeparator())+System.lineSeparator());
+                }
+                Platform.runLater( ()->{
+                    actionChoice.put(this.currentDbTransformation, Action.Transform);
+                    //System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
+                    this.transInfoObservableList.add(0,this.currentDbTransformation);
+                    fkInfoObservableList.remove(0);
+
+                    tryNextTransformation();              
+                });
+                } catch (Exception ex) {
+                    Platform.runLater( ()->{
+                        Alert("Error during transformation",ex.getMessage());
+                    });
+                }
+            });
+            t.start();
+            /*
             if(!sqlScript){
                 this.currentDbTransformation.transfrom();
             }else{
@@ -559,6 +581,7 @@ public class MainController implements Initializable {
             fkInfoObservableList.remove(0);
             
             tryNextTransformation();
+            */
         }catch(NumberFormatException e){
             //labelInfo.setTextFill(Color.RED);
             //labelInfo.setText(message);
