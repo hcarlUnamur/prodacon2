@@ -210,16 +210,6 @@ public class MainController implements Initializable {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 if(isIn((String)newValue, TWO_PARAMETER_TYPE)){
                     hboxNewType2parameterTransforamtion();
-                    //remplire le 2eme paramettre 
-                    /*
-                    if(choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable)){
-                        String charset = currentDbTransformation.getRefColumnBeforeTransformation().getCharset();
-                        textFieldNewTypeLength2.setText((charset!=null)?charset:"");
-                    } else if (choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable)){
-                        String charset = currentDbTransformation.getFkColumnBeforeTransformation().getCharset();
-                        textFieldNewTypeLength2.setText((charset!=null)?charset:"");
-                    }
-                    */
                 }else if(isIn((String)newValue, CHARSET_TYPE)){
                    hboxCharsetForm();
                    if(choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable)){
@@ -518,7 +508,7 @@ public class MainController implements Initializable {
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()||textFieldNewTypeLength2.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 int i1 = Integer.parseInt(textFieldNewTypeLength1.getText());
                 int i2 =Integer.parseInt(textFieldNewTypeLength2.getText());
-                if(i1<=0 || i2<=0){throw new NumberFormatException();}
+                if(i1<=0 || i2<0){throw new NumberFormatException();}
                 newtype=(String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength2.getText()+")"; 
                 currentDbTransformation.setNewType(newtype);
             }else if(isIn((String)choiceBoxNexType.getValue(),CHARSET_TYPE)){
