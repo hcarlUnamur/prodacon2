@@ -224,10 +224,10 @@ public class MainController implements Initializable {
                    hboxCharsetForm();
                    if(choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable)){
                         String charset = currentDbTransformation.getFkColumnBeforeTransformation().getCharset();
-                        textFieldNewTypeLength2.setText((charset!=null)?charset:"");
+                        textFieldcharset.setText((charset!=null)?charset:"");
                     } else if (choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable)){
                         String charset = currentDbTransformation.getRefColumnBeforeTransformation().getCharset();
-                        textFieldNewTypeLength2.setText((charset!=null)?charset:"");
+                        textFieldcharset.setText((charset!=null)?charset:"");
                     }
                 }else{
                     hboxNewType1parameterTransforamtion();
@@ -527,9 +527,9 @@ public class MainController implements Initializable {
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 int i1 = Integer.parseInt(textFieldNewTypeLength1.getText());
                 if(i1<=0){throw new NumberFormatException();}
+                message="transformation new charset type is invalid ";
                 if(textFieldcharset.getText()==null){throw new NumberFormatException();}
                 if(textFieldcharset.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
-                message="transformation new charset type is invalid ";
                 if(!isIn(textFieldcharset.getText(),ALL_CHARSET)){throw new NumberFormatException();}
                 newtype = (String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+"CHARACTER SET "+textFieldcharset.getText() ;
                 currentDbTransformation.setNewType(newtype);           
