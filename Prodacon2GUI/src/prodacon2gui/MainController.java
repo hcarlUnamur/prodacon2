@@ -51,6 +51,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
@@ -69,7 +71,7 @@ public class MainController implements Initializable {
     @FXML private TextField dbName; 
     @FXML private TextField dbPort;   
     @FXML private TextField dbLogin;   
-    @FXML private TextField dbPassWord;
+    @FXML private TextField dbPassWord; 
 
 //Menu Foreign keys
     private ObservableList<ForeignKey> fkList = FXCollections.observableArrayList();
@@ -116,6 +118,7 @@ public class MainController implements Initializable {
     @FXML private TableColumn<DBTransformation,String> transCol2;
     private ObservableList<ForeignKey> fkInfoObservableList = FXCollections.observableArrayList();
     private ObservableList<Transformation> transInfoObservableList = FXCollections.observableArrayList();
+    private ProgressIndicator progressIndicator = new ProgressIndicator(-1);
 
 //men fast Analyse
     @FXML private TextArea fastAnalyseTextArea;
@@ -129,6 +132,7 @@ public class MainController implements Initializable {
     @FXML private TextField textFieldNewTypeLength1;
     private TextField textFieldNewTypeLength2 = new TextField();
     @FXML private Label labelInfo;
+    
     private static String[] INT_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT"};
     private static String[] NUMERIC_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT","FLOAT","DOUBLE","DECIMAL"};
     private static String[] DECIMAL_NUMERIC_TYPES = {"FLOAT","DOUBLE","DECIMAL"};
@@ -508,18 +512,20 @@ public class MainController implements Initializable {
         try {
             //test type parameter
             if(isIn((String)choiceBoxNexType.getValue(),TWO_PARAMETER_TYPE)){
-                message="transformation new type size parametter is not Integer";
+                message="transformation new type size parametter is not a valid Integer";
                 if(textFieldNewTypeLength1.getText()==null || textFieldNewTypeLength2.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()||textFieldNewTypeLength2.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
-                Integer.parseInt(textFieldNewTypeLength1.getText());
-                Integer.parseInt(textFieldNewTypeLength2.getText());
+                int i1 = Integer.parseInt(textFieldNewTypeLength1.getText());
+                int i2 =Integer.parseInt(textFieldNewTypeLength2.getText());
+                if(i1<=0 || i2<=0){throw new NumberFormatException();}
                 newtype=(String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength2.getText()+")"; 
                 currentDbTransformation.setNewType(newtype);
             }else if(isIn((String)choiceBoxNexType.getValue(),CHARSET_TYPE)){
-                message="transformation new type size parametter is not Integer";
+                message="transformation new type size parametter is not a valid Integer";
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
-                Integer.parseInt(textFieldNewTypeLength1.getText());
+                int i1 = Integer.parseInt(textFieldNewTypeLength1.getText());
+                if(i1<=0){throw new NumberFormatException();}
                 if(textFieldcharset.getText()==null){throw new NumberFormatException();}
                 if(textFieldcharset.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
                 message="transformation new charset type is invalid ";
@@ -530,7 +536,8 @@ public class MainController implements Initializable {
                 message="transformation new type size parametter is not Integer";
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
-                Integer.parseInt(textFieldNewTypeLength1.getText());
+                int i1 = Integer.parseInt(textFieldNewTypeLength1.getText());
+                if(i1<=0){throw new NumberFormatException();}
                 newtype = (String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+")" ;
                 currentDbTransformation.setNewType(newtype);
             }
@@ -543,6 +550,9 @@ public class MainController implements Initializable {
                 throw new Exception("impossible to add relative fk with this parametters["+newtype.split("\\(")[0].toUpperCase()+" != "+currentDbTransformation.getFkColumnBeforeTransformation().getColumnType().split("\\(")[0].toUpperCase()+"]");
             }
             
+            //change button to progress bar
+            //analyseButtonBox.getChildren().clear();
+            //analyseButtonBox.getChildren().add(progressIndicator);
             
             if(!sqlScript){
                 this.currentDbTransformation.transfrom();
@@ -554,6 +564,7 @@ public class MainController implements Initializable {
             //System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
             this.transInfoObservableList.add(0,this.currentDbTransformation);
             fkInfoObservableList.remove(0);
+            
             tryNextTransformation();
         }catch(NumberFormatException e){
             labelInfo.setTextFill(Color.RED);
