@@ -509,6 +509,8 @@ public class MainController implements Initializable {
                 int i1 = Integer.parseInt(textFieldNewTypeLength1.getText());
                 int i2 =Integer.parseInt(textFieldNewTypeLength2.getText());
                 if(i1<=0 || i2<0){throw new NumberFormatException();}
+                message="transformation new type size parametter is not a valid Integer [the decimal value can't be >= to the total length]";
+                if(i2>=i1){throw new NumberFormatException();}
                 newtype=(String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+","+textFieldNewTypeLength2.getText()+")"; 
                 currentDbTransformation.setNewType(newtype);
             }else if(isIn((String)choiceBoxNexType.getValue(),CHARSET_TYPE)){
