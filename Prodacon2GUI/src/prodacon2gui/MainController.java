@@ -666,7 +666,15 @@ public class MainController implements Initializable {
             this.choiceBoxNexType.setValue(typeParser(dbtransfo.getNewType())[0]);
             this.textFieldNewTypeLength1.setText(typeParser(dbtransfo.getNewType())[1]);
             this.textFieldNewTypeLength2.setText(typeParser(dbtransfo.getNewType())[2]);
+            if(choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable)){
+                        String charset = currentDbTransformation.getFkColumnBeforeTransformation().getCharset();
+                        textFieldcharset.setText((charset!=null)?charset:"");
+                    } else if (choiceBoxTarget.getValue().equals(TransformationTarget.ForeignKeyTable)){
+                        String charset = currentDbTransformation.getRefColumnBeforeTransformation().getCharset();
+                        textFieldcharset.setText((charset!=null)?charset:"");
+                    }
             
+       
             ok = dbtransfo.isEncodageMatching();
             this.encodageMatching.setText((dbtransfo.isEncodageMatching()?"[OK] Encodage matching":"[KO] Encodage mismatching"));
 
