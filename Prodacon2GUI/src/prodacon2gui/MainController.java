@@ -706,9 +706,9 @@ public class MainController implements Initializable {
                 );
             }
 
-            if(dbtransfo.getTransforamtiontype().equals(TransformationType.MVMT)){
-                this.ExeButton.setDisable(true);
-            }else{this.ExeButton.setDisable(false);}
+            if(dbtransfo.getUnmatchingValue().isEmpty()){
+                this.ExeButton.setDisable(false);
+            }else{this.ExeButton.setDisable(true);}
             
     }
     
