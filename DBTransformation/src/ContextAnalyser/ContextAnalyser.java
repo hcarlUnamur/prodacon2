@@ -292,7 +292,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
     }
     
     private static boolean isUnsigned(Column col){
-        return col.getColumnType().contains("unsigned");
+        return col.getColumnType().toUpperCase().contains("unsigned".toUpperCase());
     }
 
     @Override
