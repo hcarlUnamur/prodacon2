@@ -69,13 +69,13 @@ public class Table {
             Tablecolumn = new ArrayList<Column>();
             this.name = name;
             //create Tablecolumn
-            SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type","CHARACTER_SET_NAME","NUMERIC_PRECISION","NUMERIC_SCALE"},"table_name='"+name+"'" );
+            SQLSelectQuery select = new SQLSelectQuery(new String[]{"information_schema.columns"},con, new String[]{"column_name","column_type","CHARACTER_SET_NAME","NUMERIC_PRECISION","NUMERIC_SCALE,COLUMN_DEFAULT"},"table_name='"+name+"'" );
             ResultSet rs = select.sqlQueryDo();
             while(rs.next()){
                     String colName = rs.getString("column_name");
                     String colType = rs.getString("column_type");
                     String charset = rs.getString("CHARACTER_SET_NAME");
-                    
+                    String defaultV = rs.getString("COLUMN_DEFAULT");
                     // specific case when for example whe store a FLoat without prescice the parameters
                     String numPres = rs.getString("NUMERIC_PRECISION")!=null ? rs.getString("NUMERIC_PRECISION") :"0";
                     String numScal = rs.getString("NUMERIC_SCALE")!=null ? rs.getString("NUMERIC_SCALE") :"0";
@@ -85,7 +85,7 @@ public class Table {
                     }else if(!colType.contains("(") && isIn(colType, ONE_PARAMETER_TYPE) ){
                         colType = String.format("%s(%s)",rs.getString("column_type"),numPres);
                     }
-                    this.addColumn(new Column(colName, colType,charset));             
+                    this.addColumn(new Column(colName, colType,charset,defaultV));             
                 }
             rs.close();
             //creat foreignkeys

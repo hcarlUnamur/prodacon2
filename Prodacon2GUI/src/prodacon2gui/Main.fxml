@@ -253,7 +253,7 @@
                               <Label text="Foreign Keys" GridPane.valignment="CENTER" />
                               <TableView fx:id="fkInfo" maxWidth="1.7976931348623157E308" prefHeight="290.0" prefWidth="378.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                                 <columns>
-                                  <TableColumn fx:id="fkInfoCol1" maxWidth="1.7976931348623157E308" prefWidth="258.0" resizable="false" text="Constant Name" />
+                                  <TableColumn fx:id="fkInfoCol1" maxWidth="1.7976931348623157E308" prefWidth="258.0" resizable="false" text="Constraint Name" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

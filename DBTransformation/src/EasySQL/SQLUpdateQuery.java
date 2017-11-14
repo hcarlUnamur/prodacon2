@@ -56,8 +56,12 @@ public class SQLUpdateQuery extends SQLManipulationQuery implements StringQueryG
     @Override
     public Object sqlQueryUndo() throws SQLException {
         StringBuilder where = new StringBuilder();
-        for(int i = 0;i<setValues.length;i++){
-                where.append(" AND  " +setValues[i][0]+ "='" + setValues[i][1]+"'");
+        for(int i = 0;i<setValues.length;i++){              
+                if((setValues[i][1].equals("DEFAULT"))||(setValues[i][1].equals("NULL"))||(setValues[i][1].equals(null))){
+                    where.append(" AND  " +setValues[i][0]+ " = "+setValues[i][1]+")");
+                }else{
+                    where.append(" AND  " +setValues[i][0]+ "='" + setValues[i][1]+"'");
+                }
             }
             where.delete(0, 4);
         
@@ -115,7 +119,11 @@ public class SQLUpdateQuery extends SQLManipulationQuery implements StringQueryG
         StringBuilder out = new StringBuilder();
         StringBuilder where = new StringBuilder();
         for(int i = 0;i<setValues.length;i++){
-                where.append(" AND  " +setValues[i][0]+ "='" + setValues[i][1]+"'");
+                if((setValues[i][1].equals("DEFAULT"))||(setValues[i][1].equals("NULL"))||(setValues[i][1].equals(null))){
+                    where.append(" AND  " +setValues[i][0]+ " = "+setValues[i][1]+")");
+                }else{
+                    where.append(" AND  " +setValues[i][0]+ "='" + setValues[i][1]+"'");
+                }
             }
             where.delete(0, 4);
         

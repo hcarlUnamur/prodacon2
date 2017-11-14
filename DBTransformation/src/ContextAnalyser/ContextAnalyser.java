@@ -198,7 +198,15 @@ public class ContextAnalyser implements Iterator<Transformation> {
                 //System.out.println(fkColumn.getColumnType()+""+referencedColumn.getColumnType());
                 if(getTypelength2(fkColumn)!=getTypelength2(referencedColumn)){
                     //System.out.println("*****************Transforamtion impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
-                    return new ImpossibleTransformation("Transformation impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
+                    //return new ImpossibleTransformation("Transformation impossible mismatching decimal length : " + fkColumn.getColumnType() + " -/-> " + referencedColumn.getColumnType());
+                    DBTransformation dbt = new DBTransformation(   factory,
+                                                                        tableLoaded, 
+                                                                        fk, TransformationTarget.ForeignKeyTable,
+                                                                        getTypeName(referencedColumn)+"("+getTypelength1(referencedColumn)+","+getTypelength2(referencedColumn)+")",
+                                                                        TransformationType.LMTT
+                                                    );
+                    dbt.setTableDico(dicoTable);
+                    return dbt;
                 }else if(getTypelength1(fkColumn)!=getTypelength1(referencedColumn)){
                         if (getTypelength1(referencedColumn)>getTypelength1(fkColumn)){
                         //System.out.println("*****************Transformation [fk table] : " + fkColumn.getColumnName() + " " + fkColumn + " to " +getTypeName(referencedColumn)+"("+getTypelength1(referencedColumn)+","+getTypelength2(referencedColumn)+")" );

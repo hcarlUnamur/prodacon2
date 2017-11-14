@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
  * @author carl_
  */
 public class DBTransformation extends Transformation {
+    
     private ReentrantLock lock = new ReentrantLock();
     private String dataBaseHostName;
     private String dataBasePortNumber;
@@ -48,6 +49,8 @@ public class DBTransformation extends Transformation {
     
     private Column fkColumnBeforeTransformation;
     private Column refColumnBeforeTransformation;
+    
+    private CascadeChoice cascadeChoice;
     
     public DBTransformation(SQLQueryFactory sqlFactory,HashMap<String,Table> tableDico,ForeignKey fk, TransformationTarget target,String newType,ContextAnalyser.TransformationType transforamtiontype) {
         this.tableName=fk.getForeingKeyTable();
@@ -84,8 +87,15 @@ public class DBTransformation extends Transformation {
         
         this.cascadeFkMap= new HashMap();
         this.cascadeFkMap.put(TransformationTarget.ForeignKeyTable, new ArrayList());
-        this.cascadeFkMap.put(TransformationTarget.ReferencedTable, new ArrayList());
-        
+        this.cascadeFkMap.put(TransformationTarget.ReferencedTable, new ArrayList());       
+    }
+
+    public CascadeChoice getCascadeChoice() {
+        return cascadeChoice;
+    }
+
+    public void setCascadeChoice(CascadeChoice cascadeChoice) {
+        this.cascadeChoice = cascadeChoice;
     }
     
     public Column getFkColumnBeforeTransformation() {
@@ -198,35 +208,26 @@ public class DBTransformation extends Transformation {
     }
     
     public void transfrom() throws SQLException{         
-        
         makeCascadeTransformation();           
- 
         for(SQLQuery query : listQuery){
             query.sqlQueryDo();
         }
         addFkQuery.sqlQueryDo();
-        
-        tableDico.get(fk.getForeingKeyTable()).addForeignKey(fk);
-        
+        tableDico.get(fk.getForeingKeyTable()).addForeignKey(fk);     
     }    
     public void unDoTransformation() throws SQLException{
-        addFkQuery.sqlQueryUndo();
-        
+        addFkQuery.sqlQueryUndo();     
         for (int i=(this.listQuery.size()-1);i>=0;i--){
             cascadTransformation.getQueries().add(0,(SQLAlterTableQuery)listQuery.get(i));
-            //cascadTransformation.addQuery((SQLAlterTableQuery)listQuery.get(i));
-        }
-        
+        }        
         try{
             undoCascadeTransformation();
         }catch(SQLException e){
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, "SQLException during undoing Cascade transformation", e);
-        }
-        
+        }     
     }
 
-    public void analyse(){
-        
+    public void analyse(){       
         try {
             fkColumnBeforeTransformation = loadTable(fk.getForeingKeyTable()).getTablecolumn()
                     .stream()
@@ -238,12 +239,10 @@ public class DBTransformation extends Transformation {
                     .stream()
                     .filter(c->c.getColumnName().equals(fk.getReferencedColumn()))
                     .findFirst()
-                    .get();
-            
+                    .get();            
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        }     
         encodageAnalyse();
         analyseValues();
         analyseCascade();
@@ -261,25 +260,18 @@ public class DBTransformation extends Transformation {
                     .filter(s->s.getColumnName().equals(fk.getForeingKeyColumn()))
                     .findFirst()
                     .get()
-                    .getCharset();
-            
+                    .getCharset();           
             String encodageRef = refTable.getTablecolumn()
                     .stream()
                     .filter(s->s.getColumnName().equals(fk.getReferencedColumn()))
                     .findFirst()
                     .get()
-                    .getCharset();
-            
-            //System.out.println("ref charset : "+encodageRef);
-            //System.out.println("fk charset "+encodagefk);
+                    .getCharset();  
             if(encodageRef ==null && encodagefk==null){
-                 //System.out.println("case1");
                 this.encodageMatching=true;
             }else if ((encodageRef !=null && encodagefk==null) || (encodageRef ==null && encodagefk!=null)){
-                //System.out.println("case2");
                 this.encodageMatching=false;
             } else{
-                //System.out.println("case3 : "+encodageRef.toUpperCase().equals(encodagefk.toUpperCase()));
                 this.encodageMatching = encodageRef.toUpperCase().equals(encodagefk.toUpperCase());
             }
         } catch (SQLException ex) {
@@ -287,18 +279,19 @@ public class DBTransformation extends Transformation {
         }
     }
     
-    public void makeCascadeTransformation() throws SQLException{
-        
+    public void makeCascadeTransformation() throws SQLException{        
         //remove existing fk for the modification
         ArrayList<SQLQuery> remvfk = new ArrayList();
         getCascadeFk().forEach(fk->remvfk.add(sqlFactory.createSQLAlterDropForeignKeyQuery(fk.getForeingKeyTable(), fk)));
         for(SQLQuery query : remvfk){
                 query.sqlQueryDo();
         }
-        // change the type
         
+        // proceed on the unamtching values
+        makeCascadeTransformationOnValues();
+        
+        // change the type        
         SQLTransactionQuery transaction = sqlFactory.creatTransactionQuery();
-        
         if (target.equals(TransformationTarget.ForeignKeyTable)){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
             //modifi the BD intern representation
@@ -315,9 +308,9 @@ public class DBTransformation extends Transformation {
              //modifi the BD intern representation
             setColumnWithTypAndCharset(tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get(),newType);
             setColumnWithTypAndCharset(tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get(),newType);
-        }
+        }       
         
-        
+        //undo remove existing fk for the modification
         for(ForeignKey fk : this.getCascadeFk()){
             transaction.addQuery(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)));
             //new ajout pas certain que se soit bon
@@ -334,6 +327,10 @@ public class DBTransformation extends Transformation {
                 query.sqlQueryUndo();
         }
         
+    }
+    
+    private void makeCascadeTransformationOnValues(){
+    
     }
     
     private void undoCascadeTransformation() throws SQLException{
@@ -388,44 +385,36 @@ public class DBTransformation extends Transformation {
     //ajoute a la liste cascadeFk toutes les foreign key pointant sur la colonne de la table donnée
     private void loadCascadFk(String tablename, String columnName,TransformationTarget target){
             
-            try {
-            
-            if(!tableDico.containsKey(tablename)){tableDico.put(tablename, loadTable(tablename));}
-            SQLSelectQuery select2 = new SQLSelectQuery(
-            new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
-            sqlFactory.getConn(),
-            new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
-            "(REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_TABLE_NAME = '"+tablename+"' AND REFERENCED_COLUMN_NAME = '"+columnName+"') OR ( REFERENCED_TABLE_NAME IS NOT NULL AND TABLE_NAME='"+tablename+"' AND COLUMN_NAME='"+columnName+"' )"
-            );
-            ResultSet result =select2.sqlQueryDo();
-            while(result.next()){
-            
-            ForeignKey clef =   new ForeignKey( result.getString("REFERENCED_TABLE_NAME"),
-            result.getString("REFERENCED_COLUMN_NAME"),
-            result.getString("COLUMN_NAME"),
-            result.getString("TABLE_NAME"),
-            result.getString("CONSTRAINT_NAME")
-            );
-            //test pour éviter les cycles
-            //System.out.println("clef = "+clef);
-            //System.out.println("!cascadeFk.contains(clef) ->"+!cascadeFk.contains(clef));
-            //cascadeFk.forEach(System.out::println);
-            if(!cascadeFkMap.get(target).contains(clef)){
-            //System.out.println("add :" + clef);
-            cascadeFkMap.get(target).add(clef);
-            loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"),target);
-            loadCascadFk(result.getString("REFERENCED_TABLE_NAME"),result.getString("REFERENCED_COLUMN_NAME"),target);  
-            }
-            }
+            try { 
+                if(!tableDico.containsKey(tablename)){tableDico.put(tablename, loadTable(tablename));}
+                SQLSelectQuery select2 = new SQLSelectQuery(
+                new String[]{"INFORMATION_SCHEMA.KEY_COLUMN_USAGE"},
+                sqlFactory.getConn(),
+                new String[]{"TABLE_NAME,COLUMN_NAME","COLUMN_NAME","CONSTRAINT_NAME","REFERENCED_TABLE_NAME","REFERENCED_COLUMN_NAME"},
+                "(REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_TABLE_NAME = '"+tablename+"' AND REFERENCED_COLUMN_NAME = '"+columnName+"') OR ( REFERENCED_TABLE_NAME IS NOT NULL AND TABLE_NAME='"+tablename+"' AND COLUMN_NAME='"+columnName+"' )"
+                );
+                ResultSet result =select2.sqlQueryDo();
+                while(result.next()){            
+                    ForeignKey clef =   new ForeignKey( 
+                        result.getString("REFERENCED_TABLE_NAME"),
+                        result.getString("REFERENCED_COLUMN_NAME"),
+                        result.getString("COLUMN_NAME"),
+                        result.getString("TABLE_NAME"),
+                        result.getString("CONSTRAINT_NAME")
+                    );
+                    if(!cascadeFkMap.get(target).contains(clef)){
+                    cascadeFkMap.get(target).add(clef);
+                    loadCascadFk(result.getString("TABLE_NAME"),result.getString("COLUMN_NAME"),target);
+                    loadCascadFk(result.getString("REFERENCED_TABLE_NAME"),result.getString("REFERENCED_COLUMN_NAME"),target);  
+                    }
+                }
             } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
             loadCascadeFKFromDicoTable(tablename, columnName, target);      
     }
     
-    private void loadCascadeFKFromDicoTable(String tablename, String columnName,TransformationTarget target){
-        
+    private void loadCascadeFKFromDicoTable(String tablename, String columnName,TransformationTarget target){       
         ArrayList<ForeignKey> allFK = new ArrayList();
         this.tableDico.forEach((k,v)->allFK.addAll(v.getForeignKeys()));
          ArrayList<ForeignKey> fkFiltered = allFK.stream()
@@ -481,20 +470,11 @@ public class DBTransformation extends Transformation {
                 
         for(ForeignKey fk : this.getCascadeFk()){
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getForeingKeyTable(), new Column(fk.getForeingKeyColumn(), newType)).getStringSQLQueryDo());
-            //new ajout pas certain que se soit bon
             out.append(sqlFactory.createSQLAlterModifyColumnTypeQuery(fk.getReferencedTableName(), new Column(fk.getReferencedColumn(), newType)).getStringSQLQueryDo());
             //modifi the BD intern representation
             setColumnWithTypAndCharset(tableDico.get(fk.getForeingKeyTable()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getForeingKeyColumn())).findFirst().get(),newType);
             setColumnWithTypAndCharset(tableDico.get(fk.getReferencedTableName()).getTablecolumn().stream().filter(c->c.getColumnName().equals(fk.getReferencedColumn())).findFirst().get(),newType);
-
         }
-        //this.cascadTransformation = transaction;
-        //transaction.sqlQueryDo();
-        //reconstruct the fk
-        //for(SQLQuery query : remvfk){
-        //        out.append(((StringQueryGetter)query).getStringSQLQueryUndo());
-        //        
-        //}
         ArrayList<SQLQuery> readd = new ArrayList();
         getCascadeFk().forEach(fk->readd.add(sqlFactory.createSQLAlterAddForeignKeyQuery(fk.getForeingKeyTable(), fk)));
         for(SQLQuery query : readd){
@@ -507,12 +487,10 @@ public class DBTransformation extends Transformation {
     private Table loadTable(String tableName) throws SQLException{
         Table out = null;
         if (tableDico.containsKey(tableName)){
-            //System.out.println("not reload :" + tableName);
             out = tableDico.get(tableName);
         }else{
-                //System.out.println("reload :" + tableName);
-                out = sqlFactory.loadTable(tableName);
-                tableDico.put(tableName,out);
+            out = sqlFactory.loadTable(tableName);
+            tableDico.put(tableName,out);
         }
         return out;
     }
