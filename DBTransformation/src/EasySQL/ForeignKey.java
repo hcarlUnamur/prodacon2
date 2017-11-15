@@ -108,6 +108,12 @@ public class ForeignKey {
     public String toString() {
         return "ForeignKey{" + "ReferencedTableName=" + ReferencedTableName + ", ReferencedColumn=" + ReferencedColumn + ", foreingKeyColumn=" + foreingKeyColumn + ", foreingKeyTable=" + foreingKeyTable + ", constraintName=" + constraintName + '}';
     }
+
+    @Override
+    protected ForeignKey clone() throws CloneNotSupportedException {
+        return new ForeignKey(ReferencedTableName, ReferencedColumn, foreingKeyColumn, foreingKeyTable, constraintName);
+    }
+    
     
     
 }

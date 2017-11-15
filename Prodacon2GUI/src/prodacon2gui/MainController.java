@@ -594,6 +594,7 @@ public class MainController implements Initializable {
                     } catch (Exception ex) {
                         Platform.runLater( ()->{
                             Alert("Error during transformation",ex.getMessage());
+                            showAnalysebutton();
                         });
                     }
                 });
