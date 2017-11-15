@@ -357,7 +357,7 @@ public class DBTransformation extends Transformation {
                 for(ForeignKey f : fkCascadelist){
                     for(String value : getUnmatchingValue()){
                         SQLQuery query = sqlFactory.createSQLDeleteQuery(
-                                fk.getForeingKeyTable(),
+                                f.getForeingKeyTable(),
                                 String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         query.sqlQueryDo();
@@ -375,7 +375,6 @@ public class DBTransformation extends Transformation {
             if(this.cascadeChoice.equals(CascadeChoice.SetNull)){
                 ArrayList<ForeignKey> fkCascadelist = (ArrayList<ForeignKey>) this.getCascadeFk().clone();
                 fkCascadelist.add(this.fk);
-                fkCascadelist.forEach(System.out::println);
                 for(ForeignKey f : fkCascadelist){
                     for(String value : getUnmatchingValue()){
                         SQLUpdateQuery query = sqlFactory.createSQLUpdateQuery(
@@ -394,7 +393,7 @@ public class DBTransformation extends Transformation {
                 for(ForeignKey f : fkCascadelist){
                     for(String value : getUnmatchingValue()){
                         SQLDeleteQuery query = sqlFactory.createSQLDeleteQuery(
-                                fk.getForeingKeyTable(),
+                                f.getForeingKeyTable(),
                                 String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         out.append(query.getStringSQLQueryDo());
