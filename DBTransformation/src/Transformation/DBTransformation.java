@@ -375,11 +375,12 @@ public class DBTransformation extends Transformation {
             if(this.cascadeChoice.equals(CascadeChoice.SetNull)){
                 ArrayList<ForeignKey> fkCascadelist = (ArrayList<ForeignKey>) this.getCascadeFk().clone();
                 fkCascadelist.add(this.fk);
+                fkCascadelist.forEach(System.out::println);
                 for(ForeignKey f : fkCascadelist){
                     for(String value : getUnmatchingValue()){
                         SQLUpdateQuery query = sqlFactory.createSQLUpdateQuery(
                                 f.getForeingKeyTable(),
-                                (new String[][]{{f.getForeingKeyTable(),null}}) ,
+                                (new String[][]{{f.getForeingKeyColumn(),null}}) ,
                                 String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         out.append(query.getStringSQLQueryDo());
