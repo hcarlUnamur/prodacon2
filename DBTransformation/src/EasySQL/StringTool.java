@@ -32,7 +32,11 @@ public class StringTool {
     public static String UpdateSetVal(String[][] values){
         String cond = "";
             for(int i=0; i<values.length; i++){
-                cond = cond + values[i][0] + "=" + "'" + values[i][1] + "'";
+                if(values[i][1]==null || values[i][1].equals("DEFAULT")){
+                    cond = cond + values[i][0] + "=" + "" + values[i][1] + "";
+                }else{
+                    cond = cond + values[i][0] + "=" + "'" + values[i][1] + "'";
+                }
                 if(i < values.length - 1){
                     cond = cond + " , ";
                 }
