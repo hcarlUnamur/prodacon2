@@ -344,7 +344,7 @@ public class DBTransformation extends Transformation {
                         SQLQuery query = sqlFactory.createSQLUpdateQuery(
                                 f.getForeingKeyTable(),
                                 (new String[][]{{f.getReferencedColumn(),null}}) ,
-                                String.format("%s = '%s'",f.getForeingKeyTable(),value )
+                                String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         query.sqlQueryDo();
                     }
@@ -358,7 +358,7 @@ public class DBTransformation extends Transformation {
                     for(String value : getUnmatchingValue()){
                         SQLQuery query = sqlFactory.createSQLDeleteQuery(
                                 fk.getForeingKeyTable(),
-                                String.format("%s = '%s'",f.getForeingKeyTable(),value )
+                                String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         query.sqlQueryDo();
                     }
@@ -380,7 +380,7 @@ public class DBTransformation extends Transformation {
                         SQLUpdateQuery query = sqlFactory.createSQLUpdateQuery(
                                 f.getForeingKeyTable(),
                                 (new String[][]{{f.getReferencedColumn(),null}}) ,
-                                String.format("%s = '%s'",f.getForeingKeyTable(),value )
+                                String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         out.append(query.getStringSQLQueryDo());
                     }
@@ -394,7 +394,7 @@ public class DBTransformation extends Transformation {
                     for(String value : getUnmatchingValue()){
                         SQLDeleteQuery query = sqlFactory.createSQLDeleteQuery(
                                 fk.getForeingKeyTable(),
-                                String.format("%s = '%s'",f.getForeingKeyTable(),value )
+                                String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         out.append(query.getStringSQLQueryDo());
                     }
