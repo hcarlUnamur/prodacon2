@@ -522,6 +522,10 @@ public class DBTransformation extends Transformation {
         for(SQLQuery query : remvfk){
                 out.append(((StringQueryGetter)query).getStringSQLQueryDo());
         }
+        
+        //proccess the unmatching value
+        out.append(getScriptOfmakeCascadeTransformationOnValues());
+
         // change the type
        
         if (target.equals(TransformationTarget.ForeignKeyTable)){
