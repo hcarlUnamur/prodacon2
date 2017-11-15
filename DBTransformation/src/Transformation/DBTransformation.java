@@ -343,7 +343,7 @@ public class DBTransformation extends Transformation {
                     for(String value : getUnmatchingValue()){
                         SQLQuery query = sqlFactory.createSQLUpdateQuery(
                                 f.getForeingKeyTable(),
-                                (new String[][]{{f.getReferencedColumn(),null}}) ,
+                                (new String[][]{{f.getForeingKeyColumn(),null}}) ,
                                 String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         query.sqlQueryDo();
@@ -379,7 +379,7 @@ public class DBTransformation extends Transformation {
                     for(String value : getUnmatchingValue()){
                         SQLUpdateQuery query = sqlFactory.createSQLUpdateQuery(
                                 f.getForeingKeyTable(),
-                                (new String[][]{{f.getReferencedColumn(),null}}) ,
+                                (new String[][]{{f.getForeingKeyTable(),null}}) ,
                                 String.format("%s = '%s'",f.getForeingKeyColumn(),value )
                         );
                         out.append(query.getStringSQLQueryDo());
