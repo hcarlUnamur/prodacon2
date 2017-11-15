@@ -11,5 +11,6 @@ package Transformation;
  */
 public enum CascadeChoice {
     SetNull,
-    SetDefault
+    SetDefault,
+    DeletValues
 }

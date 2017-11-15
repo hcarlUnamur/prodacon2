@@ -4,6 +4,7 @@ import ContextAnalyser.TransformationType;
 import EasySQL.Column;
 import EasySQL.ForeignKey;
 import EasySQL.SQLAlterTableQuery;
+import EasySQL.SQLDeleteQuery;
 import EasySQL.SQLQuery;
 import EasySQL.SQLQueryFactory;
 import EasySQL.SQLQueryType;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import EasySQL.SQLTransactionQuery;
+import EasySQL.SQLUpdateQuery;
 import EasySQL.StringQueryGetter;
 import java.sql.SQLException;
 import java.util.concurrent.locks.ReentrantLock;
@@ -329,9 +331,72 @@ public class DBTransformation extends Transformation {
         
     }
     
-    private void makeCascadeTransformationOnValues(){
     
+    // to modifi if we want to make undoable
+    private void makeCascadeTransformationOnValues() throws SQLException{
+        if (this.cascadeChoice !=null ){
+            //set case null
+            if(this.cascadeChoice.equals(CascadeChoice.SetNull)){
+                for(ForeignKey f : this.getCascadeFk()){
+                    for(String value : getUnmatchingValue()){
+                        SQLQuery query = sqlFactory.createSQLUpdateQuery(
+                                f.getForeingKeyTable(),
+                                (new String[][]{{f.getReferencedColumn(),null}}) ,
+                                String.format("%s = '%s'",f.getForeingKeyTable(),value )
+                        );
+                        query.sqlQueryDo();
+                    }
+                }
+            }
+            //delete values case
+            if(this.cascadeChoice.equals(CascadeChoice.DeletValues)){
+                for(ForeignKey f : this.getCascadeFk()){
+                    for(String value : getUnmatchingValue()){
+                        SQLQuery query = sqlFactory.createSQLDeleteQuery(
+                                fk.getForeingKeyTable(),
+                                String.format("%s = '%s'",f.getForeingKeyTable(),value )
+                        );
+                        query.sqlQueryDo();
+                    }
+                }
+            }
+        }
     }
+    
+    // to modifi if we want to make undoable (need to implement SQLQUERY getUndoString)
+    private String getScriptOfmakeCascadeTransformationOnValues() throws SQLException{
+        StringBuilder out = new StringBuilder();
+        if (this.cascadeChoice !=null ){
+            //set case null
+            if(this.cascadeChoice.equals(CascadeChoice.SetNull)){
+                for(ForeignKey f : this.getCascadeFk()){
+                    for(String value : getUnmatchingValue()){
+                        SQLUpdateQuery query = sqlFactory.createSQLUpdateQuery(
+                                f.getForeingKeyTable(),
+                                (new String[][]{{f.getReferencedColumn(),null}}) ,
+                                String.format("%s = '%s'",f.getForeingKeyTable(),value )
+                        );
+                        out.append(query.getStringSQLQueryDo());
+                    }
+                }
+            }
+            //delete values case
+            if(this.cascadeChoice.equals(CascadeChoice.DeletValues)){
+                for(ForeignKey f : this.getCascadeFk()){
+                    for(String value : getUnmatchingValue()){
+                        SQLDeleteQuery query = sqlFactory.createSQLDeleteQuery(
+                                fk.getForeingKeyTable(),
+                                String.format("%s = '%s'",f.getForeingKeyTable(),value )
+                        );
+                        out.append(query.getStringSQLQueryDo());
+                    }
+                }
+            }
+        }
+        
+        return out.toString();
+    }
+    
     
     private void undoCascadeTransformation() throws SQLException{
         //remove existing fk for the modification
