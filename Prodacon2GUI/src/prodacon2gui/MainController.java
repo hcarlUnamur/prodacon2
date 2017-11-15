@@ -41,6 +41,7 @@ import javafx.scene.layout.HBox;
 import Transformation.*;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -50,6 +51,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
@@ -498,6 +501,7 @@ public class MainController implements Initializable {
     
     @FXML
     private void executeTransformationButtonOnClick(){
+        boolean cancel=false;
         String message="";
         String newtype ="";
         try {
@@ -543,45 +547,58 @@ public class MainController implements Initializable {
                 throw new Exception("impossible to add relative fk with this parametters["+newtype.split("\\(")[0].toUpperCase()+" != "+currentDbTransformation.getFkColumnBeforeTransformation().getColumnType().split("\\(")[0].toUpperCase()+"]");
             }
             
-            //change button to progress bar
-            analyseButtonBox.getChildren().clear();
-            analyseButtonBox.getChildren().add(progressIndicator);
-            Thread t = new Thread( ()->{
-                try{
-                if(!sqlScript){
-                        this.currentDbTransformation.transfrom();
-                }else{
-                    textAreaScript.appendText("-- processing of : "+this.currentDbTransformation.getFk()+System.lineSeparator()+currentDbTransformation.getTransformationScript().replace(";", ";"+System.lineSeparator())+System.lineSeparator());
-                }
-                Platform.runLater( ()->{
-                    actionChoice.put(this.currentDbTransformation, Action.Transform);
-                    //System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
-                    this.transInfoObservableList.add(0,this.currentDbTransformation);
-                    fkInfoObservableList.remove(0);
+            //if unmaching values
+            if(!currentDbTransformation.getUnmatchingValue().isEmpty()){
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Unmaching value choice");
+                alert.setHeaderText("There are some unmatching values");
+                alert.setContentText("Choose a action");
 
-                    tryNextTransformation();              
-                });
-                } catch (Exception ex) {
-                    Platform.runLater( ()->{
-                        Alert("Error during transformation",ex.getMessage());
-                    });
+                ButtonType setnull = new ButtonType("Set null");
+                ButtonType deletValues = new ButtonType("Delet values on cascade");
+                ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                alert.getButtonTypes().setAll(setnull, deletValues, buttonTypeCancel);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == setnull){
+                    currentDbTransformation.setCascadeChoice(CascadeChoice.SetNull);
+                } else if (result.get() == deletValues) {
+                    currentDbTransformation.setCascadeChoice(CascadeChoice.DeletValues);
+                }    
+                else {
+                    cancel=true;
                 }
-            });
-            t.start();
-            /*
-            if(!sqlScript){
-                this.currentDbTransformation.transfrom();
-            }else{
-                textAreaScript.appendText("-- processing of : "+this.currentDbTransformation.getFk()+System.lineSeparator()+currentDbTransformation.getTransformationScript().replace(";", ";"+System.lineSeparator())+System.lineSeparator());
             }
-     
-            actionChoice.put(this.currentDbTransformation, Action.Transform);
-            //System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
-            this.transInfoObservableList.add(0,this.currentDbTransformation);
-            fkInfoObservableList.remove(0);
             
-            tryNextTransformation();
-            */
+            
+            if(!cancel){ //cancel turned in true only on a unmachnigvalue case and the use chose cancel on the alert Dialogue
+                //change button to progress bar
+                analyseButtonBox.getChildren().clear();
+                analyseButtonBox.getChildren().add(progressIndicator);
+                Thread t = new Thread( ()->{
+                    try{
+                    if(!sqlScript){
+                            this.currentDbTransformation.transfrom();
+                    }else{
+                        textAreaScript.appendText("-- processing of : "+this.currentDbTransformation.getFk()+System.lineSeparator()+currentDbTransformation.getTransformationScript().replace(";", ";"+System.lineSeparator())+System.lineSeparator());
+                    }
+                    Platform.runLater( ()->{
+                        actionChoice.put(this.currentDbTransformation, Action.Transform);
+                        //System.out.println("add : " +this.currentDbTransformation.getFk().getConstraintName() +" on action choice " );
+                        this.transInfoObservableList.add(0,this.currentDbTransformation);
+                        fkInfoObservableList.remove(0);
+
+                        tryNextTransformation();              
+                    });
+                    } catch (Exception ex) {
+                        Platform.runLater( ()->{
+                            Alert("Error during transformation",ex.getMessage());
+                        });
+                    }
+                });
+                t.start();
+            }
         }catch(NumberFormatException e){
             //labelInfo.setTextFill(Color.RED);
             //labelInfo.setText(message);

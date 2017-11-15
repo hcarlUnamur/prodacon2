@@ -337,7 +337,9 @@ public class DBTransformation extends Transformation {
         if (this.cascadeChoice !=null ){
             //set case null
             if(this.cascadeChoice.equals(CascadeChoice.SetNull)){
-                for(ForeignKey f : this.getCascadeFk()){
+                ArrayList<ForeignKey> fkCascadelist = (ArrayList<ForeignKey>) this.getCascadeFk().clone();
+                fkCascadelist.add(this.fk);
+                for(ForeignKey f : fkCascadelist){
                     for(String value : getUnmatchingValue()){
                         SQLQuery query = sqlFactory.createSQLUpdateQuery(
                                 f.getForeingKeyTable(),
@@ -350,7 +352,9 @@ public class DBTransformation extends Transformation {
             }
             //delete values case
             if(this.cascadeChoice.equals(CascadeChoice.DeletValues)){
-                for(ForeignKey f : this.getCascadeFk()){
+                ArrayList<ForeignKey> fkCascadelist = (ArrayList<ForeignKey>) this.getCascadeFk().clone();
+                fkCascadelist.add(this.fk);
+                for(ForeignKey f : fkCascadelist){
                     for(String value : getUnmatchingValue()){
                         SQLQuery query = sqlFactory.createSQLDeleteQuery(
                                 fk.getForeingKeyTable(),
@@ -369,7 +373,9 @@ public class DBTransformation extends Transformation {
         if (this.cascadeChoice !=null ){
             //set case null
             if(this.cascadeChoice.equals(CascadeChoice.SetNull)){
-                for(ForeignKey f : this.getCascadeFk()){
+                ArrayList<ForeignKey> fkCascadelist = (ArrayList<ForeignKey>) this.getCascadeFk().clone();
+                fkCascadelist.add(this.fk);
+                for(ForeignKey f : fkCascadelist){
                     for(String value : getUnmatchingValue()){
                         SQLUpdateQuery query = sqlFactory.createSQLUpdateQuery(
                                 f.getForeingKeyTable(),
@@ -382,7 +388,9 @@ public class DBTransformation extends Transformation {
             }
             //delete values case
             if(this.cascadeChoice.equals(CascadeChoice.DeletValues)){
-                for(ForeignKey f : this.getCascadeFk()){
+                ArrayList<ForeignKey> fkCascadelist = (ArrayList<ForeignKey>) this.getCascadeFk().clone();
+                fkCascadelist.add(this.fk);
+                for(ForeignKey f : fkCascadelist){
                     for(String value : getUnmatchingValue()){
                         SQLDeleteQuery query = sqlFactory.createSQLDeleteQuery(
                                 fk.getForeingKeyTable(),
