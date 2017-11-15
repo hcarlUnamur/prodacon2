@@ -758,11 +758,12 @@ public class MainController implements Initializable {
                         }
                 );
             }
-
+            /*
             if(dbtransfo.getUnmatchingValue().isEmpty()){
                 this.ExeButton.setDisable(false);
             }else{this.ExeButton.setDisable(true);}
-            
+            */
+            this.ExeButton.setDisable(false);
     }
     
     private static String[] typeParser(String s){
