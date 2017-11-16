@@ -13,8 +13,6 @@ import Transformation.ImpossibleTransformation;
 import Transformation.Transformation;
 import Transformation.TransformationTarget;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -22,22 +20,30 @@ import java.util.logging.Logger;
  */
 public class ContextAnalyser implements Iterator<Transformation> {
     
-    private static String[] INT_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT"};
-    private static String[] NUMERIC_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT","FLOAT","DOUBLE","DECIMAL"};
-    private static String[] ALPHA_NUMERIC_TYPES = {"ENUM","CHAR","VARCHAR","BLOB","TEXT","TINYBLOB","TINYTEXT","MEDIUMBLOB","MEDIUMTEXT","LONGBLOB","LONGTEXT"};
-    private static String[] TIME_TYPES = {"TIME","YEAR","DATE","TIMESTAMP","DATETIME"};
-    private static String[] TIME_TYPES_TRANSFORMABLE = {"TIMESTAMP","DATETIME"};
-    private static String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
-    private static String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
+    private static final String[] INT_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT"};
+    private static final String[] NUMERIC_TYPES = {"TINYINT","SMALLINT","INT","MEDIUMINT","BIGINT","FLOAT","DOUBLE","DECIMAL"};
+    private static final String[] ALPHA_NUMERIC_TYPES = {"ENUM","CHAR","VARCHAR","BLOB","TEXT","TINYBLOB","TINYTEXT","MEDIUMBLOB","MEDIUMTEXT","LONGBLOB","LONGTEXT"};
+    private static final String[] TIME_TYPES = {"TIME","YEAR","DATE","TIMESTAMP","DATETIME"};
+    private static final String[] TIME_TYPES_TRANSFORMABLE = {"TIMESTAMP","DATETIME"};
+    private static final String[] ONE_PARAMETER_TYPE={"YEAR","CHAR","VARCHAR"}; 
+    private static final String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
     
-    private ArrayList<ForeignKey> fks;
-    private EasySQL.SQLQueryFactory factory;
-    private HashMap<String,Table> tableLoaded;
-    private HashMap<String,Table> dicoTable;
+    private final ArrayList<ForeignKey> fks;
+    private final EasySQL.SQLQueryFactory factory;
+    private final HashMap<String,Table> tableLoaded;
+    private final HashMap<String,Table> dicoTable;
     private int iteratorIndex;
     
+/**
+ * @param dataBaseHostName the DataBase host name where we will make the transformation.  
+ * @param dbName the data base name where we will make the transformation.
+ * @param dataBasePortNumber the port of data base where we will make the transformation.
+ * @param dataBaseLogin the login of the data base where we will make the transformation.
+ * @param dataBasePassword the password of the login of the data base where we will make the transformation.
+ * @param fks A list of foreign keys that we want to generate the transformation.
+ */
+    
     public ContextAnalyser(String dataBaseHostName,String dbName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword, ArrayList<ForeignKey> fks) {
-
         this.factory= new EasySQL.SQLQueryFactory(dataBaseHostName,dbName,dataBasePortNumber, dataBaseLogin, dataBasePassword);
         this.fks = fks;
         this.tableLoaded = new HashMap<String,Table>();
@@ -49,7 +55,22 @@ public class ContextAnalyser implements Iterator<Transformation> {
         return dicoTable;
     }
        
-    // create de transformation map , try to find a transformation strategy for all foreignKeys;
+
+ /**
+* Create a Transformation Object that was configured to make able the adding of foreign key if it is possible.
+* @param fk foreign key that we want to add to the DB with the returned transformation
+* @throws LoadUnexistentTableException if the tables and/or the columns from the fk parameter don't exist on the DB  
+* @return
+*  - If the fk is already on the DB, return an EmptyTransformation.</br>
+*  - If it is possible, return a DBTransformation Object that was configured to make able the adding of key foreign</br>
+*  - Finally, if the algorithm don't find a possible transformation it return a ImpossibleTransformation </br>  
+* @see Transformation
+* @see DBTransformation
+* @see EmptyTransformation
+* @see ImpossibleTransformation
+*
+*/
+    
     public Transformation analyse(ForeignKey fk) throws LoadUnexistentTableException{
         Table usedTable = null;
         Table referencedTable = null;
@@ -294,12 +315,27 @@ public class ContextAnalyser implements Iterator<Transformation> {
     private static boolean isUnsigned(Column col){
         return col.getColumnType().toUpperCase().contains("unsigned".toUpperCase());
     }
+    
+    
 
     @Override
     public boolean hasNext() {
         return iteratorIndex<this.fks.size();
     }
 
+ /**
+* Return the next Transformation Object of the iteration that was configured to make able the adding of foreign key if it is possible.
+* @throws RuntimeException if the tables and/or the columns from the fk parameter don't exist on the DB  
+* @return
+*  - If the fk is already on the DB, return an EmptyTransformation.</br>
+*  - If it is possible, return a DBTransformation Object that was configured to make able the adding of key foreign</br>
+*  - Finally, if the algorithm don't find a possible transformation it return a ImpossibleTransformation </br>  
+* @see Transformation
+* @see DBTransformation
+* @see EmptyTransformation
+* @see ImpossibleTransformation
+*
+*/  
     @Override
     public Transformation next() {
         Transformation out = null;
@@ -311,7 +347,12 @@ public class ContextAnalyser implements Iterator<Transformation> {
         }
         return out;
     }
-    
+    /**
+     * 
+     * @param table 
+     * @param fk 
+     * @return TRUE if the foreign key is alread on the database. Otherwise, return FALSE
+     */
     private boolean fkAlreadyExist (Table table, ForeignKey fk){
         boolean out = false;
         
@@ -320,7 +361,14 @@ public class ContextAnalyser implements Iterator<Transformation> {
         }
         return out;
     }
-
+    
+    /**
+     * if the Table is already on the dicoTable attribut return the object stored
+     * if not load creat the table with de DB metadata store it and finally return it 
+     * @param tableName name of the table that will be return
+     * @return a configured Table object  
+     * @throws SQLException 
+     */
     private Table loadTable(String tableName) throws SQLException{
         Table out = null;
         if (dicoTable.containsKey(tableName)){
