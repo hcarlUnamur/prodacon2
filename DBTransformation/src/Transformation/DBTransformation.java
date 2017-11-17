@@ -23,7 +23,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 /**
  * Analyse the database to find a way to add the foreign key 
- * (change the type of the Foreignkey and/or the reference,  the cascade transformation, and can processed the unmatching values)
+ * (change the type of the Foreignkey and/or the reference,
+ * the cascade transformation, and can processed the unmatching values)
  * 
  * @author carl
  */
