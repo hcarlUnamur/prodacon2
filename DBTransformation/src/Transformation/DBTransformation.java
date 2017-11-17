@@ -481,30 +481,66 @@ public class DBTransformation extends Transformation {
         
         
     }
-    
+    private static final String[] TWO_PARAMETER_TYPE={"FLOAT","DOUBLE","DECIMAL"};
     private void analyseValues(){
-         String s = String.format(
-                "SELECT %s FROM %s WHERE %s IS NOT NULL AND %s NOT IN (SELECT %s FROM %s);",
-                fk.getForeingKeyColumn(),
-                fk.getForeingKeyTable(),
-                fk.getForeingKeyColumn(),
-                fk.getForeingKeyColumn(),
-                fk.getReferencedColumn(),
-                fk.getReferencedTableName()
-                );
-        try {
-            ResultSet queryResult =sqlFactory.createSQLCreateFreeQuery(SQLQueryType.Getter,s).sqlQueryDo();
-            while(queryResult.next()){
-                unmatchingValue.add(queryResult.getString(1));
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
-                if (this.transforamtiontype.equals(TransformationType.MBT) && !unmatchingValue.isEmpty()){
-                    this.transforamtiontype=TransformationType.MVMT;
+        // case try matching between decimal and undecimal type
+        if( ((isInOrContaintElement(fkColumnBeforeTransformation.getColumnType().toUpperCase(),TWO_PARAMETER_TYPE)) && !(isInOrContaintElement(refColumnBeforeTransformation.getColumnType().toUpperCase(),TWO_PARAMETER_TYPE))) 
+            ||
+            (!(isInOrContaintElement(fkColumnBeforeTransformation.getColumnType().toUpperCase(),TWO_PARAMETER_TYPE)) && (isInOrContaintElement(refColumnBeforeTransformation.getColumnType().toUpperCase(),TWO_PARAMETER_TYPE)))
+          ){
+            try {
+                ArrayList<Float> refValues = new ArrayList();
+                ArrayList<Float> fkValues = new ArrayList();
+                
+                String query1=String.format("Select %s FROM %s",fk.getReferencedColumn(),fk.getForeingKeyTable());
+                ResultSet queryResult =sqlFactory.createSQLCreateFreeQuery(SQLQueryType.Getter,query1).sqlQueryDo();
+                while(queryResult.next()){
+                    try{refValues.add( Float.parseFloat(queryResult.getString(1)));}
+                    catch(NumberFormatException ex){unmatchingValue.add(queryResult.getString(1));}
                 }
+                
+                String query2=String.format("Select %s FROM %s",fk.getForeingKeyColumn(),fk.getForeingKeyTable());
+                queryResult =sqlFactory.createSQLCreateFreeQuery(SQLQueryType.Getter,query2).sqlQueryDo();
+                while(queryResult.next()){
+                    try{fkValues.add( Float.parseFloat(queryResult.getString(1)));}
+                    catch(NumberFormatException ex){unmatchingValue.add(queryResult.getString(1));}
+                }
+                
+                ArrayList<String> unmatch = fkValues.parallelStream()
+                                            .filter(f->!refValues.contains(f))
+                                            .map(f->Float.toString(f))
+                                            .collect(Collectors.toCollection(ArrayList::new));
+                        
+                unmatchingValue.addAll(unmatch);
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
+            }
         
+        }else{
+            String s = String.format(
+                    "SELECT %s FROM %s WHERE %s IS NOT NULL AND %s NOT IN (SELECT %s FROM %s);",
+                    fk.getForeingKeyColumn(),
+                    fk.getForeingKeyTable(),
+                    fk.getForeingKeyColumn(),
+                    fk.getForeingKeyColumn(),
+                    fk.getReferencedColumn(),
+                    fk.getReferencedTableName()
+            );
+            try {
+                ResultSet queryResult =sqlFactory.createSQLCreateFreeQuery(SQLQueryType.Getter,s).sqlQueryDo();
+                while(queryResult.next()){
+                    unmatchingValue.add(queryResult.getString(1));
+                }
+            }catch (SQLException ex){
+                Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        if (this.transforamtiontype.equals(TransformationType.MBT) && !unmatchingValue.isEmpty()){
+            this.transforamtiontype=TransformationType.MVMT;
+        }
     };
     
     private void analyseCascade(){       
@@ -666,6 +702,13 @@ public class DBTransformation extends Transformation {
     private static boolean isIn(String s , String[] table){
             for(String e : table){
                 if(s.toUpperCase().equals(e.toUpperCase())){return true;}
+            }
+        return false;
+    };
+    
+    private static boolean isInOrContaintElement(String s , String[] table){
+            for(String e : table){
+                if(s.toUpperCase().contains(e.toUpperCase())){return true;}
             }
         return false;
     };
