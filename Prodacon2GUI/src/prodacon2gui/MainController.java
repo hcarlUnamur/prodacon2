@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package prodacon2gui;
 
 import ContextAnalyser.ContextAnalyser;
@@ -213,6 +208,8 @@ public class MainController implements Initializable {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 if(isIn((String)newValue, TWO_PARAMETER_TYPE)){
                     hboxNewType2parameterTransforamtion();
+                }else if(((String)newValue).toUpperCase().equals("YEAR")){
+                    hboxNewType0parameterTransforamtion();
                 }else if(isIn((String)newValue, CHARSET_TYPE)){
                    hboxCharsetForm();
                    if(choiceBoxTarget.getValue().equals(TransformationTarget.ReferencedTable)){
@@ -348,6 +345,11 @@ public class MainController implements Initializable {
         l.add(new Label(" ( "));
         l.add(textFieldNewTypeLength1);
         l.add(new Label(" ) "));
+    }
+    
+    private void hboxNewType0parameterTransforamtion(){
+        ObservableList l = hBoxnewType.getChildren();
+        l.clear();
     }
     
     private void hboxCharsetForm(){
@@ -529,6 +531,17 @@ public class MainController implements Initializable {
                 if(!isIn(textFieldcharset.getText(),ALL_CHARSET)){throw new NumberFormatException();}
                 newtype = (String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+") "+"CHARACTER SET "+textFieldcharset.getText() ;
                 currentDbTransformation.setNewType(newtype);           
+            }else if(((String)choiceBoxNexType.getValue()).toUpperCase().equals("YEAR")){
+                message="transformation new type size parametter is not a valid Integer must be 2 or 4";
+                if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
+                if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
+                int i1 = Integer.parseInt(textFieldNewTypeLength1.getText());
+                if(i1!=2 || i1!=4){throw new NumberFormatException();}
+                newtype = (String)choiceBoxNexType.getValue()+"("+textFieldNewTypeLength1.getText()+")" ;
+                currentDbTransformation.setNewType(newtype);
+            }else if (isIn((String)choiceBoxNexType.getValue(),TIME_TYPES)){
+                newtype = (String)choiceBoxNexType.getValue();
+                currentDbTransformation.setNewType(newtype);
             }else{
                 message="transformation new type size parametter is not a valid Integer";
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
