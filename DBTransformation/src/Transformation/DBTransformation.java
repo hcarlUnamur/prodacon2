@@ -484,7 +484,7 @@ public class DBTransformation extends Transformation {
     
     private void analyseValues(){
          String s = String.format(
-                "SELECT %s FROM %s WHERE %s IS NOT NULL AND CONVERT(%s,char) NOT IN (SELECT CONVERT(%s,char) FROM %s);",
+                "SELECT %s FROM %s WHERE %s IS NOT NULL AND %s NOT IN (SELECT %s FROM %s);",
                 fk.getForeingKeyColumn(),
                 fk.getForeingKeyTable(),
                 fk.getForeingKeyColumn(),
