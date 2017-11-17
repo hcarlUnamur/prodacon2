@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Test {
+public class TestValueMismatching {
 
     public static void main(String[] args) {
         try {
@@ -30,6 +30,7 @@ public class Test {
 
             ArrayList<Column> listCol1 = new ArrayList<>();
             listCol1.add(new Column("1id", "int"));
+            listCol1.add(new Column("1name", "varchar(10)"));
             Table t1 = new Table("testTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
             SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
             add1.sqlQueryDo();
@@ -39,7 +40,7 @@ public class Test {
             sqlF.createSQLInsertQuery("testTable1", new String[]{"3"}).sqlQueryDo();
 
             ArrayList<Column> listCol2 = new ArrayList<>();
-            listCol2.add(new Column("2id", "tinyInt"));
+            listCol2.add(new Column("2id", "varchar(10)"));
             Table t2 = new Table("testTable2", listCol2, new ArrayList<ForeignKey>(), "2id");
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
@@ -167,72 +168,8 @@ public class Test {
             sqlF.createSQLInsertQuery("testTable14", new String[]{"1"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testTable14", new String[]{"2"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testTable14", new String[]{"3"}).sqlQueryDo();
+
             
-            ArrayList<Column> listCol15 = new ArrayList<>();
-            listCol15.add(new Column("15id", "int unsigned"));
-            Table t15 = new Table("testTable15", listCol15, new ArrayList<ForeignKey>(), "15id");
-            SQLCreateTableQuery add15 = sqlF.createSQLCreateTableQuery(t15);
-            add15.sqlQueryDo();
-
-            sqlF.createSQLInsertQuery("testTable15", new String[]{"1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable15", new String[]{"2"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable15", new String[]{"3"}).sqlQueryDo();
-
-            ForeignKey fk1 = new ForeignKey("testTable1", "1id", "2id", "testTable2", "FK1");
-            ForeignKey fk2 = new ForeignKey("testTable2", "2id", "3id", "testTable3", "FK2");
-            ForeignKey fk3 = new ForeignKey("testTable2", "2id", "4id", "testTable4", "FK3");
-            ForeignKey fk4 = new ForeignKey("testTable4", "4id", "5id", "testTable5", "FK4");
-            ForeignKey fk5 = new ForeignKey("testTable5", "5id", "1id", "testTable1", "FK5");
-
-            ArrayList<ForeignKey> lFK = new ArrayList<>();
-            lFK.add(fk1);
-
-            //sqlF.createSQLAlterAddForeignKeyQuery("testTable2", fk1).sqlQueryDo();
-            //sqlF.createSQLAlterAddForeignKeyQuery("testTable3", fk2).sqlQueryDo();
-            // sqlF.createSQLAlterAddForeignKeyQuery("testTable4", fk3).sqlQueryDo();
-            //sqlF.createSQLAlterAddForeignKeyQuery("testTable5", fk4).sqlQueryDo();
-            //sqlF.createSQLAlterAddForeignKeyQuery("testTable1", fk5).sqlQueryDo();
-
-            /*
-            ContextAnalyser ca = new ContextAnalyser("localhost", "mydb", "3306", "root", "root", lFK);
-            
-            
-            while (ca.hasNext()){
-                System.out.println("OOOOOOOOOOOOOOOO");
-                Transformation transfo = ca.next();
-                
-                if (transfo instanceof DBTransformation){
-                    DBTransformation dbt = (DBTransformation)transfo;
-                    dbt.analyse();
-                    System.out.println("aaaaaaaaaa " + dbt.getTarget() + " + " + dbt.getTransforamtiontype() + " + encodage match : " + dbt.isEncodageMatching());
-                    for (SQLQuery q : dbt.getListQuery()){
-                        System.out.println("query : " + q.toString());
-                    }
-                    
-                    for (String s : dbt.getUnmatchingValue()){
-                        System.out.println("unmatching Values : " + s);
-                    }
-                                       
-                    dbt.transfrom();
-                    System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuundo");
-                    //dbt.unDoTransformation();
-                }
-                else if (transfo instanceof ImpossibleTransformation){
-                    ImpossibleTransformation impT = (ImpossibleTransformation)transfo;
-                    System.out.println("MESSAGE : " + impT.getMessage());
-                }else if (transfo instanceof EmptyTransformation){
-                    EmptyTransformation empt = (EmptyTransformation) transfo;
-                    System.out.println("MESSAGE : " + empt.getMessage());
-                }
-                
-            }
-            System.out.println("NNNNNNNNNNNNNNNNN");
-            add5.sqlQueryUndo();
-            add4.sqlQueryUndo();
-            add3.sqlQueryUndo();
-            add2.sqlQueryUndo();
-            add1.sqlQueryUndo();
-             */
         } catch (SQLException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }
