@@ -1,13 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Transformation;
 
 /**
  *
- * @author carl_
+ * Object that represente that there are no need some transformation, the foreign key is already on the DB 
+ * 
+ * @author carl
  */
 public class EmptyTransformation extends Transformation {
 

@@ -22,8 +22,10 @@ import java.sql.SQLException;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 /**
- *
- * @author carl_
+ * Analyse the database to find a way to add the foreign key 
+ * (change the type of the Foreignkey and/or the reference,  the cascade transformation, and can processed the unmatching values)
+ * 
+ * @author carl
  */
 public class DBTransformation extends Transformation {
     
@@ -54,6 +56,16 @@ public class DBTransformation extends Transformation {
     
     private CascadeChoice cascadeChoice;
     
+    /**
+     * DBTransformation constructor
+     * 
+     * @param sqlFactory SQLFactory linked the the database
+     * @param tableDico Hashmap containt the Table object that don't have to be loade directli from the database metadata (= intern represnetation of the DB) 
+     * @param fk ForeignKey that we want to add
+     * @param target Column(s) that will be transformed by the transformation ()   
+     * @param newType new type given to the target column (and these potentials "cascade column")
+     * @param transforamtiontype information about the type of transformation (instantiated by the ContextAnalyser) 
+     */
     public DBTransformation(SQLQueryFactory sqlFactory,HashMap<String,Table> tableDico,ForeignKey fk, TransformationTarget target,String newType,ContextAnalyser.TransformationType transforamtiontype) {
         this.tableName=fk.getForeingKeyTable();
         this.listQuery = new ArrayList();
@@ -71,6 +83,21 @@ public class DBTransformation extends Transformation {
         this.cascadeFkMap.put(TransformationTarget.ReferencedTable, new ArrayList());
         
     }
+    
+    /**
+     * DBTransformation constructor
+     * 
+     * @deprecated 
+     * @param dataBaseHostName DB hostname 
+     * @param dataBasePortNumber DB port number
+     * @param dataBaseLogin DB login
+     * @param dataBasePassword DB password of the given login
+     * @param tableDico Hashmap containt the Table object that don't have to be loade directli from the database metadata (= intern represnetation of the DB) 
+     * @param fk ForeignKey that we want to add
+     * @param target Column(s) that will be transformed by the transformation ()   
+     * @param newType new type given to the target column (and these potentials "cascade column")
+     * @param transforamtiontype information about the type of transformation (instantiated by the ContextAnalyser) 
+     */
     public DBTransformation(String dataBaseHostName, String dataBasePortNumber, String dataBaseLogin, String dataBasePassword,HashMap<String,Table> tableDico, ForeignKey fk, TransformationTarget target, String newType, ContextAnalyser.TransformationType transforamtiontype) {
         this.dataBaseHostName = dataBaseHostName;
         this.dataBasePortNumber = dataBasePortNumber;
@@ -208,7 +235,13 @@ public class DBTransformation extends Transformation {
     public void setTransforamtiontype(TransformationType transforamtiontype) {
         this.transforamtiontype = transforamtiontype;
     }
-    
+    /**
+     * Make a direct transformation on the database the add the given Foreign key.
+     * Change the type of the "target" (target attribut) to the "newType"(attribut) and make the some of the cascade column
+     * delet or set null the unmatching value according the "cascadeChoice" (attribut) value.
+     * finally adding the foreign key constraint.
+     * @throws SQLException if there are some probleme with the DB
+     */
     public void transfrom() throws SQLException{         
         makeCascadeTransformation();           
         for(SQLQuery query : listQuery){
@@ -216,7 +249,14 @@ public class DBTransformation extends Transformation {
         }
         addFkQuery.sqlQueryDo();
         tableDico.get(fk.getForeingKeyTable()).addForeignKey(fk);     
-    }    
+    } 
+    
+    /**
+     * undo the DB transformation
+     * Require the execution of the transfrom() method first
+     * not suported if there was some unmatching value during the previous transformation
+     * @throws SQLException if there are some probleme with the DB
+     */
     public void unDoTransformation() throws SQLException{
         addFkQuery.sqlQueryUndo();     
         for (int i=(this.listQuery.size()-1);i>=0;i--){
@@ -229,6 +269,18 @@ public class DBTransformation extends Transformation {
         }     
     }
 
+    /**
+     * use the intern representation ("tableDico" attribut) the database metadata to analyse if the charset match,
+     * if there are some unmatching value and if there are some potential cascade transformation to proceed.
+     * This methode instantiates the attributs : 
+     * ArrayList<String> unmatchingValue, 
+     * HashMap<TransformationTarget,ArrayList<ForeignKey>> cascadeFkMap,
+     * boolean encodageMatching,
+     * Column fkColumnBeforeTransformation,
+     * Column refColumnBeforeTransformation,
+     * SQLAlterTableQuery addFkQuery
+     * 
+     */
     public void analyse(){       
         try {
             fkColumnBeforeTransformation = loadTable(fk.getForeingKeyTable()).getTablecolumn()
@@ -245,7 +297,7 @@ public class DBTransformation extends Transformation {
         } catch (SQLException ex) {
             Logger.getLogger(DBTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }     
-        encodageAnalyse();
+        encodageAnalyse(); // = charset analyse
         analyseValues();
         analyseCascade();
         //déplacer dans le cascade : transforamtion du type de la fk ou ref column
@@ -405,7 +457,12 @@ public class DBTransformation extends Transformation {
         return out.toString();
     }
     
-    
+    /**
+     * Require the execution of CascadeTransformation first
+     * Not supported if the previous transformation had some unmatching values 
+     * 
+     * @throws SQLException 
+     */
     private void undoCascadeTransformation() throws SQLException{
         //remove existing fk for the modification
         ArrayList<SQLQuery> remvfv = new ArrayList();
@@ -502,6 +559,12 @@ public class DBTransformation extends Transformation {
          }
     }
     
+    /**
+     * 
+     * @return A String that contains the script to proceeds to the adding of the Foreign key
+     * @throws SQLException if there are some probleme with de database 
+     */
+    
     public String getTransformationScript()throws SQLException{
         StringBuilder out = new StringBuilder();         
         out.append(getMakeCascadeTransformationString());                  
@@ -514,7 +577,13 @@ public class DBTransformation extends Transformation {
         return out.toString();
     }
     
-    public String getMakeCascadeTransformationString() throws SQLException{
+    /**
+     * 
+     * @return A String that contains the script to proceeds the cascade transformation to make able the adding of the Foreign key
+     * @throws SQLException if there are some probleme with de database 
+     */
+    
+    private String getMakeCascadeTransformationString() throws SQLException{
         StringBuilder out = new StringBuilder();
         //remove existing fk for the modification
         ArrayList<SQLQuery> remvfk = new ArrayList();
@@ -561,6 +630,13 @@ public class DBTransformation extends Transformation {
         return out.toString();
     }
     
+    /**
+     * Return a Table Object that is which that be stored on de intern representation (tableDico attribut)
+     * if it don't be already stored creat it from the DB metadata, store it and retrun it; 
+     * @param tableName Name of the Table that we have to load
+     * @return A Table Object laready initialised
+     * @throws SQLException if there are some probleme with de database
+     */
     private Table loadTable(String tableName) throws SQLException{
         Table out = null;
         if (tableDico.containsKey(tableName)){
