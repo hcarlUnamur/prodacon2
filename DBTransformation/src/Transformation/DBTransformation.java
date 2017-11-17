@@ -491,9 +491,9 @@ public class DBTransformation extends Transformation {
           ){
             try {
                 ArrayList<Float> refValues = new ArrayList();
-                ArrayList<Float> fkValues = new ArrayList();
+                ArrayList<Float> fkValues = new ArrayList();               
                 
-                String query1=String.format("Select %s FROM %s",fk.getReferencedColumn(),fk.getForeingKeyTable());
+                String query1=String.format("Select %s FROM %s",fk.getReferencedColumn(),fk.getReferencedTableName());
                 ResultSet queryResult =sqlFactory.createSQLCreateFreeQuery(SQLQueryType.Getter,query1).sqlQueryDo();
                 while(queryResult.next()){
                     try{refValues.add( Float.parseFloat(queryResult.getString(1)));}
@@ -507,11 +507,17 @@ public class DBTransformation extends Transformation {
                     catch(NumberFormatException ex){unmatchingValue.add(queryResult.getString(1));}
                 }
                 
+                refValues.forEach(System.out::println);
+                System.out.println("________");
+                fkValues.forEach(System.out::println);
+                
                 ArrayList<String> unmatch = fkValues.parallelStream()
                                             .filter(f->!refValues.contains(f))
                                             .map(f->Float.toString(f))
                                             .collect(Collectors.toCollection(ArrayList::new));
-                        
+                    
+                System.out.println("________");
+                unmatch.forEach(System.out::println);
                 unmatchingValue.addAll(unmatch);
                 
             } catch (SQLException ex) {
