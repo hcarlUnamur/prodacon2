@@ -508,8 +508,8 @@ public class MainController implements Initializable {
         String newtype ="";
         try {
             System.out.println(" 1 "+(isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)));
-            System.out.println(" 2 "+currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)|| isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) );
-            System.out.println(" 3 "+currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)|| isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES));
+            System.out.println(" 2 "+(currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)|| isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ));
+            System.out.println(" 3 "+(currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)|| isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES)));
             
             
             
