@@ -544,7 +544,7 @@ public class MainController implements Initializable {
                 currentDbTransformation.setNewType(newtype);
             }
             //test transforamtion is :  float -> varchar,text ... 
-            else if (  (isIn(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)) &&
+            else if (  (isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)) &&
                             (
                                 (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)|| isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ) ||
                                 (currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)|| isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) )
