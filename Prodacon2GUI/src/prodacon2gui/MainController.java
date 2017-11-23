@@ -524,7 +524,11 @@ public class MainController implements Initializable {
             
             System.out.println(" 5 "+ (boolNewTypeIsAlpha && (boolTargetIsFKAndWasDecimal || boolTargetIsREFAndWasDecimal)));
             //test type parameter
-            if(isIn((String)choiceBoxNexType.getValue(),TWO_PARAMETER_TYPE)){
+            if ((boolNewTypeIsAlpha && (boolTargetIsFKAndWasDecimal || boolTargetIsREFAndWasDecimal))){
+                message="The application don't support transformation between Decimal type to alphanumeric type";
+                System.out.println("coucou bitch");
+                throw new NumberFormatException();               
+            }else if(isIn((String)choiceBoxNexType.getValue(),TWO_PARAMETER_TYPE)){
                 message="transformation new type size parametter is not a valid Integer";
                 if(textFieldNewTypeLength1.getText()==null || textFieldNewTypeLength2.getText()==null){throw new NumberFormatException();}
                 if(textFieldNewTypeLength1.getText().replace(" ", "").isEmpty()||textFieldNewTypeLength2.getText().replace(" ", "").isEmpty()){ throw new NumberFormatException();}
@@ -558,12 +562,6 @@ public class MainController implements Initializable {
             }else if (isIn((String)choiceBoxNexType.getValue(),TIME_TYPES)){
                 newtype = (String)choiceBoxNexType.getValue();
                 currentDbTransformation.setNewType(newtype);
-            }
-            //test transforamtion is :  float -> varchar,text ... 
-            else if ((boolNewTypeIsAlpha && (boolTargetIsFKAndWasDecimal || boolTargetIsREFAndWasDecimal))){
-                message="The application don't support transformation between Decimal type to alphanumeric type";
-                System.out.println("coucou bitch");
-                throw new NumberFormatException();               
             }else{
                 message="transformation new type size parametter is not a valid Integer";
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
