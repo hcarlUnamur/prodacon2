@@ -564,6 +564,7 @@ public class MainController implements Initializable {
                         
                     ){
                 message="The application don't support transformation between Decimal type to alphanumeric type";
+                System.out.println("coucou bitch");
                 throw new NumberFormatException();               
             }else{
                 message="transformation new type size parametter is not a valid Integer";
