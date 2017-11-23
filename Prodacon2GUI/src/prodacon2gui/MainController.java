@@ -508,8 +508,8 @@ public class MainController implements Initializable {
         String newtype ="";
         try {
             System.out.println(" 1 "+(isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)));
-            System.out.println(" 2 "+(currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)|| isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ));
-            System.out.println(" 3 "+(currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)|| isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES)));
+            System.out.println(" 2 "+(currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)&& isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ));
+            System.out.println(" 3 "+(currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)&& isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES)));
             System.out.println(" 4 "+(  (isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)) &&
                             (
                                 (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)|| isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ) ||
@@ -558,10 +558,9 @@ public class MainController implements Initializable {
             //test transforamtion is :  float -> varchar,text ... 
             else if (  (isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)) &&
                             (
-                                (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)|| isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ) ||
-                                (currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)|| isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) )
-                            )
-                        
+                                (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)&& isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ) ||
+                                (currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)&& isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) )
+                            )                        
                     ){
                 message="The application don't support transformation between Decimal type to alphanumeric type";
                 System.out.println("coucou bitch");
