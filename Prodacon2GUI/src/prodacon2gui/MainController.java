@@ -542,6 +542,17 @@ public class MainController implements Initializable {
             }else if (isIn((String)choiceBoxNexType.getValue(),TIME_TYPES)){
                 newtype = (String)choiceBoxNexType.getValue();
                 currentDbTransformation.setNewType(newtype);
+            }
+            //test transforamtion is :  float -> varchar,text ... 
+            else if (  (isIn(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)) &&
+                            (
+                                (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)|| isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ) ||
+                                (currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)|| isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) )
+                            )
+                        
+                    ){
+                message="The application don't support transformation between Decimal type to alphanumeric type";
+                throw new NumberFormatException();               
             }else{
                 message="transformation new type size parametter is not a valid Integer";
                 if(textFieldNewTypeLength1.getText()==null){throw new NumberFormatException();}
@@ -1046,4 +1057,10 @@ public class MainController implements Initializable {
         return false;
     };
 
+    private static boolean isInOrContaintElement(String s , String[] table){
+            for(String e : table){
+                if(s.toUpperCase().contains(e.toUpperCase())){return true;}
+            }
+        return false;
+    };
 }
