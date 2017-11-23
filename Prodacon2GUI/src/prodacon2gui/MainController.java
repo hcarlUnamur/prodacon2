@@ -517,8 +517,12 @@ public class MainController implements Initializable {
                             )
                         
                     ));
+           
+            boolean boolNewTypeIsAlpha = (isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES));
+            boolean boolTargetIsFKAndWasDecimal = (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)&& isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES)) ;
+            boolean boolTargetIsREFAndWasDecimal = (currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)&& isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES));
             
-            
+            System.out.println(" 5 "+ (boolNewTypeIsAlpha && (boolTargetIsFKAndWasDecimal || boolTargetIsREFAndWasDecimal)));
             //test type parameter
             if(isIn((String)choiceBoxNexType.getValue(),TWO_PARAMETER_TYPE)){
                 message="transformation new type size parametter is not a valid Integer";
