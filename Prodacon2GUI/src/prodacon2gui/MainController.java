@@ -507,26 +507,12 @@ public class MainController implements Initializable {
         String message="";
         String newtype ="";
         try {
-            System.out.println(" 1 "+(isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)));
-            System.out.println(" 2 "+(currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)&& isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ));
-            System.out.println(" 3 "+(currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)&& isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES)));
-            System.out.println(" 4 "+(  (isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)) &&
-                            (
-                                (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)|| isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ) ||
-                                (currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)|| isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) )
-                            )
-                        
-                    ));
-           
             boolean boolNewTypeIsAlpha = (isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES));
             boolean boolTargetIsFKAndWasDecimal = (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)&& isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES)) ;
             boolean boolTargetIsREFAndWasDecimal = (currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)&& isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES));
             
-            System.out.println(" 5 "+ (boolNewTypeIsAlpha && (boolTargetIsFKAndWasDecimal || boolTargetIsREFAndWasDecimal)));
-            //test type parameter
             if ((boolNewTypeIsAlpha && (boolTargetIsFKAndWasDecimal || boolTargetIsREFAndWasDecimal))){
                 message="The application don't support transformation between Decimal type to alphanumeric type";
-                System.out.println("coucou bitch");
                 throw new NumberFormatException();               
             }else if(isIn((String)choiceBoxNexType.getValue(),TWO_PARAMETER_TYPE)){
                 message="transformation new type size parametter is not a valid Integer";
