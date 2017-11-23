@@ -560,12 +560,7 @@ public class MainController implements Initializable {
                 currentDbTransformation.setNewType(newtype);
             }
             //test transforamtion is :  float -> varchar,text ... 
-            else if (  (isInOrContaintElement(currentDbTransformation.getNewType(),ALPHA_NUMERIC_TYPES)) &&
-                            (
-                                (currentDbTransformation.getTarget().equals(TransformationTarget.ForeignKeyTable)&& isInOrContaintElement(currentDbTransformation.getFkColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) ) ||
-                                (currentDbTransformation.getTarget().equals(TransformationTarget.ReferencedTable)&& isInOrContaintElement(currentDbTransformation.getRefColumnBeforeTransformation().getColumnType(),DECIMAL_NUMERIC_TYPES) )
-                            )                        
-                    ){
+            else if ((boolNewTypeIsAlpha && (boolTargetIsFKAndWasDecimal || boolTargetIsREFAndWasDecimal))){
                 message="The application don't support transformation between Decimal type to alphanumeric type";
                 System.out.println("coucou bitch");
                 throw new NumberFormatException();               
