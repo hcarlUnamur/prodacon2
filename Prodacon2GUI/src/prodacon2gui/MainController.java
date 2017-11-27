@@ -256,8 +256,7 @@ public class MainController implements Initializable {
                             sb.append(colr.getColumnType().toString() +" "+ ((colr.getCharset()!=null)?" CHARSET : "+colr.getCharset():""));
                             if (!cascadeTransformationObservableList.contains(sb.toString())){
                                cascadeTransformationObservableList.add(sb.toString());
-                            }
-                            
+                            }                            
                         }
                 );
                 if(newtarget.equals(TransformationTarget.ForeignKeyTable)){
