@@ -123,4 +123,8 @@ public class SQLQueryFactory extends AbstractSQLQueryFactory {
         return SQLAlterTableQuery.CreateDropPrimaryKeyQuery(table, getConn());
     }
     
+    public SQLCreateTriggerQuery createSQLcreateTriggerQuery(ForeignKey fk, String logTable){
+        return new SQLCreateTriggerQuery(getConn(), fk, logTable);
+    }
+    
 }

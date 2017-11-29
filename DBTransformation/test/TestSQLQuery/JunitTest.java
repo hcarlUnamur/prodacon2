@@ -10,11 +10,13 @@ import EasySQL.Column;
 import EasySQL.ForeignKey;
 import EasySQL.SQLAlterTableQuery;
 import EasySQL.SQLCreateTableQuery;
+import EasySQL.SQLCreateTriggerQuery;
 import EasySQL.SQLDeleteQuery;
 import EasySQL.SQLDropTableQuery;
 import EasySQL.SQLInsertQuery;
 import EasySQL.SQLQuery;
 import EasySQL.SQLQueryFactory;
+import EasySQL.SQLQueryFree;
 import EasySQL.SQLQueryType;
 import EasySQL.SQLSelectQuery;
 import EasySQL.SQLTransactionQuery;
@@ -1257,24 +1259,26 @@ public class JunitTest {
                     }
                     dbt.transfrom();
                     */
-                    result = 1;
-                    System.err.println("MESSAGE : sould be IMP transformation");
+                    //result = 1;
+                    //System.err.println("MESSAGE : sould be IMP transformation");
                     //dbt.unDoTransformation();
                 }
                 else if (transfo instanceof ImpossibleTransformation){
+                    
                     /*
                     ImpossibleTransformation impT = (ImpossibleTransformation)transfo;
                     System.err.println("MESSAGE : " + impT.getMessage());
                     result = 1;
                     */
                 }else if (transfo instanceof EmptyTransformation){
+                    
                     EmptyTransformation empt = (EmptyTransformation) transfo;
                     System.err.println("MESSAGE : " + empt.getMessage());
                     result = 1;
                 }
                 
             }
-            
+           
             /*
             t2 = sqlF.loadTable("testIMPTable2");
             ArrayList<ForeignKey> lfk = new ArrayList<>();
@@ -1318,6 +1322,74 @@ public class JunitTest {
         }
         assertEquals(0, result);
     }
+    
+     @Test
+    public void testTriggerQuery() {
+
+        int result = 0;
+        try {
+            ArrayList<Column> listCol1 = new ArrayList<>();
+            listCol1.add(new Column("1id", "int"));
+            Table t1 = new Table("testTrigger1", listCol1, new ArrayList<ForeignKey>(), "1id");
+            SQLCreateTableQuery add1 = sqlF.createSQLCreateTableQuery(t1);
+            add1.sqlQueryDo();
+            
+            ArrayList<Column> listCol2 = new ArrayList<>();
+            listCol2.add(new Column("2id", "int"));
+            
+            Table t2 = new Table("testTrigger2", listCol2, new ArrayList<ForeignKey>(), "2id");
+            SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
+            add2.sqlQueryDo();
+            
+            ArrayList<Column> listCol3 = new ArrayList<>();
+            listCol3.add(new Column("foreignKeyTable", "varchar(100) NOT NULL"));
+            listCol3.add(new Column("foreignKeyColumn", "varchar(100) NOT NULL"));
+            listCol3.add(new Column("referencedTable", "varchar(100) NOT NULL"));
+            listCol3.add(new Column("referencedColumn", "varchar(100) NOT NULL"));
+            listCol3.add(new Column("problemAction", "varchar(40) NOT NULL"));
+            listCol3.add(new Column("dateAndTime", "TimeStamp NOT NULL DEFAULT now()"));
+            
+            Table t3 = new Table("tableTriggerLog", listCol3);
+            SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
+            add3.sqlQueryDo();
+            
+            ForeignKey fk = new ForeignKey("testTrigger2", "2id", "1id", "testTrigger1", "TriggerFk");
+            
+            SQLCreateTriggerQuery tri = sqlF.createSQLcreateTriggerQuery(fk, "tableTriggerLog");
+            tri.sqlQueryDo();
+            
+            SQLInsertQuery ins1 = sqlF.createSQLInsertQuery("testTrigger1", new String[]{"1"});
+            ins1.sqlQueryDo();
+            SQLInsertQuery ins2 = sqlF.createSQLInsertQuery("testTrigger2", new String[]{"1"});
+            ins2.sqlQueryDo();
+            SQLDeleteQuery ins3 = sqlF.createSQLDeleteQuery("testTrigger2", "testTrigger2.2id=\"1\"");
+            ins3.sqlQueryDo();
+            SQLUpdateQuery ins4 = sqlF.createSQLUpdateQuery("testTrigger1", new String[][]{{"1id", "2"}}, "testTrigger1.1id=\"1\"");
+            ins4.sqlQueryDo();
+            SQLInsertQuery ins5 = sqlF.createSQLInsertQuery("testTrigger2", new String[]{"2"});
+            ins5.sqlQueryDo();
+            SQLUpdateQuery ins6 = sqlF.createSQLUpdateQuery("testTrigger2", new String[][]{{"2id", "3"}}, "testTrigger2.2id=\"2\"");
+            ins6.sqlQueryDo();
+            
+            SQLQueryFree free = sqlF.createSQLCreateFreeQuery(SQLQueryType.Getter, "select COUNT(*) from tableTriggerLog");
+            ResultSet count = free.sqlQueryDo();
+            count.next();
+            if(!count.getString(1).equals("5")){
+                result = 1;
+                System.err.println("trigger problem");
+            }
+            add2.sqlQueryUndo();
+            add1.sqlQueryUndo();
+            add3.sqlQueryUndo();
+
+            System.out.println("ok");
+        } catch (Exception ex) {
+            ErrorGestion(ex, "testTriggerQuery", new ArrayList<>(Arrays.asList("testTrigger2", "testTrigger1", "tableTriggerLog")));
+            result = 1;
+        }
+        assertEquals(0, result);
+    }
+    
     /*
     //permet de tester si la méthode de création de transaction fonctionne.
     @Test
