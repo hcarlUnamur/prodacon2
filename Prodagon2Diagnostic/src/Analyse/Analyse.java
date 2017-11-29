@@ -52,6 +52,8 @@ public class Analyse {
     
 // Constructor -------------------------------------------------------------------------------------------------------------------------------------    
     
+    private Analyse() {}
+    
     public Analyse(SQLQueryFactory sqlFactory, HashMap<String, Table> dicoTable, ForeignKey fk, TransformationTarget target, String newType, TransformationType transforamtiontype) {
         this.sqlFactory = sqlFactory;
         this.dicoTable = dicoTable;
@@ -59,6 +61,24 @@ public class Analyse {
         this.target = target;
         this.newType = newType;
         this.transforamtiontype = transforamtiontype;
+        this.cascadeFkMap.put(TransformationTarget.ForeignKeyTable, new ArrayList());
+        this.cascadeFkMap.put(TransformationTarget.ReferencedTable, new ArrayList());
+    }
+    
+    public static Analyse impossibleToFindTable(ForeignKey fk){
+        Analyse out = new Analyse();
+        out.fk = fk;
+        out.impossibleAdding=true;
+        out.message="Impossible to find the Reference/ForeignKey table and/or column. It can be not exist";
+        return out;
+    }
+    
+    public static Analyse impossibleToFindTable(ForeignKey fk, String message){
+        Analyse out = new Analyse();
+        out.fk = fk;
+        out.impossibleAdding=true;
+        out.message=message;
+        return out;
     }
 
 // Getter & Setter -------------------------------------------------------------------------------------------------------------------------------------
@@ -371,9 +391,9 @@ public class Analyse {
      * @param objectName  name of Json creat
      * @return String in Json format to Diagnostic the feasibility of foreign key adding 
      */
-    private String getJson(String objectName){
+    public String getJson(String objectName){
         HashMap<String,Object> map = new HashMap();
-        map.put("foreignKey",this.fk);
+        map.put("foreignKey",this.fk.toJson());
         map.put("message", this.message);
         if(this.impossibleAdding){
             map.put("impossibleAdding",new Boolean(this.impossibleAdding));
@@ -383,9 +403,9 @@ public class Analyse {
             map.put("impossibleAdding",new Boolean(this.impossibleAdding));
             map.put("fkAlreadyExist",new Boolean(this.fkAlreadyExist));
             map.put("encodageMatching",new Boolean(this.encodageMatching));
-            map.put("unmatchingUnsigned",new Boolean(this.unmatchingUnsigned));
-            map.put("foreignKeyCascade",this.cascadeFkMap.get(TransformationTarget.ForeignKeyTable));
-            map.put("ReferenceCascade",this.cascadeFkMap.get(TransformationTarget.ReferencedTable));
+            map.put("unmatchingUnsigned",new Boolean(this.unmatchingUnsigned));          
+            map.put("foreignKeyCascade",(this.cascadeFkMap.get(TransformationTarget.ForeignKeyTable)).stream().map(fk->fk.toJson()).collect(Collectors.toCollection(ArrayList::new)));
+            map.put("ReferenceCascade",(this.cascadeFkMap.get(TransformationTarget.ReferencedTable)).stream().map(fk->fk.toJson()).collect(Collectors.toCollection(ArrayList::new)));
             map.put("advisedNewType",this.newType);
             map.put("advisedTarget",this.target.name());
             map.put("transformationType",this.transforamtiontype.name());
@@ -397,7 +417,7 @@ public class Analyse {
      * @return String in Json format to Diagnostic the feasibility of foreign key adding 
      * the name of this json is the foreign key constraint name
      */
-    private String getJson(){
+    public String getJson(){
         return getJson(fk.getConstraintName());
     }
     
@@ -418,4 +438,12 @@ public class Analyse {
         }
         return out;
     }
+
+    @Override
+    public String toString() {
+        return super.toString(); 
+    }
+    
+    
+    
 }

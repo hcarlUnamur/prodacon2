@@ -114,6 +114,9 @@ public class ForeignKey {
         return new ForeignKey(ReferencedTableName, ReferencedColumn, foreingKeyColumn, foreingKeyTable, constraintName);
     }
     
+    public String toJson(){
+        return "{" + "\"ReferencedTableName\":\"" + ReferencedTableName + "\", \"ReferencedColumn\":\"" + ReferencedColumn + "\", \"ForeingKeyColumn\":\"" + foreingKeyColumn + "\", \"ForeingKeyTable\":\"" + foreingKeyTable + "\", \"ConstraintName\":\"" + constraintName + "\"}";
+    }
     
     
 }

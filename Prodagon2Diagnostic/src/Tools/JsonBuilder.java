@@ -26,6 +26,7 @@ public class JsonBuilder {
         out.append("{ \""+objectName+"\" : {");
         map.forEach((k,v)->out.append(objectToJsonElement(k, v)));
         out.append("}}");
+        out.deleteCharAt(out.lastIndexOf(","));
         return out.toString();
     }
     static public String objectToJsonElement(String key, Object value){
@@ -38,9 +39,13 @@ public class JsonBuilder {
                 out.delete(out.length()-2, out.length());
             }
             out.append(" ], ");
-        }else{
-            out.append("\""+key+"\" : \""+value.toString()+"\",");
-        }    
+        }else if((value.toString()).contains("{")){
+            out.append("\""+key+"\" : "+value.toString()+",");
+        }
+        else{
+            //System.out.println("******************"+key+" "+value);
+            out.append("\""+key+"\" : \""+((value==null)?"null":value.toString())+"\",");
+        }
         return out.toString();
     }
     
