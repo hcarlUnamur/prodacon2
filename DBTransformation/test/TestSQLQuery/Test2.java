@@ -57,6 +57,7 @@ public class Test2 {
             sqlF.createSQLInsertQuery("testTable3", new String[]{"1"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testTable3", new String[]{"2"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testTable3", new String[]{"3"}).sqlQueryDo();
+            //sqlF.createSQLInsertQuery("testTable3", new String[]{"4"}).sqlQueryDo();
 
             ArrayList<Column> listCol4 = new ArrayList<>();
             listCol4.add(new Column("4id", "float(4,1)"));
@@ -67,6 +68,7 @@ public class Test2 {
             sqlF.createSQLInsertQuery("testTable4", new String[]{"1"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testTable4", new String[]{"2"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testTable4", new String[]{"3"}).sqlQueryDo();
+            //sqlF.createSQLInsertQuery("testTable4", new String[]{"4"}).sqlQueryDo();
 
             ArrayList<Column> listCol5 = new ArrayList<>();
             listCol5.add(new Column("5id", "char"));
