@@ -23,9 +23,17 @@ public class JsonBuilder {
      */
     static public String mapToJson(String objectName, Map<String,Object> map){
         StringBuilder out = new StringBuilder();
-        out.append("{ \""+objectName+"\" : {");
+        
+        if(objectName!=null){
+            out.append("{ \""+objectName+"\" : {");
+        }else{
+            out.append("{");
+        }
         map.forEach((k,v)->out.append(objectToJsonElement(k, v)));
-        out.append("}}");
+        out.append("}");
+        if(objectName!=null){
+            out.append("}");
+        }
         out.deleteCharAt(out.lastIndexOf(","));
         return out.toString();
     }

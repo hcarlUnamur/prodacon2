@@ -23,17 +23,33 @@ import java.util.logging.Logger;
  */
 public class Main {
  
+    /**
+     * 
+     * commande example : java prodacon2Diagnostic "localhost" "3306" "DB_name" "Login" "Password" 
+     * 
+     */
     public static void main(String[] args){
         try {
             List<ForeignKey> listfk = loadFkFromFile("./possible_matchesTest.txt");
-            Diagnostic diag = new Diagnostic("localhost", "mydb", "3306", "root", "root",listfk);
+             Diagnostic diag = null;
+            if (args.length==0){
+                diag = new Diagnostic("localhost", "mydb", "3306", "root", "root",listfk);
+            }else{
+                try{
+                    diag = new Diagnostic(args[0], args[2], args[1], args[3], args[4],listfk);
+                }catch(Exception ex){
+                    System.out.println("Error : Wrong parameters");
+                }
+            }
+            System.out.println("{ \"proadcon2Diagnostic\" : [ ");
             while (diag.hasNext()){
                 Analyse analyse = diag.next();
                 analyse.analyse();
-                System.out.println(analyse.getJson());
-                //System.out.println(analyse.getJson().replace(",", ","+System.lineSeparator()).replace("{", "{"+System.lineSeparator()));
+                System.out.println(analyse.getJson()+((diag.hasNext())?",":""));
             }
-        
+            
+            System.out.println("] }");
+            
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }

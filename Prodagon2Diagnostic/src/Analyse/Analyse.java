@@ -418,7 +418,7 @@ public class Analyse {
      * the name of this json is the foreign key constraint name
      */
     public String getJson(){
-        return getJson(fk.getConstraintName());
+        return getJson(null);
     }
     
     /**
