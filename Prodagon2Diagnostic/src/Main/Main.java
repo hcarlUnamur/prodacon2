@@ -29,26 +29,39 @@ public class Main {
      * 
      */
     public static void main(String[] args){
+       boolean error=false;
+        for(String s : args){
+            System.out.println(s);
+        }
+        
         try {
             List<ForeignKey> listfk = loadFkFromFile("./possible_matchesTest.txt");
              Diagnostic diag = null;
             if (args.length==0){
-                diag = new Diagnostic("localhost", "mydb", "3306", "root", "root",listfk);
+                try{
+                    diag = new Diagnostic("localhost", "myb", "3306", "root", "root",listfk);
+                }catch(Exception ex){
+                    System.out.println("Error : We can creat a connexion with the database ( can be caused by wrong parameter Wrong parameters)");
+                    error=true;
+                }
             }else{
                 try{
                     diag = new Diagnostic(args[0], args[2], args[1], args[3], args[4],listfk);
                 }catch(Exception ex){
-                    System.out.println("Error : Wrong parameters");
+                    System.out.println("Error : We can creat a connexion with the database ( can be caused by wrong parameter Wrong parameters)");
+                    error=true;
                 }
             }
-            System.out.println("{ \"proadcon2Diagnostic\" : [ ");
-            while (diag.hasNext()){
-                Analyse analyse = diag.next();
-                analyse.analyse();
-                System.out.println(analyse.getJson()+((diag.hasNext())?",":""));
+            if (!error){
+                System.out.println("{ \"proadcon2Diagnostic\" : [ ");
+                while (diag.hasNext()){
+                    Analyse analyse = diag.next();
+                    analyse.analyse();
+                    System.out.println(analyse.getJson()+((diag.hasNext())?",":""));
+                }
+
+                System.out.println("] }");
             }
-            
-            System.out.println("] }");
             
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
