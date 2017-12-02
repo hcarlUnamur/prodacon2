@@ -29,7 +29,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 /**
  *
@@ -131,6 +130,7 @@ public class FXMLDocumentController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Resource File");
+            fileChooser.setInitialFileName("Proadacon2DiagnosticOutput.json");
             File file = fileChooser.showSaveDialog(null);
             writer = new PrintWriter(file, "UTF-8");
             writer.println(tAreaOutput.getText());
