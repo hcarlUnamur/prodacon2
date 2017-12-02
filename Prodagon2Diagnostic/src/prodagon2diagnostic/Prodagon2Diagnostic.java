@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -23,6 +24,7 @@ public class Prodagon2Diagnostic extends Application {
         
         Scene scene = new Scene(root);
         stage.setTitle("Prodacon2 DB Diagnostic");
+        stage.getIcons().add(new Image("file:img/Loupe.png"));
         stage.setScene(scene);
         stage.show();
     }
