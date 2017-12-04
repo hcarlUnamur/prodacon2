@@ -16,6 +16,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/*
+Exception in thread "Thread-3" java.lang.NullPointerException
+	at Analyse.Analyse.loadTable(Analyse.java:448)
+	at Analyse.Analyse.AlreadExistCheck(Analyse.java:276)
+	at Analyse.Analyse.analyse(Analyse.java:206)
+	at prodagon2diagnostic.FXMLDocumentController.lambda$OnClickStart$1(FXMLDocumentController.java:116)
+	at java.lang.Thread.run(Thread.java:748)
+*/
+
 /**
  * @author carl
  */
@@ -203,7 +212,11 @@ public class Analyse {
      */
     public void analyse(){
         fkTableExistCheck();
-        AlreadExistCheck();
+        
+        if(!impossibleAdding){
+            AlreadExistCheck();
+        }
+        
         if(!impossibleAdding){
             encodageAnalyse();
             unsignedCompatibilityCheck();
