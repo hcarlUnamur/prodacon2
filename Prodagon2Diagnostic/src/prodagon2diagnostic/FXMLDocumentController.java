@@ -141,7 +141,7 @@ public class FXMLDocumentController implements Initializable {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Resource File");
-            fileChooser.setInitialFileName("Proadacon2DiagnosticOutput.json");
+            fileChooser.setInitialFileName("Prodacon2DiagnosticOutput.json");
             File file = fileChooser.showSaveDialog(null);
             writer = new PrintWriter(file, "UTF-8");
             writer.println(tAreaOutput.getText());

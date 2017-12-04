@@ -87,7 +87,7 @@ public class Column implements Jsonable{
         out.append("\"columnName\":"+"\""+this.columnName+"\",");
         out.append("\"columnType\":"+"\""+this.columnType+"\",");
         out.append("\"defaultValue\":"+"\""+this.defaultValue+"\",");
-        out.append("\"charset\":"+"\""+this.charset+"\",");
+        out.append("\"charset\":"+"\""+((this.charset!=null)?(this.charset.replace("\"", "\\\"")):"null")+"\",");
         out.append("\"unsigned\":"+"\""+this.unsigned+"\"");
         out.append("}");
         return out.toString();

@@ -275,7 +275,7 @@ public class Analyse {
             
             this.unmatchingUnsigned = !(fkunsigned==refunsigned);
             if (this.unmatchingUnsigned){
-                message+=" differents signed unsigned values between the foreign key column and the reference column "+System.lineSeparator();
+                message+="Differents signed/unsigned values between the foreign key column and the reference column";
             }
         } catch (SQLException ex) {
             Logger.getLogger(Analyse.class.getName()).log(Level.SEVERE, null, ex);
