@@ -23,7 +23,7 @@ public class SQLCreateTriggerQuery extends SQLManipulationQuery implements Strin
                                               "BEGIN " +
                                                 "IF not (new.%s IN (SELECT %s from %s)) " +
                                               "THEN " +
-                                                "INSERT INTO %s (foreignKeyTable, foreignKeyColumn, referencedTable, referencedColumn, problemAction) values(\"%s\", \"%s\", \"%s\", \"%s\", \"insert\"); " +
+                                                "INSERT INTO %s (foreignKeyName, foreignKeyTable, foreignKeyColumn, referencedTable, referencedColumn, problemAction) values(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"insert\"); " +
                                               "END IF; " +
                                               "END;";
     
@@ -33,7 +33,7 @@ public class SQLCreateTriggerQuery extends SQLManipulationQuery implements Strin
                                               "BEGIN " +
                                                  "IF (old.%s IN (SELECT %s from %s)) " +
                                               "THEN " +
-                                                 "INSERT INTO %s (foreignKeyTable, foreignKeyColumn, referencedTable, referencedColumn, problemAction) values(\"%s\", \"%s\", \"%s\", \"%s\", \"delete\"); " +
+                                                 "INSERT INTO %s (foreignKeyName, foreignKeyTable, foreignKeyColumn, referencedTable, referencedColumn, problemAction) values(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"delete\"); " +
                                               "END IF; " +
                                               "END;";
     
@@ -43,7 +43,7 @@ public class SQLCreateTriggerQuery extends SQLManipulationQuery implements Strin
                                                 "BEGIN " +
                                                    "IF((old.%s <> new.%s) AND not (new.%s IN (SELECT %s from %s))) " +
                                                 "THEN " +
-                                                   "INSERT INTO %s (foreignKeyTable, foreignKeyColumn, referencedTable, referencedColumn, problemAction) values(\"%s\", \"%s\", \"%s\", \"%s\", \"updateForeignkeyTable\"); " +
+                                                   "INSERT INTO %s (foreignKeyName, foreignKeyTable, foreignKeyColumn, referencedTable, referencedColumn, problemAction) values(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"updateForeignkeyTable\"); " +
                                                 "END IF; " +
                                                 "END;";
     
@@ -53,7 +53,7 @@ public class SQLCreateTriggerQuery extends SQLManipulationQuery implements Strin
                                                  "BEGIN " +
                                                     "IF((old.%s <> new.%s) AND (old.%s IN (SELECT %s from %s))) \n" +
                                                  "THEN " +
-                                                    "INSERT INTO %s (foreignKeyTable, foreignKeyColumn, referencedTable, referencedColumn, problemAction) values(\"%s\", \"%s\", \"%s\", \"%s\", \"updateReferencedTable\"); " +
+                                                    "INSERT INTO %s (foreignKeyName, foreignKeyTable, foreignKeyColumn, referencedTable, referencedColumn, problemAction) values(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"updateReferencedTable\"); " +
                                                  "END IF; " +
                                                  "END;";
     
@@ -82,10 +82,10 @@ public class SQLCreateTriggerQuery extends SQLManipulationQuery implements Strin
         
         Statement stmt = this.getCon().createStatement();
 
-        String queryInsert = String.format(QUERYFORMATINSERT,"triggerInsert" + this.foreignKeyName,this.foreignKeyTable,this.foreignKeyColumn,this.referencedColumn,this.referencedTable,this.logTable,this.foreignKeyTable,this.foreignKeyColumn,this.referencedTable,this.referencedColumn);
-        String queryDelete = String.format(QUERYFORMATDELETE,"triggerDelete" + this.foreignKeyName,this.referencedTable,this.referencedColumn,this.foreignKeyColumn,this.foreignKeyTable,this.logTable,this.foreignKeyTable,this.foreignKeyColumn,this.referencedTable,this.referencedColumn);
-        String queryUpdateFK = String.format(QUERYFORMATUPDATEFK,"triggerUpdateFK" + this.foreignKeyName,this.foreignKeyTable,this.foreignKeyColumn,this.foreignKeyColumn,this.foreignKeyColumn,this.referencedColumn,this.referencedTable,this.logTable,this.foreignKeyTable,this.foreignKeyColumn,this.referencedTable,this.referencedColumn);
-        String queryUpdateREF = String.format(QUERYFORMATUPDATEREF, "triggerUpdateREF" + this.foreignKeyName,this.referencedTable,this.referencedColumn,this.referencedColumn,this.referencedColumn,this.foreignKeyColumn,this.foreignKeyTable,this.logTable,this.foreignKeyTable,this.foreignKeyColumn,this.referencedTable,this.referencedColumn);
+        String queryInsert = String.format(QUERYFORMATINSERT,"triggerInsert" + this.foreignKeyName,this.foreignKeyTable,this.foreignKeyColumn,this.referencedColumn,this.referencedTable,this.logTable,this.foreignKeyName,this.foreignKeyTable,this.foreignKeyColumn,this.referencedTable,this.referencedColumn);
+        String queryDelete = String.format(QUERYFORMATDELETE,"triggerDelete" + this.foreignKeyName,this.referencedTable,this.referencedColumn,this.foreignKeyColumn,this.foreignKeyTable,this.logTable,this.foreignKeyName,this.foreignKeyTable,this.foreignKeyColumn,this.referencedTable,this.referencedColumn);
+        String queryUpdateFK = String.format(QUERYFORMATUPDATEFK,"triggerUpdateFK" + this.foreignKeyName,this.foreignKeyTable,this.foreignKeyColumn,this.foreignKeyColumn,this.foreignKeyColumn,this.referencedColumn,this.referencedTable,this.logTable,this.foreignKeyName,this.foreignKeyTable,this.foreignKeyColumn,this.referencedTable,this.referencedColumn);
+        String queryUpdateREF = String.format(QUERYFORMATUPDATEREF, "triggerUpdateREF" + this.foreignKeyName,this.referencedTable,this.referencedColumn,this.referencedColumn,this.referencedColumn,this.foreignKeyColumn,this.foreignKeyTable,this.logTable,this.foreignKeyName,this.foreignKeyTable,this.foreignKeyColumn,this.referencedTable,this.referencedColumn);
         
         
         Logger.getLogger(SQLAlterTableQuery.class.getName()).log(Level.INFO, queryInsert);
