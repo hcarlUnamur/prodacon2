@@ -8,6 +8,7 @@ package Main;
 import Analyse.Analyse;
 import Diagnostic.Diagnostic;
 import EasySQLight.ForeignKey;
+import EasySQLight.Table;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -61,7 +62,12 @@ public class Main {
                     System.out.println(analyse.getJson()+((diag.hasNext())?",":""));
                 }
 
-                System.out.println("] }");
+                System.out.println("],");
+                ArrayList<Table> tables = new ArrayList();
+                diag.getDicoTable().forEach((c,v)->tables.add(v));
+                System.out.println("\"dicoTable\":"+System.lineSeparator()+Tools.JsonBuilder.tableArrayToJson(tables));
+                System.out.println(" }");
+                
             }
             
         } catch (Exception ex) {
