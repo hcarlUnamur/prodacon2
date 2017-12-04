@@ -1341,7 +1341,8 @@ public class JunitTest {
             SQLCreateTableQuery add2 = sqlF.createSQLCreateTableQuery(t2);
             add2.sqlQueryDo();
             
-            ArrayList<Column> listCol3 = new ArrayList<>();
+            ArrayList<Column> listCol3 = new ArrayList<>();                        
+            listCol3.add(new Column("foreignKeyName", "varchar(100) NOT NULL"));
             listCol3.add(new Column("foreignKeyTable", "varchar(100) NOT NULL"));
             listCol3.add(new Column("foreignKeyColumn", "varchar(100) NOT NULL"));
             listCol3.add(new Column("referencedTable", "varchar(100) NOT NULL"));
@@ -1370,19 +1371,20 @@ public class JunitTest {
             ins5.sqlQueryDo();
             SQLUpdateQuery ins6 = sqlF.createSQLUpdateQuery("testTrigger2", new String[][]{{"2id", "3"}}, "testTrigger2.2id=\"2\"");
             ins6.sqlQueryDo();
-            
+                                    
             SQLQueryFree free = sqlF.createSQLCreateFreeQuery(SQLQueryType.Getter, "select COUNT(*) from tableTriggerLog");
             ResultSet count = free.sqlQueryDo();
             count.next();
-            if(!count.getString(1).equals("5")){
+            if(!count.getString(1).equals("4")){
                 result = 1;
-                System.err.println("trigger problem");
+                System.err.println("trigger problem + " + count.getString(1));
             }
             add2.sqlQueryUndo();
             add1.sqlQueryUndo();
             add3.sqlQueryUndo();
 
             System.out.println("ok");
+
         } catch (Exception ex) {
             ErrorGestion(ex, "testTriggerQuery", new ArrayList<>(Arrays.asList("testTrigger2", "testTrigger1", "tableTriggerLog")));
             result = 1;
