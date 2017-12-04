@@ -80,6 +80,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void OnClickStart(){
         swithToWorkingIcon();
+        boolean error=false;
         if (fieldsAreEmpty()){
             Alert("Some fields Are Empties", "");
             swithToStartButton();
@@ -88,38 +89,42 @@ public class FXMLDocumentController implements Initializable {
             tAreaOutput.setText("");
             List<ForeignKey> listfk =null;
             try {
+                
                 listfk = loadFkFromFile(tFieldFKFile.getText());
             } catch (Exception ex) {
                 Alert("Error during reading the \"Foreign Keys\" file (It may doesn't exist)"+System.lineSeparator() +ex, "");
                 swithToStartButton();
+                error=true;
             }
             
             //try tu connect to the DB and proceed the analyse 
-            try{
-                currentDiagnostic = new Diagnostic(
-                        tFieldhost.getText(),
-                        tFieldDBName.getText(),
-                        tFielPort.getText(),
-                        tFieldUserName.getText(),
-                        tFieldPassword.getText(),
-                        listfk
-                );
-                Thread t = new Thread( () ->{
-                        addOutputAndNotify("{ \"proadcon2Diagnostic\" : [ ");
-                        while (currentDiagnostic.hasNext()){
-                            Analyse analyse = currentDiagnostic.next();
-                            analyse.analyse();
-                            addOutputAndNotify(analyse.getJson()+",");
-                        }
-                        deleteLastComa();
-                        addOutputAndNotify("] }");
-                        swithToStartButtonAndSaveButton();
+            if(!error){
+                try{
+                    currentDiagnostic = new Diagnostic(
+                            tFieldhost.getText(),
+                            tFieldDBName.getText(),
+                            tFielPort.getText(),
+                            tFieldUserName.getText(),
+                            tFieldPassword.getText(),
+                            listfk
+                    );
+                    Thread t = new Thread( () ->{
+                            addOutputAndNotify("{ \"proadcon2Diagnostic\" : [ ");
+                            while (currentDiagnostic.hasNext()){
+                                Analyse analyse = currentDiagnostic.next();
+                                analyse.analyse();
+                                addOutputAndNotify(analyse.getJson()+",");
+                            }
+                            deleteLastComa();
+                            addOutputAndNotify("] }");
+                            swithToStartButtonAndSaveButton();
+                    }
+                    );
+                    t.start();
+                }catch(RuntimeException ex){
+                    Alert("Error during the DB connexion (some data can be wrong)"+System.lineSeparator() +ex, "");
+                    swithToStartButton();
                 }
-                );
-                t.start();
-            }catch(RuntimeException ex){
-                Alert("Error during the DB connexion (some data can be wrong)"+System.lineSeparator() +ex, "");
-                swithToStartButton();
             }
         }
     }

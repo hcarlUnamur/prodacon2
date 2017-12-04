@@ -203,6 +203,7 @@ public class Analyse {
      */
     public void analyse(){
         fkTableExistCheck();
+        AlreadExistCheck();
         if(!impossibleAdding){
             encodageAnalyse();
             unsignedCompatibilityCheck();
@@ -235,6 +236,8 @@ public class Analyse {
             this.message="Impossible to find the Reference table and/or column. It can be not exist";
         }
      }
+    
+    
     /**
      *  Check if the reference and the foreignkey column are not the same unsigned/signed value
      *  Set this.unmatchingUnsigned (and if turn false set this.message)
@@ -268,7 +271,18 @@ public class Analyse {
      * Check if the foreign key alread exist on the databases 
      */
     private void AlreadExistCheck(){
-        
+         try {
+            Table fkTable = loadTable(fk.getForeingKeyTable());
+            for(ForeignKey clef : fkTable.getForeignKeys()){
+                if(sameSementicKey(fk, clef)){
+                    this.impossibleAdding=true;
+                    this.fkAlreadyExist=true;
+                    this.message="The Fk is already on the database";
+                }
+            }            
+        } catch (SQLException ex) {
+            Logger.getLogger(Analyse.class.getName()).log(Level.SEVERE, null, ex);
+        }   
     }
     /**
      * Check if the charset between foreign key and reference matches
@@ -443,7 +457,20 @@ public class Analyse {
     public String toString() {
         return super.toString(); 
     }
-    
-    
+    /**
+     * check if the two koreign key avec the same Table an column as Foreignkey/Reference
+     * 
+     * @param fk1 foreign key to compare
+     * @param fk2 foreign key to compare
+     * @return return true if the two koreign key avec the same Table/column for the Foreignkey/Reference
+     */
+    public boolean sameSementicKey(ForeignKey fk1, ForeignKey fk2){
+        boolean samefkTable = fk1.getForeingKeyTable().toUpperCase().equals(fk2.getForeingKeyTable().toUpperCase());
+        boolean samefkColumn = fk1.getForeingKeyColumn().toUpperCase().equals(fk2.getForeingKeyColumn().toUpperCase());
+        boolean samerefTable = fk1.getReferencedTableName().toUpperCase().equals(fk2.getReferencedTableName().toUpperCase()); 
+        boolean samerefColumn = fk1.getReferencedColumn().toUpperCase().equals(fk2.getReferencedColumn().toUpperCase());
+        
+        return samefkColumn && samefkTable && samerefColumn && samerefTable;
+    }
     
 }
