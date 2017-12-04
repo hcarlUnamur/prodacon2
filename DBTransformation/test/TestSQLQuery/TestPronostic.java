@@ -6,6 +6,7 @@ import EasySQL.ForeignKey;
 import EasySQL.SQLCreateTableQuery;
 import EasySQL.SQLQuery;
 import EasySQL.SQLQueryFactory;
+import EasySQL.SQLQueryFree;
 import EasySQL.SQLQueryType;
 import EasySQL.SQLTransactionQuery;
 import EasySQL.SQLUpdateQuery;
@@ -26,8 +27,20 @@ public class TestPronostic {
 
     public static void main(String[] args) {
         try {
+            SQLQueryFactory sqlF0 = new SQLQueryFactory("localhost", "mydb", "3306", "root", "root");
+            SQLQueryFree free0 = sqlF0.createSQLCreateFreeQuery(SQLQueryType.Updater, "create database mydbBIS");
+            free0.sqlQueryDo();
+            
+            SQLQueryFactory sqlFBIS = new SQLQueryFactory("localhost", "mydbBIS", "3306", "root", "root");
+            SQLQueryFree free0BIS = sqlFBIS.createSQLCreateFreeQuery(SQLQueryType.Updater, "drop database mydb");
+            free0BIS.sqlQueryDo();
+            SQLQueryFree free1BIS = sqlFBIS.createSQLCreateFreeQuery(SQLQueryType.Updater, "create database mydb");
+            free1BIS.sqlQueryDo();
+            
             SQLQueryFactory sqlF = new SQLQueryFactory("localhost", "mydb", "3306", "root", "root");
-
+            SQLQueryFree freeEnd = sqlF0.createSQLCreateFreeQuery(SQLQueryType.Updater, "drop database mydbBIS");
+            freeEnd.sqlQueryDo();
+            
             ArrayList<Column> listCol1 = new ArrayList<>();
             listCol1.add(new Column("1id", "int"));
             Table t1 = new Table("testTable1", listCol1, new ArrayList<ForeignKey>(), "1id");
@@ -49,85 +62,85 @@ public class TestPronostic {
             sqlF.createSQLInsertQuery("testTable2", new String[]{"3"}).sqlQueryDo();
 
             ArrayList<Column> listCol3 = new ArrayList<>();
-            listCol3.add(new Column("3id", "bigInt"));
+            listCol3.add(new Column("3id", "int"));
             Table t3 = new Table("testTable3", listCol3, new ArrayList<ForeignKey>(), "3id");
             SQLCreateTableQuery add3 = sqlF.createSQLCreateTableQuery(t3);
             add3.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"12"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"24"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable3", new String[]{"35"}).sqlQueryDo();
-/*
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"1"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"2"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable3", new String[]{"3"}).sqlQueryDo();
+
             ArrayList<Column> listCol4 = new ArrayList<>();
-            listCol4.add(new Column("4id", "int"));
+            listCol4.add(new Column("4id", "bigInt"));
             Table t4 = new Table("testTable4", listCol4, new ArrayList<ForeignKey>(), "4id");
             SQLCreateTableQuery add4 = sqlF.createSQLCreateTableQuery(t4);
             add4.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable4", new String[]{"1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable4", new String[]{"2"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable4", new String[]{"3"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable4", new String[]{"12"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable4", new String[]{"24"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable4", new String[]{"35"}).sqlQueryDo();
 
             ArrayList<Column> listCol5 = new ArrayList<>();
-            listCol5.add(new Column("5id", "tinyInt"));
+            listCol5.add(new Column("5id", "bigInt"));
             Table t5 = new Table("testTable5", listCol5, new ArrayList<ForeignKey>(), "5id");
             SQLCreateTableQuery add5 = sqlF.createSQLCreateTableQuery(t5);
             add5.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable5", new String[]{"1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable5", new String[]{"2"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable5", new String[]{"3"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable5", new String[]{"12"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable5", new String[]{"24"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable5", new String[]{"35"}).sqlQueryDo();
 
             ArrayList<Column> listCol6 = new ArrayList<>();
-            listCol6.add(new Column("6id", "tinyInt"));
+            listCol6.add(new Column("6id", "bigInt"));
             Table t6 = new Table("testTable6", listCol6, new ArrayList<ForeignKey>(), "6id");
             SQLCreateTableQuery add6 = sqlF.createSQLCreateTableQuery(t6);
             add6.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable6", new String[]{"1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable6", new String[]{"2"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable6", new String[]{"3"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable6", new String[]{"12"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable6", new String[]{"24"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable6", new String[]{"35"}).sqlQueryDo();
 
             ArrayList<Column> listCol7 = new ArrayList<>();
-            listCol7.add(new Column("7id", "int"));
+            listCol7.add(new Column("7id", "bigInt unsigned"));
             Table t7 = new Table("testTable7", listCol7, new ArrayList<ForeignKey>(), "7id");
             SQLCreateTableQuery add7 = sqlF.createSQLCreateTableQuery(t7);
             add7.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable7", new String[]{"1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable7", new String[]{"2"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable7", new String[]{"3"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable7", new String[]{"12"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable7", new String[]{"24"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable7", new String[]{"35"}).sqlQueryDo();
 
             ArrayList<Column> listCol8 = new ArrayList<>();
-            listCol8.add(new Column("8id", "bigInt"));
+            listCol8.add(new Column("8id", "varchar(10) character set utf8"));
             Table t8 = new Table("testTable8", listCol8, new ArrayList<ForeignKey>(), "8id");
             SQLCreateTableQuery add8 = sqlF.createSQLCreateTableQuery(t8);
             add8.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable8", new String[]{"1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable8", new String[]{"2"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable8", new String[]{"3"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable8", new String[]{"12"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable8", new String[]{"24"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable8", new String[]{"35"}).sqlQueryDo();
 
             ArrayList<Column> listCol9 = new ArrayList<>();
-            listCol9.add(new Column("9id", "varchar(10)"));
+            listCol9.add(new Column("9id", "varchar(20) character set utf8"));
             Table t9 = new Table("testTable9", listCol9, new ArrayList<ForeignKey>(), "9id");
             SQLCreateTableQuery add9 = sqlF.createSQLCreateTableQuery(t9);
             add9.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable9", new String[]{"1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable9", new String[]{"2"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable9", new String[]{"3"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable9", new String[]{"12"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable9", new String[]{"24"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable9", new String[]{"35"}).sqlQueryDo();
 
             ArrayList<Column> listCol10 = new ArrayList<>();
-            listCol10.add(new Column("10id", "mediumInt"));
+            listCol10.add(new Column("10id", "varchar(10) character set latin1"));
             Table t10 = new Table("testTable10", listCol10, new ArrayList<ForeignKey>(), "10id");
             SQLCreateTableQuery add10 = sqlF.createSQLCreateTableQuery(t10);
             add10.sqlQueryDo();
 
-            sqlF.createSQLInsertQuery("testTable10", new String[]{"1"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable10", new String[]{"2"}).sqlQueryDo();
-            sqlF.createSQLInsertQuery("testTable10", new String[]{"3"}).sqlQueryDo();
-            
+            sqlF.createSQLInsertQuery("testTable10", new String[]{"12"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable10", new String[]{"24"}).sqlQueryDo();
+            sqlF.createSQLInsertQuery("testTable10", new String[]{"35"}).sqlQueryDo();
+       /*     
             ArrayList<Column> listCol11 = new ArrayList<>();
             listCol11.add(new Column("11id", "tinyInt"));
             Table t11 = new Table("testTable11", listCol11, new ArrayList<ForeignKey>(), "11id");
@@ -178,19 +191,15 @@ public class TestPronostic {
             sqlF.createSQLInsertQuery("testTable15", new String[]{"2"}).sqlQueryDo();
             sqlF.createSQLInsertQuery("testTable15", new String[]{"3"}).sqlQueryDo();
 */
-            ForeignKey fk1 = new ForeignKey("testTable1", "1id", "2id", "testTable2", "FK1");
-            //ForeignKey fk2 = new ForeignKey("testTable2", "2id", "3id", "testTable3", "FK2");
-            //ForeignKey fk3 = new ForeignKey("testTable2", "2id", "4id", "testTable4", "FK3");
-            //ForeignKey fk4 = new ForeignKey("testTable4", "4id", "5id", "testTable5", "FK4");
-            //ForeignKey fk5 = new ForeignKey("testTable5", "5id", "1id", "testTable1", "FK5");
+            ForeignKey fk0 = new ForeignKey("testTable2", "2id", "1id", "testTable1", "FK0");
+            ForeignKey fk1 = new ForeignKey("testTable3", "3id", "2id", "testTable2", "FK1");
+            ForeignKey fk2 = new ForeignKey("testTable4", "4id", "5id", "testTable5", "FK2");
+            ForeignKey fk3 = new ForeignKey("testTable6", "6id", "4id", "testTable4", "FK3");
 
-            ArrayList<ForeignKey> lFK = new ArrayList<>();
-            lFK.add(fk1);
-
+            sqlF.createSQLAlterAddForeignKeyQuery("testTable1", fk0).sqlQueryDo();
             sqlF.createSQLAlterAddForeignKeyQuery("testTable2", fk1).sqlQueryDo();
-            //sqlF.createSQLAlterAddForeignKeyQuery("testTable3", fk2).sqlQueryDo();
-            //sqlF.createSQLAlterAddForeignKeyQuery("testTable4", fk3).sqlQueryDo();
-            //sqlF.createSQLAlterAddForeignKeyQuery("testTable5", fk4).sqlQueryDo();
+            sqlF.createSQLAlterAddForeignKeyQuery("testTable5", fk2).sqlQueryDo();
+            sqlF.createSQLAlterAddForeignKeyQuery("testTable4", fk3).sqlQueryDo();
             //sqlF.createSQLAlterAddForeignKeyQuery("testTable1", fk5).sqlQueryDo();
 
             

@@ -1,2 +1,8 @@
-testtable2:2id:testtable1:1id
-testtable3:3id:testtable2:2id
+testtable1:1id:testtable2:2id
+testtable3:3id:testtable1:1id
+testtable4:4id:testtable1:1id
+testtable1:1id:testtable5:5id
+testtable7:7id:testtable5:5id
+testtable8:8id:testtable6:6id
+testtable8:8id:testtable9:9id
+testtable10:10id:testtable8:8id
