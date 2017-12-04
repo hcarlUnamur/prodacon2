@@ -10,12 +10,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import EasySQL.Exception.LoadUnexistentTableException;
+import Tools.Jsonable;
+import EasySQLight.Column;
 
 /**
  *
  * @author carl
  */
-public class Table {
+public class Table implements Jsonable{
 
     private ArrayList<Column> Tablecolumn;
     private String name;
@@ -177,4 +179,19 @@ public class Table {
             }
         return false;
     };
+
+
+    @Override
+    public String toJson(){
+    StringBuilder sbuild = new StringBuilder();
+        sbuild.append("{");
+        sbuild.append("\"name\":"+"\""+this.name+"\",");
+        sbuild.append("\"primaryKey\":"+"\""+this.primaryKey+"\",");
+        sbuild.append("\"Tablecolumn\":"+Tools.JsonBuilder.columnArrayToJson(this.Tablecolumn)+",");
+        sbuild.append("\"foreignKeys\":"+Tools.JsonBuilder.fkArrayToJson(this.foreignKeys));
+        sbuild.append("}");
+    return sbuild.toString();
+    }
+    
+    
 }

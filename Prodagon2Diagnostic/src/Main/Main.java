@@ -39,7 +39,8 @@ public class Main {
              Diagnostic diag = null;
             if (args.length==0){
                 try{
-                    diag = new Diagnostic("localhost", "myb", "3306", "root", "root",listfk);
+                    System.out.println("Default parameter");
+                    diag = new Diagnostic("localhost", "mydb", "3306", "root", "root",listfk);
                 }catch(Exception ex){
                     System.out.println("Error : We can creat a connexion with the database ( can be caused by wrong parameter Wrong parameters)");
                     error=true;

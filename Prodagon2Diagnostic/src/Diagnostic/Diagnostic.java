@@ -48,7 +48,41 @@ public class Diagnostic implements Iterator<Analyse> {
         this.iteratorIndex=0;
         this.dicoTable = new HashMap();
     }
+// getter & setter------------------------------------------------------------------------------------------------------------------------------------
 
+    public SQLQueryFactory getFactory() {
+        return factory;
+    }
+
+    public void setFactory(SQLQueryFactory factory) {
+        this.factory = factory;
+    }
+
+    public List<ForeignKey> getFks() {
+        return fks;
+    }
+
+    public void setFks(List<ForeignKey> fks) {
+        this.fks = fks;
+    }
+
+    public int getIteratorIndex() {
+        return iteratorIndex;
+    }
+
+    public void setIteratorIndex(int iteratorIndex) {
+        this.iteratorIndex = iteratorIndex;
+    }
+
+    public HashMap<String, Table> getDicoTable() {
+        return dicoTable;
+    }
+
+    public void setDicoTable(HashMap<String, Table> dicoTable) {
+        this.dicoTable = dicoTable;
+    }
+    
+    
 // Iterator overloaded methods-------------------------------------------------------------------------------------------------------------------------    
     
     @Override

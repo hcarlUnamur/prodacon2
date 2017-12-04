@@ -5,7 +5,10 @@
  */
 package Tools;
 
-import java.util.HashMap;
+import EasySQLight.Column;
+import EasySQLight.ForeignKey;
+import EasySQLight.Table;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +46,7 @@ public class JsonBuilder {
             List list = (List) value;
             out.append("\""+key+"\" : [ ");
             if(!list.isEmpty()){
-                list.stream().forEach(v->out.append(v.toString()+", "));
+                list.stream().forEach(v->out.append(((v instanceof Jsonable)?((Jsonable)v).toJson():v.toString())+", "));
                 out.delete(out.length()-2, out.length());
             }
             out.append(" ], ");
@@ -54,6 +57,52 @@ public class JsonBuilder {
             //System.out.println("******************"+key+" "+value);
             out.append("\""+key+"\" : \""+((value==null)?"null":value.toString())+"\",");
         }
+        return out.toString();
+    }
+    
+    //technicaly not need with super type but my IDE don't want
+    public static String columnArrayToJson(List<Column> list){
+        StringBuilder out= new StringBuilder();
+        out.append("[");
+        for(Jsonable l : list){
+            out.append(l.toJson()+",");
+        }
+        if(list.size()>0){out.deleteCharAt(out.lastIndexOf(","));}
+        out.append("]");
+        return out.toString();
+    }
+    
+    //technicaly not need with super type but my IDE don't want
+    public static String fkArrayToJson(List<ForeignKey> list){
+        StringBuilder out= new StringBuilder();
+        out.append("[");
+        for(Jsonable l : list){
+            out.append(l.toJson()+",");
+        }
+        if(list.size()>0){out.deleteCharAt(out.lastIndexOf(","));}
+        out.append("]");
+        return out.toString();
+    }
+    
+    public static String arrayToJson(List<Jsonable> list){
+        StringBuilder out= new StringBuilder();
+        out.append("[");
+        for(Jsonable l : list){
+            out.append(l.toJson()+",");
+        }
+        if(list.size()>0){out.deleteCharAt(out.lastIndexOf(","));}
+        out.append("]");
+        return out.toString();
+    }
+    
+    public static String tableArrayToJson(List<Table> list){
+        StringBuilder out= new StringBuilder();
+        out.append("[");
+        for(Jsonable l : list){
+            out.append(l.toJson()+","+System.lineSeparator());
+        }
+        if(list.size()>0){out.deleteCharAt(out.lastIndexOf(","));}
+        out.append("]");
         return out.toString();
     }
     

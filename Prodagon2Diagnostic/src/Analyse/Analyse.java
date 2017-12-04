@@ -208,6 +208,7 @@ public class Analyse {
             encodageAnalyse();
             unsignedCompatibilityCheck();
             analyseValues();
+            analyseCascade();
         }        
     }
     /**

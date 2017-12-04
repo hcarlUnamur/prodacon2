@@ -1,7 +1,9 @@
 package EasySQLight;
 
+import Tools.Jsonable;
 
-public class Column {
+
+public class Column implements Jsonable{
     private String columnName;
     private String columnType;
     private String charset;
@@ -76,5 +78,18 @@ public class Column {
     
     public String toString(){
         return columnName + " " + columnType;
+    }
+    
+    @Override
+    public String toJson(){
+        StringBuilder out = new StringBuilder();
+        out.append("{");
+        out.append("\"columnName\":"+"\""+this.columnName+"\",");
+        out.append("\"columnType\":"+"\""+this.columnType+"\",");
+        out.append("\"defaultValue\":"+"\""+this.defaultValue+"\",");
+        out.append("\"charset\":"+"\""+this.charset+"\",");
+        out.append("\"unsigned\":"+"\""+this.unsigned+"\"");
+        out.append("}");
+        return out.toString();
     }
 }

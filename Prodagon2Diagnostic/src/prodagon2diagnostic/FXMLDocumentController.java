@@ -3,6 +3,7 @@ package prodagon2diagnostic;
 import Analyse.Analyse;
 import Diagnostic.Diagnostic;
 import EasySQLight.ForeignKey;
+import EasySQLight.Table;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -109,14 +110,19 @@ public class FXMLDocumentController implements Initializable {
                             listfk
                     );
                     Thread t = new Thread( () ->{
-                            addOutputAndNotify("{ \"proadcon2Diagnostic\" : [ ");
+                            addOutputAndNotify("{"+System.lineSeparator()+" \"proadcon2Diagnostic\" : [ ");
                             while (currentDiagnostic.hasNext()){
                                 Analyse analyse = currentDiagnostic.next();
                                 analyse.analyse();
                                 addOutputAndNotify(analyse.getJson()+",");
                             }
                             deleteLastComa();
-                            addOutputAndNotify("] }");
+                            addOutputAndNotify("],");
+                            
+                            ArrayList<Table> tables = new ArrayList();
+                            currentDiagnostic.getDicoTable().forEach((c,v)->tables.add(v));
+                            addOutputAndNotify("\"dicoTable\":"+System.lineSeparator()+Tools.JsonBuilder.tableArrayToJson(tables));
+                            addOutputAndNotify(" }");
                             swithToStartButtonAndSaveButton();
                     }
                     );

@@ -1,8 +1,9 @@
 package EasySQLight;
 
+import Tools.Jsonable;
 import java.util.Objects;
 
-public class ForeignKey {
+public class ForeignKey implements Jsonable{
     
     private String ReferencedTableName;
     private String ReferencedColumn;
