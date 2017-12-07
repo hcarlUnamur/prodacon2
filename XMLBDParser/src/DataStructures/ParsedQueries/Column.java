@@ -1,10 +1,12 @@
 package DataStructures.ParsedQueries;
 
+import java.io.Serializable;
+
 /**
  *
  * @author carl
  */
-public class Column {
+public class Column implements Serializable {
     
     private String id;
     private boolean explicite;

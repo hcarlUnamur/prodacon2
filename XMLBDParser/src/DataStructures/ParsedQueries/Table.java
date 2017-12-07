@@ -1,10 +1,12 @@
 package DataStructures.ParsedQueries;
 
+import java.io.Serializable;
+
 /**
  *
  * @author carl
  */
-public class Table {
+public class Table implements Serializable {
     private String id;
     private boolean explicite;
 

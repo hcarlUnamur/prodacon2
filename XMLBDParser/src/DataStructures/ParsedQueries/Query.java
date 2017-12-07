@@ -1,5 +1,6 @@
 package DataStructures.ParsedQueries;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  *
  * @author carl
  */
-public class Query {
+public class Query implements Serializable {
     private int id;
     private boolean error;
     private List<Table> tables;
