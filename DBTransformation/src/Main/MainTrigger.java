@@ -32,9 +32,6 @@ public class MainTrigger {
     private String dbName;
     private ArrayList<ForeignKey> fkArray;
     
-    /**
-     * @param args the command line arguments
-     */
     public MainTrigger(){
         fkArray = new ArrayList();
     }

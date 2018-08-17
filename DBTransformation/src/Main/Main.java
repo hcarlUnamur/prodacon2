@@ -38,9 +38,6 @@ public class Main {
     private ArrayList<Transformation> transformations;
     private HashMap<Transformation,Action> actionChoice;
     
-    /**
-     * @param args the command line arguments
-     */
     public Main(){
         fkArray = new ArrayList();
         transformations = new ArrayList<Transformation>();

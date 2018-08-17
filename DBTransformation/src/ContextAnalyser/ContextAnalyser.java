@@ -61,9 +61,9 @@ public class ContextAnalyser implements Iterator<Transformation> {
 * @param fk foreign key that we want to add to the DB with the returned transformation
 * @throws LoadUnexistentTableException if the tables and/or the columns from the fk parameter don't exist on the DB  
 * @return
-*  - If the fk is already on the DB, return an EmptyTransformation.</br>
-*  - If it is possible, return a DBTransformation Object that was configured to make able the adding of key foreign</br>
-*  - Finally, if the algorithm don't find a possible transformation it return a ImpossibleTransformation </br>  
+*  - If the fk is already on the DB, return an EmptyTransformation.
+*  - If it is possible, return a DBTransformation Object that was configured to make able the adding of key foreign
+*  - Finally, if the algorithm don't find a possible transformation it return a ImpossibleTransformation   
 * @see Transformation
 * @see DBTransformation
 * @see EmptyTransformation
@@ -326,9 +326,9 @@ public class ContextAnalyser implements Iterator<Transformation> {
 * Return the next Transformation Object of the iteration that was configured to make able the adding of foreign key if it is possible.
 * @throws RuntimeException if the tables and/or the columns from the fk parameter don't exist on the DB  
 * @return
-*  - If the fk is already on the DB, return an EmptyTransformation.</br>
-*  - If it is possible, return a DBTransformation Object that was configured to make able the adding of key foreign</br>
-*  - Finally, if the algorithm don't find a possible transformation it return a ImpossibleTransformation </br>  
+*  - If the fk is already on the DB, return an EmptyTransformation.
+*  - If it is possible, return a DBTransformation Object that was configured to make able the adding of key foreign
+*  - Finally, if the algorithm don't find a possible transformation it return a ImpossibleTransformation  
 * @see Transformation
 * @see DBTransformation
 * @see EmptyTransformation

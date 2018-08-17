@@ -274,8 +274,8 @@ public class DBTransformation extends Transformation {
      * use the intern representation ("tableDico" attribut) the database metadata to analyse if the charset match,
      * if there are some unmatching value and if there are some potential cascade transformation to proceed.
      * This methode instantiates the attributs : 
-     * ArrayList<String> unmatchingValue, 
-     * HashMap<TransformationTarget,ArrayList<ForeignKey>> cascadeFkMap,
+     * ArrayList &#139; String &#155; unmatchingValue, 
+     * HashMap &#139; TransformationTarget,ArrayList &#139; ForeignKey &#155; &#155; cascadeFkMap,
      * boolean encodageMatching,
      * Column fkColumnBeforeTransformation,
      * Column refColumnBeforeTransformation,
