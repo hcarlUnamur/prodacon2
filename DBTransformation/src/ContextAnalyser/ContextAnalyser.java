@@ -82,9 +82,8 @@ public class ContextAnalyser implements Iterator<Transformation> {
         }
                 Column fkColumn =null;
                 Column referencedColumn=null;
-                
-                try{
                 int i =0;
+                try{
                 fkColumn = usedTable.getTablecolumn().stream()
                                             .filter(c-> c.getColumnName().equals(fk.getForeingKeyColumn()))
                                             .findFirst()
@@ -96,7 +95,7 @@ public class ContextAnalyser implements Iterator<Transformation> {
                                             .get();
                 
                 }catch(java.util.NoSuchElementException e){
-                    if (1==0)
+                    if (i==0)
                         throw new LoadUnexistentTableException("Impossible to find : "+fk.getForeingKeyTable()+"."+fk.getForeingKeyColumn());
                     else 
                         throw new LoadUnexistentTableException("Impossible to find : "+fk.getReferencedTableName()+"."+fk.getReferencedColumn());
